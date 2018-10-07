@@ -1,0 +1,39 @@
+
+BPS_PATH=/media/shawry/STORAGE/MEGAsync/Resource/Thesis/raspberrypi3b
+
+bps_build()
+{
+	mkdir -p $BPS_PATH/build/
+	cd $BPS_PATH/build
+	cmake $BPS_PATH/
+	make -C $BPS_PATH/build/
+	echo "Completed"
+}
+
+bps_clean()
+{
+	rm -rf $BPS_PATH/bin
+	rm -rf $BPS_PATH/build
+	rm -rf $BPS_PATH/build/CMakeFiles
+	rm -f $BPS_PATH/build/CMakeCache.txt
+	rm -f $BPS_PATH/build/cmake_install.cmake
+	rm -f $BPS_PATH/build/Makefile
+}
+
+while test ${#} -gt 0; do
+    case "$1" in
+        build)
+            bps_build
+            ;;
+		clean)
+			bps_clean
+			;;
+        *)
+            echo "Unknown command: $1"
+            osaf_help
+            exit 1
+    esac
+    shift
+done
+
+exit 0
