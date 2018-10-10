@@ -67,7 +67,7 @@ void captureVideoStream()
 }
 void processFrame()
 {
-	UMat edges;
+	Mat edges;
 	sleep(1);
 	int count = 0;
 	std::time_t start, end;
