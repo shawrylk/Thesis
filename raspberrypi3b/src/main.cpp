@@ -11,7 +11,7 @@ using namespace cv;
 
 void captureVideoStream(void);
 void processFrame(void);
-static UMat frame;
+static Mat frame;
 static VideoCapture cap(0);
 int main( int, char** ) 
 {
@@ -53,9 +53,9 @@ void captureVideoStream()
 {
 	
 	 // open the default camera
-	cap.set(CAP_PROP_FRAME_WIDTH, 320);
-	cap.set(CAP_PROP_FRAME_HEIGHT, 320);
-	cap.set(CV_CAP_PROP_FPS, 200);
+	//cap.set(CAP_PROP_FRAME_WIDTH, 320);
+	//cap.set(CAP_PROP_FRAME_HEIGHT, 320);
+	//cap.set(CV_CAP_PROP_FPS, 200);
 	//cap.set(CV_CAP_PROP_CONVERT_RGB , false);
 	if (cap.isOpened())
 			std::cout << "cant open cam\n";
