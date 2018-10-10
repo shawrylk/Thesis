@@ -1,5 +1,14 @@
 
-BPS_PATH=/media/shawry/STORAGE/MEGAsync/Resource/Thesis/raspberrypi3b
+BPS_PATH=/home/shawry/Thesis/raspberrypi3b
+bps_run()
+{
+	$BPS_PATH/bin/bpsRaspberryPi3B
+}
+
+bps_install()
+{
+	sudo apt install libopencv-dev
+}
 
 bps_build()
 {
@@ -28,7 +37,13 @@ while test ${#} -gt 0; do
 		clean)
 			bps_clean
 			;;
-        *)
+		install)
+			bps_install
+			;;
+		run)
+			bps_run
+			;;
+		*)
             echo "Unknown command: $1"
             osaf_help
             exit 1
@@ -37,3 +52,6 @@ while test ${#} -gt 0; do
 done
 
 exit 0
+
+#git config --global user.email "shawry.lk@gmail.com"
+#git config --global user.name "shawrylk"
