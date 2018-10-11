@@ -11,8 +11,8 @@ using namespace cv;
 
 void captureVideoStream(void);
 void processFrame(void);
-static Mat frame;
-static VideoCapture cap(0);
+// static Mat frame;
+// static VideoCapture cap(0);
 int main( int, char** ) 
 {
 
@@ -23,8 +23,8 @@ int main( int, char** )
 	cap.set(CV_CAP_PROP_FPS, 60);
 	if (!cap.isOpened())  // check if we succeeded
 		return -1;
-	UMat edges;
-	UMat frame;
+	Mat edges;
+	Mat frame;
 	namedWindow("edges", 1);
 	std::time_t start = std::time(0);
 	for (int i = 0; i <120; i++)
@@ -49,47 +49,47 @@ int main( int, char** )
 	return 0;
 }
 
-void captureVideoStream()
-{
+// void captureVideoStream()
+// {
 	
-	 // open the default camera
-	//cap.set(CAP_PROP_FRAME_WIDTH, 320);
-	//cap.set(CAP_PROP_FRAME_HEIGHT, 320);
-	//cap.set(CV_CAP_PROP_FPS, 200);
-	//cap.set(CV_CAP_PROP_CONVERT_RGB , false);
-	if (cap.isOpened())
-			std::cout << "cant open cam\n";
-	while (1)
-	{
-		cap.read(frame);
-		waitKey(10);
-	}
-}
-void processFrame()
-{
-	Mat edges;
-	sleep(1);
-	int count = 0;
-	std::time_t start, end;
-	while(1)
-	{
-		if (frame.empty())
-			continue;
-		if (count == 0)
-			std::time(&start);
-		count++;
-		cvtColor(frame, edges, COLOR_BGR2GRAY);
-		GaussianBlur(edges, edges, Size(7, 7), 1.5, 1.5);
-		Canny(edges, edges, 0, 30, 3);
-		imshow("edges", edges);
-		waitKey(1);
+// 	 // open the default camera
+// 	//cap.set(CAP_PROP_FRAME_WIDTH, 320);
+// 	//cap.set(CAP_PROP_FRAME_HEIGHT, 320);
+// 	//cap.set(CV_CAP_PROP_FPS, 200);
+// 	//cap.set(CV_CAP_PROP_CONVERT_RGB , false);
+// 	if (cap.isOpened())
+// 			std::cout << "cant open cam\n";
+// 	while (1)
+// 	{
+// 		cap.read(frame);
+// 		waitKey(10);
+// 	}
+// }
+// void processFrame()
+// {
+// 	Mat edges;
+// 	sleep(1);
+// 	int count = 0;
+// 	std::time_t start, end;
+// 	while(1)
+// 	{
+// 		if (frame.empty())
+// 			continue;
+// 		if (count == 0)
+// 			std::time(&start);
+// 		count++;
+// 		cvtColor(frame, edges, COLOR_BGR2GRAY);
+// 		GaussianBlur(edges, edges, Size(7, 7), 1.5, 1.5);
+// 		Canny(edges, edges, 0, 30, 3);
+// 		imshow("edges", edges);
+// 		waitKey(1);
 		
-		if (count == 1200)
-		{
-			std::time(&end);
-			std::cout << "fps " << 120.0 / difftime(end, start) << std::endl;
-			count = 0;
-		}
+// 		if (count == 1200)
+// 		{
+// 			std::time(&end);
+// 			std::cout << "fps " << 120.0 / difftime(end, start) << std::endl;
+// 			count = 0;
+// 		}
 		
-	}
-}
+// 	}
+// }
