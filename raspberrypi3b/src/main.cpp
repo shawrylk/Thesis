@@ -16,26 +16,30 @@ void processFrame(void);
 int main( int, char** ) 
 {
 
+	
 	static int fps;
 	VideoCapture cap(0); // open the default camera
 	cap.set(CAP_PROP_FRAME_WIDTH, 320);
 	cap.set(CAP_PROP_FRAME_HEIGHT, 320);
-	cap.set(CV_CAP_PROP_FPS, 60);
+	cap.set(CV_CAP_PROP_FPS, 200);
 	if (!cap.isOpened())  // check if we succeeded
 		return -1;
 	Mat edges;
 	Mat frame;
 	namedWindow("edges", 1);
 	std::time_t start = std::time(0);
-	for (int i = 0; i <120; i++)
+	for (int i = 0; ;)
 	{
-		cap >> frame; // get a new frame from camera
+		bool ret = cap.read(frame); // get a new frame from camera
 		fps++;
+		if (ret == true)
+		{
 		cvtColor(frame, edges, COLOR_BGR2GRAY);
 		GaussianBlur(edges, edges, Size(7, 7), 1.5, 1.5);
 		Canny(edges, edges, 0, 30, 3);
 		imshow("edges", edges);
 		waitKey(1);
+		}
 		
 	}
 	std::time_t end = std::time(0);
