@@ -16,36 +16,36 @@ static VideoCapture cap(0);
 int main( int, char** ) 
 {
 
-	// static int fps;
-	// VideoCapture cap(0); // open the default camera
-	// cap.set(CAP_PROP_FRAME_WIDTH, 320);
-	// cap.set(CAP_PROP_FRAME_HEIGHT, 320);
-	// cap.set(CV_CAP_PROP_FPS, 60);
-	// if (!cap.isOpened())  // check if we succeeded
-	// 	return -1;
-	// UMat edges;
-	// UMat frame;
-	// namedWindow("edges", 1);
-	// std::time_t start = std::time(0);
-	// for (int i = 0; i <120; i++)
-	// {
-	// 	cap >> frame; // get a new frame from camera
-	// 	fps++;
-	// 	cvtColor(frame, edges, COLOR_BGR2GRAY);
-	// 	GaussianBlur(edges, edges, Size(7, 7), 1.5, 1.5);
-	// 	Canny(edges, edges, 0, 30, 3);
-	// 	imshow("edges", edges);
-	// 	waitKey(1);
+	static int fps;
+	VideoCapture cap(0); // open the default camera
+	cap.set(CAP_PROP_FRAME_WIDTH, 320);
+	cap.set(CAP_PROP_FRAME_HEIGHT, 320);
+	cap.set(CV_CAP_PROP_FPS, 60);
+	if (!cap.isOpened())  // check if we succeeded
+		return -1;
+	UMat edges;
+	UMat frame;
+	namedWindow("edges", 1);
+	std::time_t start = std::time(0);
+	for (int i = 0; i <120; i++)
+	{
+		cap >> frame; // get a new frame from camera
+		fps++;
+		cvtColor(frame, edges, COLOR_BGR2GRAY);
+		GaussianBlur(edges, edges, Size(7, 7), 1.5, 1.5);
+		Canny(edges, edges, 0, 30, 3);
+		imshow("edges", edges);
+		waitKey(1);
 		
-	// }
-	// std::time_t end = std::time(0);
-	// std::cout << "fps " << 120/(end - start) << std::endl;
-	// waitKey(5);
-	std::thread first(captureVideoStream);
-	std::thread second(processFrame);
-	std::cout << "Running\n";
-	first.join();
-	second.join();
+	}
+	std::time_t end = std::time(0);
+	std::cout << "fps " << 120/(end - start) << std::endl;
+	waitKey(5);
+	// std::thread first(captureVideoStream);
+	// std::thread second(processFrame);
+	// std::cout << "Running\n";
+	// first.join();
+	// second.join();
 	return 0;
 }
 
