@@ -12,6 +12,7 @@ using namespace cv;
 void captureVideoStream(void);
 void processFrame(void);
 void Blur(void);
+void Blob(void);
 static UMat frame, color, mblur;
 static VideoCapture cap(0);
 int main( int, char** ) 
@@ -44,7 +45,7 @@ int main( int, char** )
 	// waitKey(5);
 	std::thread first(captureVideoStream);
 	std::thread second(processFrame);
-	std::thread third(Blur);
+	std::thread third(Blob);
 	std::cout << "Running\n";
 	first.join();
 	second.join();
@@ -133,4 +134,69 @@ void Blur()
 		}
 		
 	}
+}
+
+void Blob()
+{
+	while (1)
+	{
+	// Read image
+	if (color.empty())
+			continue;
+	// Setup SimpleBlobDetector parameters.
+	SimpleBlobDetector::Params params;
+
+	// Change thresholds
+	params.minThreshold = 50;
+	params.maxThreshold = 200;
+
+	// Filter by Area.
+	params.filterByArea = true;
+	params.minArea = 1500;
+
+	// Filter by Circularity
+	params.filterByCircularity = true;
+	params.minCircularity = 0.1;
+
+	// Filter by Convexity
+	params.filterByConvexity = true;
+	params.minConvexity = 0.87;
+
+	// Filter by Inertia
+	params.filterByInertia = true;
+	params.minInertiaRatio = 0.01;
+
+
+	// Storage for blobs
+	vector<KeyPoint> keypoints;
+
+
+#if CV_MAJOR_VERSION < 3   // If you are using OpenCV 2
+
+	// Set up detector with params
+	SimpleBlobDetector detector(params);
+
+	// Detect blobs
+	detector.detect( im, keypoints);
+#else 
+
+	// Set up detector with params
+	Ptr<SimpleBlobDetector> detector = SimpleBlobDetector::create(params);   
+
+	// Detect blobs
+	detector->detect( color, keypoints);
+#endif 
+
+	// Draw detected blobs as red circles.
+	// DrawMatchesFlags::DRAW_RICH_KEYPOINTS flag ensures
+	// the size of the circle corresponds to the size of blob
+
+	UMat im_with_keypoints;
+	drawKeypoints( color, keypoints, im_with_keypoints, Scalar(0,0,255), DrawMatchesFlags::DRAW_RICH_KEYPOINTS );
+
+	// Show blobs
+	imshow("keypoints", im_with_keypoints );
+	waitKey(1);
+	}
+
 }
