@@ -11,7 +11,7 @@ using namespace cv;
 
 void captureVideoStream(void);
 void processFrame(void);
-static UMat frame;
+static UMat frame, color, blur;
 static VideoCapture cap(0);
 int main( int, char** ) 
 {
@@ -67,7 +67,7 @@ void captureVideoStream()
 }
 void processFrame()
 {
-	UMat edges;
+	
 	sleep(1);
 	int count = 0;
 	std::time_t start, end;
@@ -78,16 +78,44 @@ void processFrame()
 		if (count == 0)
 			std::time(&start);
 		count++;
-		//cvtColor(frame, edges, COLOR_BGR2GRAY);
+		cvtColor(frame, color, COLOR_BGR2GRAY);
 		//GaussianBlur(edges, edges, Size(7, 7), 1.5, 1.5);
 		//Canny(edges, edges, 0, 30, 3);
-		imshow("edges", frame);
+		//imshow("edges", frame);
+		//waitKey(1);
+		
+		if (count == 1200)
+		{
+			std::time(&end);
+			std::cout << "fps color " << 1200.0 / difftime(end, start) << std::endl;
+			count = 0;
+		}
+		
+	}
+}
+
+void Blur()
+{
+    sleep(1);
+	int count = 0;
+	std::time_t start, end;
+	while(1)
+	{
+		if (blur.empty())
+			continue;
+		if (count == 0)
+			std::time(&start);
+		count++;
+		//cvtColor(color, blur, COLOR_BGR2GRAY);
+		GaussianBlur(color, blur, Size(7, 7), 1.5, 1.5);
+		//Canny(edges, edges, 0, 30, 3);
+		imshow("edges", blur);
 		waitKey(1);
 		
 		if (count == 1200)
 		{
 			std::time(&end);
-			std::cout << "fps " << 1200.0 / difftime(end, start) << std::endl;
+			std::cout << "fps blur" << 1200.0 / difftime(end, start) << std::endl;
 			count = 0;
 		}
 		
