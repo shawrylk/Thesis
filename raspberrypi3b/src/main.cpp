@@ -55,14 +55,14 @@ void captureVideoStream()
 	 // open the default camera
 	cap.set(CAP_PROP_FRAME_WIDTH, 480);
 	cap.set(CAP_PROP_FRAME_HEIGHT, 480);
-	cap.set(CV_CAP_PROP_FPS, 120);
+	cap.set(CV_CAP_PROP_FPS, 180);
 	//cap.set(CV_CAP_PROP_CONVERT_RGB , false);
 	if (cap.isOpened())
 			std::cout << "cant open cam\n";
 	while (1)
 	{
 		cap.read(frame);
-		waitKey(1);
+		//waitKey(1);
 	}
 }
 void processFrame()
@@ -78,16 +78,16 @@ void processFrame()
 		if (count == 0)
 			std::time(&start);
 		count++;
-		cvtColor(frame, edges, COLOR_BGR2GRAY);
-		GaussianBlur(edges, edges, Size(7, 7), 1.5, 1.5);
-		Canny(edges, edges, 0, 30, 3);
-		imshow("edges", edges);
+		//cvtColor(frame, edges, COLOR_BGR2GRAY);
+		//GaussianBlur(edges, edges, Size(7, 7), 1.5, 1.5);
+		//Canny(edges, edges, 0, 30, 3);
+		imshow("edges", frame);
 		waitKey(1);
 		
-		if (count == 120)
+		if (count == 1200)
 		{
 			std::time(&end);
-			std::cout << "fps " << 120.0 / difftime(end, start) << std::endl;
+			std::cout << "fps " << 1200.0 / difftime(end, start) << std::endl;
 			count = 0;
 		}
 		
