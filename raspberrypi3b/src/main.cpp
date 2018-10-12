@@ -68,10 +68,10 @@ void captureVideoStream()
 		cap.read(frame);
 		//waitKey(1);
 		count++;
-		if (count == 120)
+		if (count == 1200)
 		{
 			std::time(&end);
-			std::cout << "read frame " << 120.0 / difftime(end, start) << std::endl;
+			std::cout << "read frame " << 1200.0 / difftime(end, start) << std::endl;
 			count = 0;
 		}
 	}
