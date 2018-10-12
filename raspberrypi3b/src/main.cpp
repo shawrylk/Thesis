@@ -11,7 +11,7 @@ using namespace cv;
 
 void captureVideoStream(void);
 void processFrame(void);
-static UMat frame, color, blur;
+static UMat frame, color, mblur;
 static VideoCapture cap(0);
 int main( int, char** ) 
 {
@@ -101,15 +101,15 @@ void Blur()
 	std::time_t start, end;
 	while(1)
 	{
-		if (blur.empty())
+		if (color.empty())
 			continue;
 		if (count == 0)
 			std::time(&start);
 		count++;
 		//cvtColor(color, blur, COLOR_BGR2GRAY);
-		GaussianBlur(color, blur, Size(7, 7), 1.5, 1.5);
+		GaussianBlur(color, mblur, Size(7, 7), 1.5, 1.5);
 		//Canny(edges, edges, 0, 30, 3);
-		imshow("edges", blur);
+		imshow("edges", mblur);
 		waitKey(1);
 		
 		if (count == 1200)
