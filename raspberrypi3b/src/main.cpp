@@ -1,202 +1,111 @@
-//#include <opencv2/core/core.hpp>
-//#include <opencv2/highgui/highgui.hpp>
-#include <thread>
-#include <iostream>
 #include <opencv2/opencv.hpp>
-#include <chrono>
-#include <ctime>
-#include <unistd.h>
-using namespace std;
+#include <opencv2/tracking.hpp>
+#include <opencv2/core/ocl.hpp>
+ 
 using namespace cv;
-
-void captureVideoStream(void);
-void processFrame(void);
-void Blur(void);
-void Blob(void);
-static UMat frame, color, mblur;
-static VideoCapture cap(0);
-int main( int, char** ) 
+using namespace std;
+ 
+// Convert to string
+#define SSTR( x ) static_cast< std::ostringstream & >( \
+( std::ostringstream() << std::dec << x ) ).str()
+ 
+int main(int argc, char **argv)
 {
-
-	// static int fps;
-	// VideoCapture cap(0); // open the default camera
-	// cap.set(CAP_PROP_FRAME_WIDTH, 320);
-	// cap.set(CAP_PROP_FRAME_HEIGHT, 320);
-	// cap.set(CV_CAP_PROP_FPS, 60);
-	// if (!cap.isOpened())  // check if we succeeded
-	// 	return -1;
-	// UMat edges;
-	// UMat frame;
-	// namedWindow("edges", 1);
-	// std::time_t start = std::time(0);
-	// for (int i = 0; i <120; i++)
-	// {
-	// 	cap >> frame; // get a new frame from camera
-	// 	fps++;
-	// 	cvtColor(frame, edges, COLOR_BGR2GRAY);
-	// 	GaussianBlur(edges, edges, Size(7, 7), 1.5, 1.5);
-	// 	Canny(edges, edges, 0, 30, 3);
-	// 	imshow("edges", edges);
-	// 	waitKey(1);
-		
-	// }
-	// std::time_t end = std::time(0);
-	// std::cout << "fps " << 120/(end - start) << std::endl;
-	// waitKey(5);
-	std::thread first(captureVideoStream);
-	std::thread second(processFrame);
-	std::thread third(Blob);
-	std::cout << "Running\n";
-	first.join();
-	second.join();
-	third.join();
-	return 0;
-}
-
-void captureVideoStream()
-{
-	int count = 0;
-	std::time_t start, end;
-	 // open the default camera
-	cap.set(CAP_PROP_FRAME_WIDTH, 480);
-	cap.set(CAP_PROP_FRAME_HEIGHT, 480);
-	cap.set(CV_CAP_PROP_FPS, 180);
-	//cap.set(CV_CAP_PROP_CONVERT_RGB , false);
-	if (cap.isOpened())
-			std::cout << "cant open cam\n";
-	while (1)
-	{
-		cap.read(frame);
-		//waitKey(1);
-		if (count == 0)
-			std::time(&start);
-		count++;
-		if (count == 1200)
-		{
-			std::time(&end);
-			std::cout << "read frame " << 1200.0 / difftime(end, start) << std::endl;
-			count = 0;
-		}
-	}
-}
-void processFrame()
-{
-	
-	sleep(1);
-	int count = 0;
-	std::time_t start, end;
-	while(1)
-	{
-		if (frame.empty())
-			continue;
-		if (count == 0)
-			std::time(&start);
-		count++;
-		cvtColor(frame, color, COLOR_BGR2GRAY);
-		//GaussianBlur(edges, edges, Size(7, 7), 1.5, 1.5);
-		//Canny(edges, edges, 0, 30, 3);
-		//imshow("edges", color);
-		//waitKey(1);
-		
-		if (count == 1200)
-		{
-			std::time(&end);
-			std::cout << "color " << 1200.0 / difftime(end, start) << std::endl;
-			count = 0;
-		}
-		
-	}
-}
-
-void Blur()
-{
-    sleep(1);
-	int count = 0;
-	std::time_t start, end;
-	while(1)
-	{
-		if (color.empty())
-			continue;
-		if (count == 0)
-			std::time(&start);
-		count++;
-		//cvtColor(color, blur, COLOR_BGR2GRAY);
-		GaussianBlur(color, mblur, Size(7, 7), 1.5, 1.5);
-		//Canny(edges, edges, 0, 30, 3);
-		imshow("edges", mblur);
-		waitKey(1);
-		
-		if (count == 1200)
-		{
-			std::time(&end);
-			std::cout << "blur" << 1200.0 / difftime(end, start) << std::endl;
-			count = 0;
-		}
-		
-	}
-}
-
-void Blob()
-{
-	while (1)
-	{
-	// Read image
-	if (color.empty())
-			continue;
-	// Setup SimpleBlobDetector parameters.
-	SimpleBlobDetector::Params params;
-
-	// Change thresholds
-	params.minThreshold = 50;
-	params.maxThreshold = 200;
-
-	// Filter by Area.
-	params.filterByArea = true;
-	params.minArea = 1500;
-
-	// Filter by Circularity
-	params.filterByCircularity = true;
-	params.minCircularity = 0.1;
-
-	// Filter by Convexity
-	params.filterByConvexity = true;
-	params.minConvexity = 0.87;
-
-	// Filter by Inertia
-	params.filterByInertia = true;
-	params.minInertiaRatio = 0.01;
-
-
-	// Storage for blobs
-	vector<KeyPoint> keypoints;
-
-
-#if CV_MAJOR_VERSION < 3   // If you are using OpenCV 2
-
-	// Set up detector with params
-	SimpleBlobDetector detector(params);
-
-	// Detect blobs
-	detector.detect( im, keypoints);
-#else 
-
-	// Set up detector with params
-	Ptr<SimpleBlobDetector> detector = SimpleBlobDetector::create(params);   
-
-	// Detect blobs
-	detector->detect( color, keypoints);
-#endif 
-
-	// Draw detected blobs as red circles.
-	// DrawMatchesFlags::DRAW_RICH_KEYPOINTS flag ensures
-	// the size of the circle corresponds to the size of blob
-
-	UMat im_with_keypoints;
-	drawKeypoints( color, keypoints, im_with_keypoints, Scalar(0,0,255), DrawMatchesFlags::DRAW_RICH_KEYPOINTS );
-
-	// Show blobs
-	imshow("keypoints", im_with_keypoints );
-	waitKey(1);
-	}
-
+    // List of tracker types in OpenCV 3.4.1
+    string trackerTypes[8] = {"BOOSTING", "MIL", "KCF", "TLD","MEDIANFLOW", "GOTURN", "MOSSE", "CSRT"};
+    // vector <string> trackerTypes(types, std::end(types));
+ 
+    // Create a tracker
+    string trackerType = trackerTypes[2];
+ 
+    Ptr<Tracker> tracker;
+ 
+    #if (CV_MINOR_VERSION < 3)
+    {
+        tracker = Tracker::create(trackerType);
+    }
+    #else
+    {
+        if (trackerType == "BOOSTING")
+            tracker = TrackerBoosting::create();
+        if (trackerType == "MIL")
+            tracker = TrackerMIL::create();
+        if (trackerType == "KCF")
+            tracker = TrackerKCF::create();
+        if (trackerType == "TLD")
+            tracker = TrackerTLD::create();
+        if (trackerType == "MEDIANFLOW")
+            tracker = TrackerMedianFlow::create();
+        if (trackerType == "GOTURN")
+            tracker = TrackerGOTURN::create();
+        if (trackerType == "MOSSE")
+            tracker = TrackerMOSSE::create();
+        if (trackerType == "CSRT")
+            tracker = TrackerCSRT::create();
+    }
+    #endif
+    // Read video
+    VideoCapture video(0);
+     
+    // Exit if video is not opened
+    if(!video.isOpened())
+    {
+        cout << "Could not read video file" << endl; 
+        return 1; 
+    } 
+ 
+    // Read first frame 
+    Mat frame; 
+    bool ok = video.read(frame); 
+ 
+    // Define initial bounding box 
+    Rect2d bbox(287, 23, 86, 320); 
+ 
+    // Uncomment the line below to select a different bounding box 
+    // bbox = selectROI(frame, false); 
+    // Display bounding box. 
+    rectangle(frame, bbox, Scalar( 255, 0, 0 ), 2, 1 ); 
+ 
+    imshow("Tracking", frame); 
+    tracker->init(frame, bbox);
+     
+    while(video.read(frame))
+    {     
+        // Start timer
+        double timer = (double)getTickCount();
+         
+        // Update the tracking result
+        bool ok = tracker->update(frame, bbox);
+         
+        // Calculate Frames per second (FPS)
+        float fps = getTickFrequency() / ((double)getTickCount() - timer);
+         
+        if (ok)
+        {
+            // Tracking success : Draw the tracked object
+            rectangle(frame, bbox, Scalar( 255, 0, 0 ), 2, 1 );
+        }
+        else
+        {
+            // Tracking failure detected.
+            putText(frame, "Tracking failure detected", Point(100,80), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(0,0,255),2);
+        }
+         
+        // Display tracker type on frame
+        putText(frame, trackerType + " Tracker", Point(100,20), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50),2);
+         
+        // Display FPS on frame
+        putText(frame, "FPS : " + SSTR(int(fps)), Point(100,50), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50), 2);
+ 
+        // Display frame.
+        imshow("Tracking", frame);
+         
+        // Exit if ESC pressed.
+        int k = waitKey(1);
+        if(k == 27)
+        {
+            break;
+        }
+ 
+    }
 }
