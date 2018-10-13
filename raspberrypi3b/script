@@ -139,6 +139,14 @@ echo "# Virtual Environment Wrapper" >> ~/.bashrc
 echo "source /usr/local/bin/virtualenvwrapper.sh" >> ~/.bashrc
 cd $cwd
 source /usr/local/bin/virtualenvwrapper.sh
+mkvirtualenv OpenCV-"$cvVersion"-py3 -p python3
+workon OpenCV-"$cvVersion"-py3
+ 
+# now install python libraries within this virtual environment
+pip install numpy scipy matplotlib scikit-image scikit-learn ipython
+ 
+# quit virtual environment
+deactivate
 git clone https://github.com/opencv/opencv.git
 cd opencv
 git checkout $cvVersion
