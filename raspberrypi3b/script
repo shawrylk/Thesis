@@ -6,7 +6,7 @@ bps_run()
 	$BPS_PATH/bin/bpsRaspberryPi3B
 }
 
-bps_install()
+bps_i()
 {
 	line='bcm2835-v4l2'
 	file=/etc/modules-load.d/modules.conf
@@ -67,7 +67,8 @@ bps_install()
 	sudo /etc/init.d/dphys-swapfile stop
 	sudo /etc/init.d/dphys-swapfile start
 
-
+	line='bcm2835-v4l2'
+	file=/etc/modules-load.d/modules.conf
 	if ! grep -q -x -F -e "$line" <"$file"; 
 	then
 	    echo "$line" >> "$file"
@@ -92,7 +93,7 @@ bps_clean()
 	rm -f $BPS_PATH/build/cmake_install.cmake
 	rm -f $BPS_PATH/build/Makefile
 }
-bps_intall_opencv
+bps_install_opencv()
 {
 	# Save current working directory
 	cwd=$(pwd)
@@ -161,16 +162,32 @@ mkdir build
 cd build
 cmake -D CMAKE_BUILD_TYPE=RELEASE \
             -D CMAKE_INSTALL_PREFIX=/usr/local \
-            -D INSTALL_C_EXAMPLES=ON \
-            -D INSTALL_PYTHON_EXAMPLES=ON \
+            -D INSTALL_C_EXAMPLES=OFF \
+            -D INSTALL_PYTHON_EXAMPLES=OFF \
             -D WITH_TBB=ON \
             -D WITH_V4L=ON \
         -D WITH_QT=ON \
         -D WITH_OPENGL=ON \
         -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules \
         -D BUILD_EXAMPLES=ON ..
-		make -j4
+ex -sc '%s/CONF_SWAPSIZE=100/CONF_SWAPSIZE=1024/g|x' /etc/dphys-swapfile
+
+	sudo /etc/init.d/dphys-swapfile stop
+	sudo /etc/init.d/dphys-swapfile start
+		make 
 make install
+sudo mv /usr/local/lib/python3.5/dist-packages/cv2.cpython-35m-arm-linux-gnueabihf.so cv2.so
+ex -sc '%s/CONF_SWAPSIZE=1024/CONF_SWAPSIZE=100/g|x' /etc/dphys-swapfile
+
+	sudo /etc/init.d/dphys-swapfile stop
+	sudo /etc/init.d/dphys-swapfile start
+
+line='bcm2835-v4l2'
+	file=/etc/modules-load.d/modules.conf
+	if ! grep -q -x -F -e "$line" <"$file"; 
+	then
+	    echo "$line" >> "$file"
+	fi
 }
 
 while test ${#} -gt 0; do
