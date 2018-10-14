@@ -16,16 +16,11 @@ int main(int argc, char **argv)
     // vector <string> trackerTypes(types, std::end(types));
  
     // Create a tracker
-    string trackerType = trackerTypes[2];
+    string trackerType = trackerTypes[6];
  
     Ptr<Tracker> tracker;
  
-    #if (CV_MINOR_VERSION < 3)
-    {
-        tracker = Tracker::create(trackerType);
-    }
-    #else
-    {
+    
         if (trackerType == "BOOSTING")
             tracker = TrackerBoosting::create();
         if (trackerType == "MIL")
@@ -42,8 +37,8 @@ int main(int argc, char **argv)
             tracker = TrackerMOSSE::create();
         if (trackerType == "CSRT")
             tracker = TrackerCSRT::create();
-    }
-    #endif
+   
+
     // Read video
     VideoCapture video(0);
      
@@ -55,17 +50,69 @@ int main(int argc, char **argv)
     } 
  
     // Read first frame 
-    Mat frame; 
+    UMat frame; 
     bool ok = video.read(frame); 
+    // Read image
+    UMat im;
+    cvtColor(frame, im, COLOR_BGR2GRAY);
  
+// Set up the detector with default parameters.
+    //SimpleBlobDetector detector;
+ 
+// Detect blobs.
+    //std::vector<KeyPoint> keypoints;
+    //detector.detect( im, keypoints);
+ 
+// Draw detected blobs as red circles.
+// DrawMatchesFlags::DRAW_RICH_KEYPOINTS flag ensures the size of the circle corresponds to the size of blob
+    //UMat im_with_keypoints;
+    //drawKeypoints( im, keypoints, im_with_keypoints, Scalar(0,0,255), DrawMatchesFlags::DRAW_RICH_KEYPOINTS );
+ 
+// Show blobs
+UMat canny_output;
+vector<vector<Point> > contours;
+vector<Vec4i> hierarchy;
+ 
+// detect edges using canny
+Canny( im, canny_output, 50, 150, 3 );
+ 
+// find contours
+findContours( canny_output, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0) );
+ 
+// get the moments
+vector<Moments> mu(contours.size());
+for( int i = 0; i<contours.size(); i++ )
+{ mu[i] = moments( contours[i], false ); }
+ 
+// get the centroid of figures.
+vector<Point2f> mc(contours.size());
+for( int i = 0; i<contours.size(); i++)
+{ mc[i] = Point2f( mu[i].m10/mu[i].m00 , mu[i].m01/mu[i].m00 ); }
+ 
+ 
+// draw contours
+// Mat drawing(canny_output.size(), CV_8UC3, Scalar(255,255,255));
+// for( int i = 0; i<contours.size(); i++ )
+// {
+// Scalar color = Scalar(167,151,0); // B G R values
+// drawContours(drawing, contours, i, color, 2, 8, hierarchy, 0, Point());
+// circle( drawing, mc[i], 4, color, -1, 8, 0 );
+// }
+ 
+// // show the resultant image
+// namedWindow( "Contours", WINDOW_AUTOSIZE );
+// imshow( "Contours", drawing );
+// waitKey(0);
+//     imshow("keypoints", im );
+//     waitKey(1);
     // Define initial bounding box 
-    Rect2d bbox(287, 23, 86, 320); 
- 
+    //Rect2d bbox(287, 283, 86, 320); 
+    Rect2d bbox(mc[0].x, mc[0].y, 100, 100);
     // Uncomment the line below to select a different bounding box 
     // bbox = selectROI(frame, false); 
     // Display bounding box. 
     rectangle(frame, bbox, Scalar( 255, 0, 0 ), 2, 1 ); 
- 
+    //circle(frame, Point(250,250),80, Scalar( 255, 0, 0 ), 2, 1 ); 
     imshow("Tracking", frame); 
     tracker->init(frame, bbox);
      
@@ -84,6 +131,7 @@ int main(int argc, char **argv)
         {
             // Tracking success : Draw the tracked object
             rectangle(frame, bbox, Scalar( 255, 0, 0 ), 2, 1 );
+            //circle(frame, Point(250,250),80, Scalar( 255, 0, 0 ), 2, 1 );
         }
         else
         {

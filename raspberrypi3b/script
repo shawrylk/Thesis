@@ -103,7 +103,7 @@ bps_setup()
         -D WITH_OPENGL=ON \
         -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules \
         -D BUILD_EXAMPLES=ON ..
-	reboot
+	#reboot
 }
 
 bps_build()
