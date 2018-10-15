@@ -284,21 +284,17 @@ void processFrame(void)
 
                 }
                 //let user know you found an object
-                if(bFoundObject ==true)
-                {
-                    putText(frame,"Tracking Object",Point(0,50),2,1,Scalar(0,255,0),2);
-                    //draw object location on screen
-                    drawObject(x,y,frame);
-                }
+                // if(bFoundObject ==true)
+                // {
+                //     putText(frame,"Tracking Object",Point(0,50),2,1,Scalar(0,255,0),2);
+                //     //draw object location on screen
+                //     drawObject(x,y,frame);
+                // }
 
             }
             else 
             putText(frame,"TOO MUCH NOISE! ADJUST FILTER",Point(0,50),1,2,Scalar(0,0,255),2);
         }
-        // else
-        // {
-        //     bFoundObject = false;
-        // }
         sem_post(&semProcessFrameCplt);
     }
 }
@@ -307,15 +303,30 @@ void trackingObject(void)
     while(1)
     {
         sem_wait(&semProcessFrameCplt);
-        imshow("asdasd", frame);
+        
         waitKey(1);
         if (bFoundObject)
         {
             // tracking object
-            // if tracking fails, then 
-            if (true)
+            Ptr<Tracker> tracker;
+            tracker = TrackerMOSSE::create();
+            Rect2d bbox(x, y, 150, 150);
+
+            bool ok = tracker->update(frame, bbox);
+            if (ok)
+            {
+                rectangle(frame, bbox, Scalar( 255, 0, 0 ), 2, 1 );
+                std::cout << "Tracking \n";
+            }
+            else
+            {
+                // Tracking failure detected.
+                putText(frame, "Tracking failure detected", Point(100,80), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(0,0,255),2);
                 bFoundObject = false;
+            }
+
         }
+        imshow("asdasd", frame);
         std::cout << "thread 3\n";
     }
 }
