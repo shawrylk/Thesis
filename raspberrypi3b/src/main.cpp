@@ -1,7 +1,7 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/tracking.hpp>
 #include <opencv2/core/ocl.hpp>
- 
+#include <thread>
 using namespace cv;
 using namespace std;
  
@@ -41,17 +41,20 @@ int main(int argc, char **argv)
 
     // Read video
     VideoCapture video(0);
-     
     // Exit if video is not opened
     if(!video.isOpened())
     {
         cout << "Could not read video file" << endl; 
         return 1; 
     } 
- 
-    // Read first frame 
+    // Read frame continiously
     UMat frame; 
-    bool ok = video.read(frame); 
+
+        bool ok = video.read(frame); 
+
+
+   std::cout << "Number of threads = " 
+              <<  std::thread::hardware_concurrency() << std::endl;
     // Read image
     UMat im;
     cvtColor(frame, im, COLOR_BGR2GRAY);
@@ -156,4 +159,36 @@ for( int i = 0; i<contours.size(); i++)
         }
  
     }
+}
+
+void thread1(void)
+{
+    VideoCapture video(0);
+    // Exit if video is not opened
+    if(!video.isOpened())
+    {
+        cout << "Could not read video file" << endl; 
+    } 
+    // Read frame continiously
+    UMat frame; 
+    while (1)
+    {
+        bool ok = video.read(frame); 
+
+
+    }
+}
+
+void thread2(void)
+{
+    
+}
+void thread3(void)
+{
+
+}
+
+void thread4(void)
+{
+    
 }
