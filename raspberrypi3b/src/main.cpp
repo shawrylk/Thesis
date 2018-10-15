@@ -5,36 +5,40 @@
 #include <semaphore.h>
 #include <unistd.h>
 #include <iostream>
+#include <chrono>
 using namespace cv;
 using namespace std;
  
 // Convert to string
 #define SSTR( x ) static_cast< std::ostringstream & >( \
 ( std::ostringstream() << std::dec << x ) ).str()
-#define FRAME_WIDTH     480
+#define FRAME_WIDTH     640
 #define FRAME_HEIGHT    480
-#define H_MIN           22
-#define H_MAX           42
-#define S_MIN           83
-#define S_MAX           176
-#define V_MIN           56
-#define V_MAX           164
+#define H_MIN           26
+#define H_MAX           46
+#define S_MIN           22
+#define S_MAX           187
+#define V_MIN           217
+#define V_MAX           256
 #define MAX_NUM_OBJECTS 50
 #define MIN_OBJECT_AREA 20*20
 #define MAX_OBJECT_AREA FRAME_HEIGHT*FRAME_WIDTH/1.5
-
+#define RECT_SIZE       130
 sem_t semCaptureFrameCplt, semProcessFrameCplt;
 bool bFoundObject = false, bInit = true;
 UMat frame, HSV, thresh, contour;
 Mat erodeElement = getStructuringElement( MORPH_RECT,Size(3,3));
 //dilate with larger element so make sure object is nicely visible
 Mat dilateElement = getStructuringElement( MORPH_RECT,Size(8,8));
+//these two vectors needed for output of findContours
+vector< vector<Point> > contours;
+vector<Vec4i> hierarchy;
 int x,y;
+
 void captureFrame(void);
 void processFrame(void);
 void trackingObject(void);
-void drawObject(int x, int y,UMat &frame);
-string intToString(int number);
+
 
 int main()
 {
@@ -59,21 +63,29 @@ void captureFrame(void)
     // Read frame continiously
     video.set(CAP_PROP_FRAME_WIDTH,FRAME_WIDTH);
 	video.set(CAP_PROP_FRAME_HEIGHT,FRAME_HEIGHT);
+    video.set(CAP_PROP_FPS, 90);
     sleep(1);
+    int count = 0;
+    auto start = std::chrono::system_clock::now();
+    float fps;
     while (1)
     {
         bool ok = video.read(frame); 
+        if (count == 0)
+            start = std::chrono::system_clock::now();
+        count++;
         if (ok)
         {
-            std::cout << "thread 1\n";       
-            if (bFoundObject)
-            {
-                sem_post(&semProcessFrameCplt);
-            }
-            else
-            {
-                sem_post(&semCaptureFrameCplt);
-            }
+            std::cout << fps << "\n";       
+            sem_post(&semCaptureFrameCplt);
+        }
+        if (count == 120)
+        {
+            auto end = std::chrono::system_clock::now();
+            std::chrono::duration<double> diff = end-start;
+            fps = 120 / diff.count();
+            std::cout << fps << "\n";
+            count = 0;
         }
     }
 }
@@ -92,20 +104,29 @@ void processFrame(void)
 		inRange(HSV,Scalar(H_MIN,S_MIN,V_MIN),Scalar(H_MAX,S_MAX,V_MAX),thresh);
         //imshow("xcvxcv", thresh);
         //waitKey(1);
-        erode(thresh,thresh,erodeElement);
-        erode(thresh,thresh,erodeElement);
+        // erode(thresh,thresh,erodeElement);
+        // erode(thresh,thresh,erodeElement);
 
-        dilate(thresh,thresh,dilateElement);
-        dilate(thresh,thresh,dilateElement);
+        // dilate(thresh,thresh,dilateElement);
+        // dilate(thresh,thresh,dilateElement);
 
-        //these two vectors needed for output of findContours
-        vector< vector<Point> > contours;
-        vector<Vec4i> hierarchy;
+        
         //find contours of filtered image using openCV findContours function
         findContours(thresh,contours,hierarchy,CV_RETR_CCOMP,CV_CHAIN_APPROX_SIMPLE );
         
         //use moments method to find our filtered object
-	    double refArea = 0;
+	    
+        sem_post(&semProcessFrameCplt);
+    }
+}
+void trackingObject(void)
+{
+   
+    Rect2d bbox;
+    while(1)
+    {
+        sem_wait(&semProcessFrameCplt);
+        double refArea = 0;
 	    bool objectFound = false;
         if (hierarchy.size() > 0) 
         {
@@ -133,57 +154,19 @@ void processFrame(void)
 
 
                 }
-                //let user know you found an object
-                // if(bFoundObject ==true)
-                // {
-                //     putText(frame,"Tracking Object",Point(0,50),2,1,Scalar(0,255,0),2);
-                //     //draw object location on screen
-                //     drawObject(x,y,frame);
-                // }
 
             }
             else 
             putText(frame,"TOO MUCH NOISE! ADJUST FILTER",Point(0,50),1,2,Scalar(0,0,255),2);
         }
-        sem_post(&semProcessFrameCplt);
-    }
-}
-void trackingObject(void)
-{
-    Ptr<Tracker> tracker;
-    tracker = TrackerMOSSE::create();
-    Rect2d bbox;
-    while(1)
-    {
-        sem_wait(&semProcessFrameCplt);
-        
-        waitKey(1);
-        if (bFoundObject)
-        {
-            // tracking object
-            if (bInit)
-            {
-                bbox = Rect2d(x - 90, y - 90, 180, 180);
-                rectangle(frame, bbox, Scalar( 255, 0, 0 ), 2, 1 ); 
-                tracker->init(frame, bbox);
-                bInit = false;
-            }
-            bool ok = tracker->update(frame, bbox);
-            if (ok)
-            {
-                rectangle(frame, bbox, Scalar( 255, 0, 0 ), 2, 1 );
-                putText(frame, "Tracking object", Point(100,80), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(0,255,0),2);
-            }
-            else
-            {
-                // Tracking failure detected.
-                putText(frame, "Tracking failure detected", Point(100,80), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(0,0,255),2);
-                bFoundObject = false;
-                bInit = true;
-            }
-
-        }
+        Rect2d bbox(x - RECT_SIZE/2, y - RECT_SIZE/2, RECT_SIZE, RECT_SIZE); 
+ 
+    // Uncomment the line below to select a different bounding box 
+    // bbox = selectROI(frame, false); 
+    // Display bounding box. 
+        rectangle(frame, bbox, Scalar( 255, 0, 0 ), 2, 1 ); 
         imshow("asdasd", frame);
+        waitKey(1);
         std::cout << "thread 3\n";
     }
 }
