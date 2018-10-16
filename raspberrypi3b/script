@@ -6,7 +6,7 @@ bps_run()
 	$BPS_PATH/bin/bpsRaspberryPi3B
 }
 
-bps_setup()
+bps_install_dependency()
 {
 	sudo apt-get purge wolfram-engine -y
 	sudo apt-get purge libreoffice* -y
@@ -81,6 +81,13 @@ bps_setup()
 	
 	# quit virtual environment
 	deactivate
+	
+
+}
+
+bps_clone_opencv()
+{
+	cd ~
 	git clone https://github.com/opencv/opencv.git
 	cd opencv
 	git checkout $cvVersion
@@ -97,13 +104,22 @@ bps_setup()
             -D CMAKE_INSTALL_PREFIX=/usr/local \
             -D INSTALL_C_EXAMPLES=OFF \
             -D INSTALL_PYTHON_EXAMPLES=OFF \
+			-D BUILD_EXAMPLES=OFF \
             -D WITH_TBB=ON \
             -D WITH_V4L=ON \
-        -D WITH_QT=ON \
-        -D WITH_OPENGL=ON \
-        -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules \
-        -D BUILD_EXAMPLES=ON ..
-	#reboot
+        	-D WITH_QT=ON \
+        	-D WITH_OPENGL=ON \
+			-D WITH_TBB=ON \
+			-D WITH_OPENMP=ON \
+			-D WITH_IPP=ON  \
+			-D WITH_NVCUVID=ON \
+			-D WITH_CUDA=ON \
+			-D BUILD_DOCS=OFF \
+			-D BUILD_PERF_TESTS=OFF \
+			-D BUILD_TESTS=OFF \
+			-D WITH_CSTRIPES=ON \
+			-D WITH_OPENCL=ON \
+			-D OPENCV_EXTRA_MODULES_PATH= ~/opencv_contrib/modules 
 }
 
 bps_build()
@@ -124,6 +140,7 @@ bps_clean()
 	rm -f $BPS_PATH/build/cmake_install.cmake
 	rm -f $BPS_PATH/build/Makefile
 }
+
 bps_install_opencv()
 {
 	cd ~/opencv/build
@@ -159,8 +176,8 @@ while test ${#} -gt 0; do
 		clean)
 			bps_clean
 			;;
-		setup)
-			bps_setup
+		install_dependency)
+			bps_install_dependency
 			;;
 		run)
 			bps_run
@@ -168,9 +185,11 @@ while test ${#} -gt 0; do
 		install_opencv)
 			bps_install_opencv
 			;;
+		clone_opencv)
+			bps_clone_opencv
+			;;
 		*)
             echo "Unknown command: $1"
-            osaf_help
             exit 1
     esac
     shift
@@ -180,3 +199,4 @@ exit 0
 
 #git config --global user.email "shawry.lk@gmail.com"
 #git config --global user.name "shawrylk"
+

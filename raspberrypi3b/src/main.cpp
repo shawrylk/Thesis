@@ -6,6 +6,8 @@
 #include <unistd.h>
 #include <iostream>
 #include <chrono>
+#include "bpsUARTData.hpp"
+
 using namespace cv;
 using namespace std;
  
@@ -14,6 +16,7 @@ using namespace std;
 ( std::ostringstream() << std::dec << x ) ).str()
 #define FRAME_WIDTH     640
 #define FRAME_HEIGHT    480
+#define FPS             90
 #define H_MIN           26
 #define H_MAX           46
 #define S_MIN           22
@@ -24,12 +27,13 @@ using namespace std;
 #define MIN_OBJECT_AREA 20*20
 #define MAX_OBJECT_AREA FRAME_HEIGHT*FRAME_WIDTH/1.5
 #define RECT_SIZE       130
-sem_t semCaptureFrameCplt, semProcessFrameCplt;
-bool bFoundObject = false, bInit = true;
+
+sem_t semCaptureFrameCplt, semProcessFrameCplt, semTrackingObjectCplt;
+bool bFoundObject = false;
 UMat frame, HSV, thresh, contour;
-Mat erodeElement = getStructuringElement( MORPH_RECT,Size(3,3));
+//Mat erodeElement = getStructuringElement( MORPH_RECT,Size(3,3));
 //dilate with larger element so make sure object is nicely visible
-Mat dilateElement = getStructuringElement( MORPH_RECT,Size(8,8));
+//Mat dilateElement = getStructuringElement( MORPH_RECT,Size(8,8));
 //these two vectors needed for output of findContours
 vector< vector<Point> > contours;
 vector<Vec4i> hierarchy;
@@ -38,18 +42,21 @@ int x,y;
 void captureFrame(void);
 void processFrame(void);
 void trackingObject(void);
-
+void sendUARTData(void);
 
 int main()
 {
     sem_init(&semCaptureFrameCplt, 0, 0);
     sem_init(&semProcessFrameCplt, 0, 0);
+    sem_init(&semTrackingObjectCplt, 0, 0);
     std::thread thread1(captureFrame);
     std::thread thread2(processFrame);
     std::thread thread3(trackingObject);
+    std::thread thread4(sendUARTData);
     thread1.join();
     thread2.join();
     thread3.join();
+    thread4.join();
     return 0;
 }
 void captureFrame(void)
@@ -63,7 +70,7 @@ void captureFrame(void)
     // Read frame continiously
     video.set(CAP_PROP_FRAME_WIDTH,FRAME_WIDTH);
 	video.set(CAP_PROP_FRAME_HEIGHT,FRAME_HEIGHT);
-    video.set(CAP_PROP_FPS, 90);
+    video.set(CAP_PROP_FPS, FPS);
     sleep(1);
     int count = 0;
     auto start = std::chrono::system_clock::now();
@@ -75,8 +82,7 @@ void captureFrame(void)
             start = std::chrono::system_clock::now();
         count++;
         if (ok)
-        {
-            std::cout << fps << "\n";       
+        {    
             sem_post(&semCaptureFrameCplt);
         }
         if (count == 120)
@@ -84,7 +90,7 @@ void captureFrame(void)
             auto end = std::chrono::system_clock::now();
             std::chrono::duration<double> diff = end-start;
             fps = 120 / diff.count();
-            std::cout << fps << "\n";
+            std::cout << "thread 1 " << fps << "\n";
             count = 0;
         }
     }
@@ -92,40 +98,42 @@ void captureFrame(void)
 
 void processFrame(void)
 {
+    int count = 0;
+    auto start = std::chrono::system_clock::now();
+    float fps;
     while(1)
     {     
+        if (count == 0)
+            start = std::chrono::system_clock::now();
+        count++;
         sem_wait(&semCaptureFrameCplt);     
-        std::cout << "thread 2\n";
-        //process frame to find object;
-        //convert frame from BGR to HSV colorspace
         cvtColor(frame,HSV,COLOR_BGR2HSV);
-		//filter HSV image between values and store filtered image to
-		//threshold matrix
 		inRange(HSV,Scalar(H_MIN,S_MIN,V_MIN),Scalar(H_MAX,S_MAX,V_MAX),thresh);
-        //imshow("xcvxcv", thresh);
-        //waitKey(1);
-        // erode(thresh,thresh,erodeElement);
-        // erode(thresh,thresh,erodeElement);
-
-        // dilate(thresh,thresh,dilateElement);
-        // dilate(thresh,thresh,dilateElement);
-
-        
-        //find contours of filtered image using openCV findContours function
         findContours(thresh,contours,hierarchy,CV_RETR_CCOMP,CV_CHAIN_APPROX_SIMPLE );
-        
-        //use moments method to find our filtered object
-	    
         sem_post(&semProcessFrameCplt);
+        if (count == 120)
+        {
+            auto end = std::chrono::system_clock::now();
+            std::chrono::duration<double> diff = end-start;
+            fps = 120 / diff.count();
+            std::cout << "thread 2 " << fps << "\n";
+            count = 0;
+        }
     }
 }
 void trackingObject(void)
 {
-   
+    int count = 0;
+    auto start = std::chrono::system_clock::now();
+    float fps;
     Rect2d bbox;
     while(1)
     {
         sem_wait(&semProcessFrameCplt);
+        if (count == 0)
+            start = std::chrono::system_clock::now();
+        count++;
+        //use moments method to find our filtered object
         double refArea = 0;
 	    bool objectFound = false;
         if (hierarchy.size() > 0) 
@@ -157,58 +165,48 @@ void trackingObject(void)
 
             }
             else 
-            putText(frame,"TOO MUCH NOISE! ADJUST FILTER",Point(0,50),1,2,Scalar(0,0,255),2);
+            putText(frame,"TOO MUCH NOISE!",Point(0,50),1,2,Scalar(0,0,255),2);
         }
         Rect2d bbox(x - RECT_SIZE/2, y - RECT_SIZE/2, RECT_SIZE, RECT_SIZE); 
- 
-    // Uncomment the line below to select a different bounding box 
-    // bbox = selectROI(frame, false); 
-    // Display bounding box. 
         rectangle(frame, bbox, Scalar( 255, 0, 0 ), 2, 1 ); 
-        imshow("asdasd", frame);
+        imshow("frame", frame);
         waitKey(1);
-        std::cout << "thread 3\n";
+        sem_post(&semTrackingObjectCplt);
+        if (count == 120)
+        {
+            auto end = std::chrono::system_clock::now();
+            std::chrono::duration<double> diff = end-start;
+            fps = 120 / diff.count();
+            std::cout << "thread 3 " << fps << "\n";
+            count = 0;
+        }
     }
 }
 
-// void thread4(void)
-// {
-    
-// }
-
-// void drawObject(int x, int y,UMat &frame)
-// {
-
-// 	//use some of the openCV drawing functions to draw crosshairs
-// 	//on your tracked image!
-
-//     //UPDATE:JUNE 18TH, 2013
-//     //added 'if' and 'else' statements to prevent
-//     //memory errors from writing off the screen (ie. (-25,-25) is not within the window!)
-
-// 	circle(frame,Point(x,y),20,Scalar(0,255,0),2);
-//     if(y-25>0)
-//     line(frame,Point(x,y),Point(x,y-25),Scalar(0,255,0),2);
-//     else line(frame,Point(x,y),Point(x,0),Scalar(0,255,0),2);
-//     if(y+25<FRAME_HEIGHT)
-//     line(frame,Point(x,y),Point(x,y+25),Scalar(0,255,0),2);
-//     else line(frame,Point(x,y),Point(x,FRAME_HEIGHT),Scalar(0,255,0),2);
-//     if(x-25>0)
-//     line(frame,Point(x,y),Point(x-25,y),Scalar(0,255,0),2);
-//     else line(frame,Point(x,y),Point(0,y),Scalar(0,255,0),2);
-//     if(x+25<FRAME_WIDTH)
-//     line(frame,Point(x,y),Point(x+25,y),Scalar(0,255,0),2);
-//     else line(frame,Point(x,y),Point(FRAME_WIDTH,y),Scalar(0,255,0),2);
-
-// 	putText(frame,intToString(x)+","+intToString(y),Point(x,y+30),1,1,Scalar(0,255,0),2);
-
-// }
-
-// string intToString(int number)
-// {
-
-
-// 	std::stringstream ss;
-// 	ss << number;
-// 	return ss.str();
-// }
+void sendUARTData(void)
+{
+    bpsUARTSendDataTypeDef sendData;
+    sendData.command = BPS_UPDATE_PID;
+    sendData.content.PIDProperties.Kp[BPS_OUTER_PID][BPS_X_AXIS] = 0;
+    sendData.content.PIDProperties.Ki[BPS_OUTER_PID][BPS_X_AXIS] = 0;
+    sendData.content.PIDProperties.Kd[BPS_OUTER_PID][BPS_X_AXIS] = 0;
+    sendData.content.PIDProperties.Kp[BPS_INNER_PID][BPS_Y_AXIS] = 0;
+    sendData.content.PIDProperties.Ki[BPS_INNER_PID][BPS_Y_AXIS] = 0;
+    sendData.content.PIDProperties.Kd[BPS_INNER_PID][BPS_Y_AXIS] = 0;
+    bpsUARTSendData(&sendData);
+    sleep(1);
+    sendData.command = BPS_MODE_SETPOINT;
+    sendData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 255;
+    sendData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] = 255;
+    while(1)
+    {
+        sem_wait(&semTrackingObjectCplt);
+        if (bFoundObject)
+        {
+            sendData.ballCoordinate[BPS_X_AXIS] = x;
+            sendData.ballCoordinate[BPS_Y_AXIS] = y;
+            bpsUARTSendData(&sendData);
+        }
+        std::cout << x << ", " << y << "\n";
+    }
+}
