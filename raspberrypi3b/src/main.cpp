@@ -241,8 +241,8 @@ void trackingObject(void)
             start = std::chrono::high_resolution_clock::now();
         count++;
         //std::cout << x << ", " << y << "\n";
-        imshow("frame", frame);
-        waitKey(1);
+        // imshow("frame", frame);
+        // waitKey(1);
 //         //use moments method to find our filtered object
 //         double refArea = 0;
 // 	    bool objectFound = false;
@@ -277,10 +277,10 @@ void trackingObject(void)
 //             else 
 //             putText(frame,"TOO MUCH NOISE!",Point(0,50),1,2,Scalar(0,0,255),2);
 //         }
-//         // Rect2d bbox(x - RECT_SIZE/2, y - RECT_SIZE/2, RECT_SIZE, RECT_SIZE); 
-//         // rectangle(frame, bbox, Scalar( 255, 0, 0 ), 2, 1 ); 
-//         // imshow("frame", frame);
-//         // waitKey(1);
+        Rect2d bbox(x - RECT_SIZE/2, y - RECT_SIZE/2, RECT_SIZE, RECT_SIZE); 
+        rectangle(frame, bbox, Scalar( 255, 0, 0 ), 2, 1 ); 
+        imshow("frame", frame);
+        waitKey(1);
         // sem_post(&semTrackingObjectCplt);
         if (count == 1000)
         {
