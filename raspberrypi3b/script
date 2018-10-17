@@ -127,6 +127,7 @@ bps_clone_opencv()
 			-D WITH_CSTRIPES=ON \
 			-D WITH_OPENCL=ON \
 			-D OPENCV_EXTRA_MODULES_PATH= ~/opencv_contrib/modules \
+			-D WITH_GSTREAMER_0_10 = ON \
 			..
 }
 

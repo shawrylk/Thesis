@@ -108,10 +108,11 @@
 
 // typedef	struct	
 // {
-// 	//int16_t		encoderCnt[2];
+// 	//int16_t		            encoderCnt[2];
 // 	int16_t						ballCoordinate[BPS_NUMBER_OF_AXIS];
 // 	bpsCommandTypeDef			command;
 // 	bpsDataTypeDef				content;
+//  char                        nullTerminated;
 // }	
 // bpsUARTSendDataTypeDef; //56
 
