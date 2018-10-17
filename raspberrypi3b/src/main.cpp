@@ -147,7 +147,7 @@ void threshFrame(void)
             auto end = std::chrono::system_clock::now();
             auto diff = std::chrono::duration_cast<chrono::seconds>(end - start);
             fps = 1000 / static_cast<double>(diff.count());
-            std::cout << "thread 4 " << fps << "\n";
+            std::cout << "thread 3 " << fps << "\n";
             count = 0;
         }
     }
@@ -191,7 +191,7 @@ void contourFrame(void)
             auto end = std::chrono::system_clock::now();
             auto diff = std::chrono::duration_cast<chrono::seconds>(end - start);
             fps = 1000 / static_cast<double>(diff.count());
-            std::cout << "thread 3 " << fps << "\n";
+            std::cout << "thread 4 " << fps << "\n";
             count = 0;
         }
     }
@@ -256,7 +256,7 @@ void trackingObject(void)
             auto end = std::chrono::system_clock::now();
             auto diff = std::chrono::duration_cast<chrono::seconds>(end - start);
             fps = 1000 / static_cast<double>(diff.count());
-            std::cout << "thread 4 " << fps << "\n";
+            std::cout << "thread 5 " << fps << "\n";
             count = 0;
         }
     }
