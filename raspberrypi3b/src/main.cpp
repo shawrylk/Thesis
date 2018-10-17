@@ -108,7 +108,7 @@ void processFrame(void)
         count++;
         sem_wait(&semCaptureFrameCplt);     
         cvtColor(frame,HSV,COLOR_BGR2HSV);
-		//inRange(HSV,Scalar(H_MIN,S_MIN,V_MIN),Scalar(H_MAX,S_MAX,V_MAX),thresh);
+		inRange(HSV,Scalar(H_MIN,S_MIN,V_MIN),Scalar(H_MAX,S_MAX,V_MAX),thresh);
         //findContours(thresh,contours,hierarchy,RETR_CCOMP,CHAIN_APPROX_SIMPLE );
         sem_post(&semProcessFrameCplt);
         if (count == 1000)
