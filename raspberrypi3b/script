@@ -119,7 +119,8 @@ bps_clone_opencv()
 			-D BUILD_TESTS=OFF \
 			-D WITH_CSTRIPES=ON \
 			-D WITH_OPENCL=ON \
-			-D OPENCV_EXTRA_MODULES_PATH= ~/opencv_contrib/modules 
+			-D OPENCV_EXTRA_MODULES_PATH= ../../opencv_contrib/modules \
+			../
 }
 
 bps_build()

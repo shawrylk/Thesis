@@ -28,12 +28,12 @@ using namespace cv;
 using namespace std;
 //initial min and max HSV filter values.
 //these will be changed using trackbars
-int H_MIN = 0;
-int H_MAX = 256;
-int S_MIN = 0;
-int S_MAX = 256;
-int V_MIN = 0;
-int V_MAX = 256;
+int H_MIN = 22;
+int H_MAX = 42;
+int S_MIN = 83;
+int S_MAX = 176;
+int V_MIN = 56;
+int V_MAX = 164;
 //default capture width and height
 const int FRAME_WIDTH = 640;
 const int FRAME_HEIGHT = 480;
@@ -225,7 +225,7 @@ int main(int argc, char* argv[])
 		//show frames 
 		imshow(windowName2,threshold);
 		imshow(windowName,cameraFeed);
-		imshow(windowName1,HSV);
+		//imshow(windowName1,HSV);
 		
 
 		//delay 30ms so that screen can refresh.
