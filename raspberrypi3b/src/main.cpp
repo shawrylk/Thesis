@@ -240,9 +240,9 @@ void trackingObject(void)
         if (count == 0)
             start = std::chrono::high_resolution_clock::now();
         count++;
-        std::cout << x << ", " << y << "\n";
-        //imshow("frame", frame);
-        //waitKey(1);
+        //std::cout << x << ", " << y << "\n";
+        imshow("frame", frame);
+        waitKey(1);
 //         //use moments method to find our filtered object
 //         double refArea = 0;
 // 	    bool objectFound = false;
