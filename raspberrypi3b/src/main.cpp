@@ -115,7 +115,6 @@ void cvtColorFrame(void)
         count++;
         sem_wait(&semCaptureFrameCplt);     
         cvtColor(frame,HSV,COLOR_BGR2HSV);
-		inRange(HSV,Scalar(H_MIN,S_MIN,V_MIN),Scalar(H_MAX,S_MAX,V_MAX),thresh);
         sem_post(&semCvtColorFrameCplt);
         if (count == 1000)
         {
@@ -177,6 +176,7 @@ void contourFrame(void)
         if (count == 0)
             start = std::chrono::high_resolution_clock::now();
         count++;
+        inRange(HSV,Scalar(H_MIN,S_MIN,V_MIN),Scalar(H_MAX,S_MAX,V_MAX),thresh);
         findContours(thresh,contours,hierarchy,RETR_CCOMP,CHAIN_APPROX_SIMPLE );
         //use moments method to find our filtered object
         double refArea = 0;
