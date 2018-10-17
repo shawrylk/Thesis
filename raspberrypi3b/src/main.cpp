@@ -50,11 +50,11 @@ int main()
     sem_init(&semTrackingObjectCplt, 0, 0);
     std::thread thread1(captureFrame);
     std::thread thread2(processFrame);
-    std::thread thread3(trackingObject);
+    //std::thread thread3(trackingObject);
     //std::thread thread4(sendUARTData);
     thread1.join();
     thread2.join();
-    thread3.join();
+    //thread3.join();
     //thread4.join();
     return 0;
 }
@@ -108,8 +108,8 @@ void processFrame(void)
         count++;
         sem_wait(&semCaptureFrameCplt);     
         cvtColor(frame,HSV,COLOR_BGR2HSV);
-		inRange(HSV,Scalar(H_MIN,S_MIN,V_MIN),Scalar(H_MAX,S_MAX,V_MAX),thresh);
-        findContours(thresh,contours,hierarchy,RETR_CCOMP,CHAIN_APPROX_SIMPLE );
+		//inRange(HSV,Scalar(H_MIN,S_MIN,V_MIN),Scalar(H_MAX,S_MAX,V_MAX),thresh);
+        //findContours(thresh,contours,hierarchy,RETR_CCOMP,CHAIN_APPROX_SIMPLE );
         sem_post(&semProcessFrameCplt);
         if (count == 1000)
         {
