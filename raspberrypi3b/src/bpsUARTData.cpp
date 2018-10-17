@@ -14,7 +14,7 @@ bpsStatusTypeDef bpsUARTInit()
 
 bpsStatusTypeDef bpsUARTSendData(bpsUARTSendDataTypeDef* sendData)
 {
-	serialPuts(fd, sendData);
+	serialPuts(fd, (const char*)sendData);
 	serialFlush(fd);
     return BPS_OK;
 }
