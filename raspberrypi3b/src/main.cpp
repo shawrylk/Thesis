@@ -45,6 +45,7 @@ void trackingObject(void);
 
 int main()
 {
+    setUseOpenCL(false);
     sem_init(&semCaptureFrameCplt, 0, 0);
     sem_init(&semProcessFrameCplt, 0, 0);
     sem_init(&semTrackingObjectCplt, 0, 0);
