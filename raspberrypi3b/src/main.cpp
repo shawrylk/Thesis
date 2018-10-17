@@ -84,11 +84,11 @@ void captureFrame(void)
         {    
             sem_post(&semCaptureFrameCplt);
         }
-        if (count == 200)
+        if (count == 1000)
         {
             auto end = std::chrono::high_resolution_clock::now();
             auto diff = std::chrono::duration_cast<chrono::seconds>(end - start);
-            fps = 120 / static_cast<double>(diff.count());
+            fps = 1000 / static_cast<double>(diff.count());
             std::cout << "thread 1 " << fps << "\n";
             count = 0;
         }
@@ -111,11 +111,11 @@ void processFrame(void)
 		inRange(HSV,Scalar(H_MIN,S_MIN,V_MIN),Scalar(H_MAX,S_MAX,V_MAX),thresh);
         findContours(thresh,contours,hierarchy,RETR_CCOMP,CHAIN_APPROX_SIMPLE );
         sem_post(&semProcessFrameCplt);
-        if (count == 200)
+        if (count == 1000)
         {
             auto end = std::chrono::high_resolution_clock::now();
             auto diff = std::chrono::duration_cast<chrono::seconds>(end - start);
-            fps = 120 / static_cast<double>(diff.count());
+            fps = 1000 / static_cast<double>(diff.count());
             std::cout << "thread 2 " << fps << "\n";
             count = 0;
         }
@@ -173,11 +173,11 @@ void trackingObject(void)
         imshow("frame", frame);
         waitKey(1);
         sem_post(&semTrackingObjectCplt);
-        if (count == 200)
+        if (count == 1000)
         {
             auto end = std::chrono::system_clock::now();
             auto diff = std::chrono::duration_cast<chrono::seconds>(end - start);
-            fps = 120 / static_cast<double>(diff.count());
+            fps = 1000 / static_cast<double>(diff.count());
             std::cout << "thread 3 " << fps << "\n";
             count = 0;
         }
