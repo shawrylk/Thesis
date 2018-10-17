@@ -14,6 +14,7 @@ bps_install_dependency()
 	git pull origin
 	cd ~/wiringPi
 	./build
+	cd ~
 	sudo apt-get purge wolfram-engine -y
 	sudo apt-get purge libreoffice* -y
 	sudo apt-get clean
