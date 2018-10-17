@@ -15,7 +15,7 @@ using namespace std;
 ( std::ostringstream() << std::dec << x ) ).str()
 #define FRAME_WIDTH     640
 #define FRAME_HEIGHT    480
-#define FPS             60
+#define FPS             90
 #define H_MIN           26
 #define H_MAX           46
 #define S_MIN           22
@@ -77,12 +77,11 @@ void captureFrame(void)
     while (1)
     {
         if (count == 0)
-            auto start = std::chrono::high_resolution_clock::now();
+            start = std::chrono::high_resolution_clock::now();
         bool ok = video.read(frame); 
         count++;
         if (ok)
         {    
-            
             sem_post(&semCaptureFrameCplt);
         }
         if (count == 120)
