@@ -42,7 +42,7 @@ void captureFrame(void);
 void cvtColorFrame(void);
 void threshFrame(void);
 void contourFrame(void);
-void trackingObject(void);
+//void trackingObject(void);
 void sendUARTData(void);
 
 int main()
@@ -57,12 +57,12 @@ int main()
     std::thread thread2(cvtColorFrame);
     std::thread thread3(threshFrame);
     std::thread thread4(contourFrame);
-    std::thread thread5(trackingObject);
+    //std::thread thread5(trackingObject);
     thread1.join();
     thread2.join();
     thread3.join();
     thread4.join();
-    thread5.join();
+    //thread5.join();
     return 0;
 }
 void captureFrame(void)
@@ -225,66 +225,66 @@ void contourFrame(void)
     
 }
 
-void trackingObject(void)
-{
-    int count = 0;
-    auto start = std::chrono::high_resolution_clock::now();
-    float fps;
-    Rect2d bbox;
-    sleep(1);
-    while(1)
-    {
-        sem_wait(&semContourFrameCplt);
-        if (count == 0)
-            start = std::chrono::high_resolution_clock::now();
-        count++;
-        //use moments method to find our filtered object
-        double refArea = 0;
-	    bool objectFound = false;
-        if (hierarchy.size() > 0) 
-        {
-            int numObjects = hierarchy.size();
-            //if number of objects greater than MAX_NUM_OBJECTS we have a noisy filter
-            if(numObjects<MAX_NUM_OBJECTS)
-            {
-                for (int index = 0; index >= 0; index = hierarchy[index][0]) 
-                {
-                    Moments moment = moments((cv::Mat)contours[index]);
-                    double area = moment.m00;
-                    //if the area is less than 20 px by 20px then it is probably just noise
-                    //if the area is the same as the 3/2 of the image size, probably just a bad filter
-                    //we only want the object with the largest area so we safe a reference area each
-                    //iteration and compare it to the area in the next iteration.
-                    if(area>MIN_OBJECT_AREA && area<MAX_OBJECT_AREA && area>refArea)
-                    {
-                        x = moment.m10/area;
-                        y = moment.m01/area;
-                        bFoundObject = true;
-                        refArea = area;
-                    }
-                    else 
-                        bFoundObject = false;
+// void trackingObject(void)
+// {
+//     int count = 0;
+//     auto start = std::chrono::high_resolution_clock::now();
+//     float fps;
+//     Rect2d bbox;
+//     sleep(1);
+//     while(1)
+//     {
+//         sem_wait(&semContourFrameCplt);
+//         if (count == 0)
+//             start = std::chrono::high_resolution_clock::now();
+//         count++;
+//         //use moments method to find our filtered object
+//         double refArea = 0;
+// 	    bool objectFound = false;
+//         if (hierarchy.size() > 0) 
+//         {
+//             int numObjects = hierarchy.size();
+//             //if number of objects greater than MAX_NUM_OBJECTS we have a noisy filter
+//             if(numObjects<MAX_NUM_OBJECTS)
+//             {
+//                 for (int index = 0; index >= 0; index = hierarchy[index][0]) 
+//                 {
+//                     Moments moment = moments((cv::Mat)contours[index]);
+//                     double area = moment.m00;
+//                     //if the area is less than 20 px by 20px then it is probably just noise
+//                     //if the area is the same as the 3/2 of the image size, probably just a bad filter
+//                     //we only want the object with the largest area so we safe a reference area each
+//                     //iteration and compare it to the area in the next iteration.
+//                     if(area>MIN_OBJECT_AREA && area<MAX_OBJECT_AREA && area>refArea)
+//                     {
+//                         x = moment.m10/area;
+//                         y = moment.m01/area;
+//                         bFoundObject = true;
+//                         refArea = area;
+//                     }
+//                     else 
+//                         bFoundObject = false;
 
 
-                }
+//                 }
 
-            }
-            else 
-            putText(frame,"TOO MUCH NOISE!",Point(0,50),1,2,Scalar(0,0,255),2);
-        }
-        // Rect2d bbox(x - RECT_SIZE/2, y - RECT_SIZE/2, RECT_SIZE, RECT_SIZE); 
-        // rectangle(frame, bbox, Scalar( 255, 0, 0 ), 2, 1 ); 
-        // imshow("frame", frame);
-        // waitKey(1);
-        // sem_post(&semTrackingObjectCplt);
-        if (count == 1000)
-        {
-            auto end = std::chrono::system_clock::now();
-            auto diff = std::chrono::duration_cast<chrono::seconds>(end - start);
-            fps = 1000 / static_cast<double>(diff.count());
-            std::cout << "thread 5 " << fps << "\n";
-            count = 0;
-        }
-    }
-}
+//             }
+//             else 
+//             putText(frame,"TOO MUCH NOISE!",Point(0,50),1,2,Scalar(0,0,255),2);
+//         }
+//         // Rect2d bbox(x - RECT_SIZE/2, y - RECT_SIZE/2, RECT_SIZE, RECT_SIZE); 
+//         // rectangle(frame, bbox, Scalar( 255, 0, 0 ), 2, 1 ); 
+//         // imshow("frame", frame);
+//         // waitKey(1);
+//         // sem_post(&semTrackingObjectCplt);
+//         if (count == 1000)
+//         {
+//             auto end = std::chrono::system_clock::now();
+//             auto diff = std::chrono::duration_cast<chrono::seconds>(end - start);
+//             fps = 1000 / static_cast<double>(diff.count());
+//             std::cout << "thread 5 " << fps << "\n";
+//             count = 0;
+//         }
+//     }
+// }
 
