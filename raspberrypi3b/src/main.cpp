@@ -43,7 +43,6 @@ void cvtColorFrame(void);
 void threshFrame(void);
 void contourFrame(void);
 void trackingObject(void);
-void showFrame(void);
 void sendUARTData(void);
 
 int main()
@@ -59,13 +58,11 @@ int main()
     std::thread thread3(threshFrame);
     std::thread thread4(contourFrame);
     std::thread thread5(trackingObject);
-    std::thread thread6(showFrame);
     thread1.join();
     thread2.join();
     thread3.join();
     thread4.join();
     thread5.join();
-    thread6.join();
     return 0;
 }
 void captureFrame(void)
@@ -248,10 +245,10 @@ void trackingObject(void)
             else 
             putText(frame,"TOO MUCH NOISE!",Point(0,50),1,2,Scalar(0,0,255),2);
         }
-        //Rect2d bbox(x - RECT_SIZE/2, y - RECT_SIZE/2, RECT_SIZE, RECT_SIZE); 
-        //rectangle(frame, bbox, Scalar( 255, 0, 0 ), 2, 1 ); 
-        //imshow("frame", frame);
-        //waitKey(1);
+        Rect2d bbox(x - RECT_SIZE/2, y - RECT_SIZE/2, RECT_SIZE, RECT_SIZE); 
+        rectangle(frame, bbox, Scalar( 255, 0, 0 ), 2, 1 ); 
+        imshow("frame", frame);
+        waitKey(1);
         sem_post(&semTrackingObjectCplt);
         if (count == 1000)
         {
@@ -264,31 +261,3 @@ void trackingObject(void)
     }
 }
 
-void showFrame(void)
-{
-    int count = 0;
-    auto start = std::chrono::high_resolution_clock::now();
-    float fps;
-    Rect2d bbox;
-    sleep(1);
-    while(1)
-    {
-        sem_wait(&semContourFrameCplt);
-        if (count == 0)
-            start = std::chrono::high_resolution_clock::now();
-        count++;
-        Rect2d bbox(x - RECT_SIZE/2, y - RECT_SIZE/2, RECT_SIZE, RECT_SIZE); 
-        rectangle(frame, bbox, Scalar( 255, 0, 0 ), 2, 1 ); 
-        imshow("frame", frame);
-        waitKey(1);
-        sem_post(&semTrackingObjectCplt);
-        if (count == 1000)
-        {
-            auto end = std::chrono::system_clock::now();
-            auto diff = std::chrono::duration_cast<chrono::seconds>(end - start);
-            fps = 1000 / static_cast<double>(diff.count());
-            std::cout << "thread 6 " << fps << "\n";
-            count = 0;
-        }
-    }
-}
