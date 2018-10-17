@@ -181,16 +181,18 @@ void contourFrame(void)
         //use moments method to find our filtered object
         double refArea = 0;
 	    bool objectFound = false;
+        double area;
+        int index;
         if (hierarchy.size() > 0) 
         {
             int numObjects = hierarchy.size();
             //if number of objects greater than MAX_NUM_OBJECTS we have a noisy filter
             if(numObjects<MAX_NUM_OBJECTS)
             {
-                for (int index = 0; index >= 0; index = hierarchy[index][0]) 
+                for (index = 0; index >= 0; index = hierarchy[index][0]) 
                 {
                     Moments moment = moments((cv::Mat)contours[index]);
-                    double area = moment.m00;
+                    area = moment.m00;
                     //if the area is less than 20 px by 20px then it is probably just noise
                     //if the area is the same as the 3/2 of the image size, probably just a bad filter
                     //we only want the object with the largest area so we safe a reference area each
@@ -238,8 +240,8 @@ void trackingObject(void)
         if (count == 0)
             start = std::chrono::high_resolution_clock::now();
         count++;
-        imshow("frame", frame);
-        waitKey(1);
+        //imshow("frame", frame);
+        //waitKey(1);
 //         //use moments method to find our filtered object
 //         double refArea = 0;
 // 	    bool objectFound = false;
