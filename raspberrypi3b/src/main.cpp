@@ -29,7 +29,7 @@ using namespace std;
 
 sem_t semCaptureFrameCplt, semProcessFrameCplt, semTrackingObjectCplt;
 bool bFoundObject = false;
-UMat frame, HSV, thresh, contour;
+Mat frame, HSV, thresh, contour;
 //Mat erodeElement = getStructuringElement( MORPH_RECT,Size(3,3));
 //dilate with larger element so make sure object is nicely visible
 //Mat dilateElement = getStructuringElement( MORPH_RECT,Size(8,8));
