@@ -124,6 +124,8 @@ void cvtColorFrame(void)
             std::cout << "thread 2 " << fps << "\n";
             count = 0;
         }
+        imshow("frame", frame);
+        waitKey(1);
     }
 }
 void threshFrame(void)
