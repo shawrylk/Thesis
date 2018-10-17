@@ -123,6 +123,6 @@ typedef enum
 bpsStatusTypeDef;
 
 bpsStatusTypeDef		bpsUARTSendData				(bpsUARTSendDataTypeDef* sendData);
-bpsStatusTypeDef 		bpsUARTInit					(void)
+bpsStatusTypeDef 		bpsUARTInit					(void);
 
 #endif
