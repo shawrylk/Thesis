@@ -70,19 +70,19 @@ void captureFrame(void)
     video.set(CAP_PROP_FRAME_WIDTH,FRAME_WIDTH);
 	video.set(CAP_PROP_FRAME_HEIGHT,FRAME_HEIGHT);
     video.set(CAP_PROP_FPS, FPS);
-    sleep(1);
     int count = 0;
     auto start = std::chrono::high_resolution_clock::now();
     float fps;
+    sleep(1);
     while (1)
     {
         if (count == 0)
             auto start = std::chrono::high_resolution_clock::now();
         bool ok = video.read(frame); 
-        
+        count++;
         if (ok)
         {    
-            count++;
+            
             sem_post(&semCaptureFrameCplt);
         }
         if (count == 120)
@@ -101,6 +101,7 @@ void processFrame(void)
     int count = 0;
     auto start = std::chrono::high_resolution_clock::now();
     float fps;
+    sleep(1);
     while(1)
     {     
         if (count == 0)
@@ -127,6 +128,7 @@ void trackingObject(void)
     auto start = std::chrono::high_resolution_clock::now();
     float fps;
     Rect2d bbox;
+    sleep(1);
     while(1)
     {
         sem_wait(&semProcessFrameCplt);
