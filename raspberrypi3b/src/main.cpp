@@ -22,7 +22,7 @@ using namespace std;
 #define S_MAX           187
 #define V_MIN           217
 #define V_MAX           256
-#define MAX_NUM_OBJECTS 50
+#define MAX_NUM_OBJECTS 5
 #define MIN_OBJECT_AREA 20*20
 #define MAX_OBJECT_AREA FRAME_HEIGHT*FRAME_WIDTH/1.5
 #define RECT_SIZE       130
