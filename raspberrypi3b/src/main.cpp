@@ -41,7 +41,7 @@ int x,y;
 void captureFrame(void);
 void processFrame(void);
 void trackingObject(void);
-//void sendUARTData(void);
+void sendUARTData(void);
 
 int main()
 {
@@ -52,11 +52,11 @@ int main()
     std::thread thread1(captureFrame);
     std::thread thread2(processFrame);
     std::thread thread3(trackingObject);
-    //std::thread thread4(sendUARTData);
+    std::thread thread4(sendUARTData);
     thread1.join();
     thread2.join();
     thread3.join();
-    //thread4.join();
+    thread4.join();
     return 0;
 }
 void captureFrame(void)
@@ -174,7 +174,7 @@ void trackingObject(void)
         // rectangle(frame, bbox, Scalar( 255, 0, 0 ), 2, 1 ); 
         // imshow("frame", frame);
         // waitKey(1);
-        // sem_post(&semTrackingObjectCplt);
+        sem_post(&semTrackingObjectCplt);
         if (count == 1000)
         {
             auto end = std::chrono::system_clock::now();
@@ -186,8 +186,8 @@ void trackingObject(void)
     }
 }
 
-// void sendUARTData(void)
-// {
+void sendUARTData(void)
+{
 //     bpsUARTSendDataTypeDef sendData;
 //     sendData.command = BPS_UPDATE_PID;
 //     sendData.content.PIDProperties.Kp[BPS_OUTER_PID][BPS_X_AXIS] = 0;
@@ -201,9 +201,16 @@ void trackingObject(void)
 //     sendData.command = BPS_MODE_SETPOINT;
 //     sendData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 255;
 //     sendData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] = 255;
-//     while(1)
-//     {
-//         sem_wait(&semTrackingObjectCplt);
+    int count = 0;
+    auto start = std::chrono::high_resolution_clock::now();
+    float fps;
+    while(1)
+    {
+        sem_wait(&semTrackingObjectCplt);
+        if (count == 0)
+            start = std::chrono::high_resolution_clock::now();
+        count++;
+        findContours(thresh,contours,hierarchy,RETR_CCOMP,CHAIN_APPROX_SIMPLE );
 //         if (bFoundObject)
 //         {
 //             sendData.ballCoordinate[BPS_X_AXIS] = x;
@@ -211,5 +218,14 @@ void trackingObject(void)
 //             bpsUARTSendData(&sendData);
 //         }
 //         std::cout << x << ", " << y << "\n";
-//     }
-// }
+        if (count == 1000)
+        {
+            auto end = std::chrono::system_clock::now();
+            auto diff = std::chrono::duration_cast<chrono::seconds>(end - start);
+            fps = 1000 / static_cast<double>(diff.count());
+            std::cout << "thread 3 " << fps << "\n";
+            count = 0;
+        }
+    }
+    
+}
