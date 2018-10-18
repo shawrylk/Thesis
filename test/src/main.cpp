@@ -212,7 +212,7 @@ int main(int argc, char* argv[])
 		capture.read(cameraFeed);
 		//convert frame from BGR to HSV colorspace
 		//cvtColor(cameraFeed,HSV,COLOR_BGR2HSV);
-		cvtColor(cameraFeed,HSV,COLOR_BGR2GRAY);
+		//cvtColor(cameraFeed,HSV,COLOR_BGR2GRAY);
 		//filter HSV image between values and store filtered image to
 		//threshold matrix
 		//inRange(HSV,Scalar(H_MIN,S_MIN,V_MIN),Scalar(H_MAX,S_MAX,V_MAX),threshold);
