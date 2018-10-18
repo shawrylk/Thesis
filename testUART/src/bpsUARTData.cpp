@@ -4,7 +4,7 @@ static int fd;
 
 bpsStatusTypeDef bpsUARTInit()
 {
-    if((fd = serialOpen ("/dev/ttyAMA0", 9600)) < 0 )
+    if((fd = serialOpen ("/dev/serial0", 9600)) < 0 )
     {
         return BPS_ERROR;
 	}
@@ -14,8 +14,8 @@ bpsStatusTypeDef bpsUARTInit()
 
 bpsStatusTypeDef bpsUARTSendData(bpsUARTSendDataTypeDef* sendData)
 {
-	//serialPuts(fd, (const char*)sendData);
-    serialPuts(fd, "hello");
+	serialPuts(fd, (const char*)sendData);
+    //serialPuts(fd, "hello");
 	serialFlush(fd);
     return BPS_OK;
 }
