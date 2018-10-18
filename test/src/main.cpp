@@ -246,25 +246,35 @@ int main(int argc, char* argv[])
 	vector<Vec4i> hierarchy;
 	//find contours of filtered image using openCV findContours function
 	findContours(thresh,contours,hierarchy,CV_RETR_TREE,CV_CHAIN_APPROX_SIMPLE );
-	vector<vector<Point> >hull( contours.size() );
-   for( int i = 0; i < contours.size(); i++ )
-      {  convexHull( Mat(contours[i]), hull[i], false ); }
+// 	vector<vector<Point> >hull( contours.size() );
+//    for( int i = 0; i < contours.size(); i++ )
+//       {  convexHull( Mat(contours[i]), hull[i], false ); }
 
-   /// Draw contours + hull results
-   Mat drawing = Mat::zeros( thresh.size(), CV_8UC3 );
-   for( int i = 0; i< contours.size(); i++ )
-      {
-        Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
-        drawContours( drawing, contours, i, color, 1, 8, vector<Vec4i>(), 0, Point() );
-        drawContours( drawing, hull, i, color, 1, 8, vector<Vec4i>(), 0, Point() );
-      }
- 
+//    /// Draw contours + hull results
+//    Mat drawing = Mat::zeros( thresh.size(), CV_8UC3 );
+//    for( int i = 0; i< contours.size(); i++ )
+//       {
+//         Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
+//         drawContours( drawing, contours, i, color, 1, 8, vector<Vec4i>(), 0, Point() );
+//         drawContours( drawing, hull, i, color, 1, 8, vector<Vec4i>(), 0, Point() );
+//       }
+  vector<Point> approxTriangle;
+    for(size_t i = 0; i < contours.size(); i++){
+        approxPolyDP(contours[i], approxTriangle, arcLength(Mat(contours[i]), true)*0.05, true);
+        if(approxTriangle.size() >=15){
+            drawContours(cameraFeed, contours, i, Scalar(0, 255, 255), FILLED); // fill GREEN
+            vector<Point>::iterator vertex;
+            for(vertex = approxTriangle.begin(); vertex != approxTriangle.end(); ++vertex){
+                circle(cameraFeed, *vertex, 3, Scalar(0, 0, 255), 1);
+            }
+        }
+    }
 // coordinates of centroid
  
 // show the image with a point mark at the centroid
 		//imshow("Image with center",cameraFeed);
 		//show frames 
-		imshow( "Hull demo", drawing );
+		//imshow( "Hull demo", drawing );
 		imshow(windowName2,thresh);
 		imshow(windowName,cameraFeed);
 		//imshow(windowName1,HSV);
