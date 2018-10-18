@@ -50,7 +50,7 @@ int main()
 		serialFlush(fd);
 		printf("%s\n", "hello");
 		fflush(stdout);
-		delay(1000);
+		sleep(1);
 	}
     return 0;
 }
