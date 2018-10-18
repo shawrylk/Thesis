@@ -185,8 +185,8 @@ int main(int argc, char* argv[])
 {
 	//some boolean variables for different functionality within this
 	//program
-    bool trackObjects = true;
-    bool useMorphOps = true;
+    bool trackObjects = false;
+    bool useMorphOps = false;
 	//Matrix to store each frame of the webcam feed
 	Mat cameraFeed;
 	//matrix storage for HSV image
@@ -226,7 +226,16 @@ int main(int argc, char* argv[])
 		//filtered object
 		if(trackObjects)
 			trackFilteredObject(x,y,thresh,cameraFeed);
-
+		Moments m = moments(thresh,true);
+		Point p(m.m10/m.m00, m.m01/m.m00);
+ 
+// coordinates of centroid
+		cout<< Mat(p)<< endl;
+ 
+// show the image with a point mark at the centroid
+		circle(cameraFeed, p, 5, Scalar(128,0,0), -1);
+		imshow("Image with center",cameraFeed);
+		waitKey(0);
 		//show frames 
 		imshow(windowName2,thresh);
 		imshow(windowName,cameraFeed);
