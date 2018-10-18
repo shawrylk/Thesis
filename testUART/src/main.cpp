@@ -43,7 +43,7 @@ int main()
 	printf("Raspberry's receiving : \n");
  
 	while(1) {
-		if((fds = serialOpen ("/dev/serial0", 115200)) < 0 ){
+		if((fds = serialOpen ("/dev/serial1", 115200)) < 0 ){
 			fprintf (stderr, "Unable to open serial device: %s\n", strerror (errno)) ;
 		}else{
 			do{
