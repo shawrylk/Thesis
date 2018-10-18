@@ -13,7 +13,7 @@ using namespace std;
 // Convert to string
 #define SSTR( x ) static_cast< std::ostringstream & >( \
 ( std::ostringstream() << std::dec << x ) ).str()
-#define FRAME_WIDTH     640
+#define FRAME_WIDTH     480
 #define FRAME_HEIGHT    480
 #define FPS             90
 #define H_MIN           26
@@ -178,7 +178,7 @@ void contourFrame(void)
         count++;
         //inRange(HSV,Scalar(H_MIN,S_MIN,V_MIN),Scalar(H_MAX,S_MAX,V_MAX),thresh);
         threshold(HSV,thresh,8,255,0);
-        findContours(thresh,contours,hierarchy,RETR_CCOMP,CHAIN_APPROX_SIMPLE );
+        findContours(thresh,contours,hierarchy,RETR_TREE,CHAIN_APPROX_SIMPLE );
         //use moments method to find our filtered object
         double refArea = 0;
 	    bool objectFound = false;
