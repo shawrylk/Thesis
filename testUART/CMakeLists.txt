@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5.1)
 
 
-project(bpsRaspberryPi3B)
+project(testUART)
 
 
 find_package(Threads)
