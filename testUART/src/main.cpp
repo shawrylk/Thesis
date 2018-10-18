@@ -38,21 +38,21 @@ int main()
     //     std::cout << "sent \n";
     //     sleep(1);
     // }
-    int fd;
- 
-	printf("Raspberry's sending : \n");
+    int fds;
+	char c;
+	printf("Raspberry's receiving : \n");
  
 	while(1) {
-		if((fd = serialOpen ("/dev/ttyAMA0", 115200)) < 0 ){
-			fprintf (stderr, "Unable to open serial device: %s\n", strerror (errno));
+		if((fds = serialOpen ("/dev/ttyAMA0", 9600)) < 0 ){
+			fprintf (stderr, "Unable to open serial device: %s\n", strerror (errno)) ;
+		}else{
+			do{
+				c = serialGetchar(fds);
+				printf("%c",c);
+				fflush (stdout);
+			}while(serialDataAvail(fds));
 		}
-		serialPuts(fd, "hello");
-		serialFlush(fd);
-		printf("%s\n", "hello");
-		fflush(stdout);
-		sleep(1);
-	}
-    return 0;
+	};
 }
 
 

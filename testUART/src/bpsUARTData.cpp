@@ -1,6 +1,6 @@
 #include "../hpp/bpsUARTData.hpp"
 
-static int fd;
+int fd;
 
 bpsStatusTypeDef bpsUARTInit()
 {
