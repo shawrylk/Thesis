@@ -274,7 +274,7 @@ void trackingObject(void)
     sleep(1);
     while(1)
     {
-        sem_wait(&semContourFrameCplt);
+        sem_wait(&semCvtColorFrameCplt);
         if (count == 0)
             start = std::chrono::high_resolution_clock::now();
         count++;
