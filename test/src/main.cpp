@@ -235,7 +235,6 @@ int main(int argc, char* argv[])
 // show the image with a point mark at the centroid
 		circle(cameraFeed, p, 5, Scalar(128,0,0), -1);
 		imshow("Image with center",cameraFeed);
-		waitKey(0);
 		//show frames 
 		imshow(windowName2,thresh);
 		imshow(windowName,cameraFeed);
