@@ -25,10 +25,15 @@ int main()
     sendData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 320;
     sendData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 240;
     sendData.nullTerminated = NULL;
-    bpsUARTInit();
+    if (bpsUARTInit() != BPS_OK)
+    {
+        std::cout << "open UART fails \n";
+        return -1;
+    }
     while (1)
     {
         bpsUARTSendData(&sendData);
+        std::cout "sent \n";
         sleep(1);
     }
 
