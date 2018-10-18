@@ -115,8 +115,43 @@ void cvtColorFrame(void)
         count++;
         sem_wait(&semCaptureFrameCplt);     
         cvtColor(frame,HSV,COLOR_BGR2GRAY);
-        threshold(HSV,thresh,10,255,0);
+        threshold(HSV,thresh,6,255,0);
         findContours(thresh,contours,hierarchy,RETR_TREE,CHAIN_APPROX_SIMPLE );
+        double refArea = 0;
+	    bool objectFound = false;
+        double area;
+        int index;
+        if (hierarchy.size() > 0) 
+        {
+            int numObjects = hierarchy.size();
+            //if number of objects greater than MAX_NUM_OBJECTS we have a noisy filter
+            if(numObjects<MAX_NUM_OBJECTS)
+            {
+                for (index = 0; index >= 0; index = hierarchy[index][0]) 
+                {
+                    Moments moment = moments((cv::Mat)contours[index]);
+                    area = moment.m00;
+                    //if the area is less than 20 px by 20px then it is probably just noise
+                    //if the area is the same as the 3/2 of the image size, probably just a bad filter
+                    //we only want the object with the largest area so we safe a reference area each
+                    //iteration and compare it to the area in the next iteration.
+                    if(area>MIN_OBJECT_AREA && area<MAX_OBJECT_AREA && area>refArea)
+                    {
+                        x = moment.m10/area;
+                        y = moment.m01/area;
+                        bFoundObject = true;
+                        refArea = area;
+                    }
+                    else 
+                        bFoundObject = false;
+
+
+                }
+
+            }
+            else 
+            putText(frame,"TOO MUCH NOISE!",Point(0,50),1,2,Scalar(0,0,255),2);
+        }
         sem_post(&semCvtColorFrameCplt);
         if (count == 1000)
         {
@@ -182,41 +217,41 @@ void contourFrame(void)
         // threshold(HSV,thresh,8,255,0);
         // findContours(thresh,contours,hierarchy,RETR_TREE,CHAIN_APPROX_SIMPLE );
         //use moments method to find our filtered object
-        double refArea = 0;
-	    bool objectFound = false;
-        double area;
-        int index;
-        if (hierarchy.size() > 0) 
-        {
-            int numObjects = hierarchy.size();
-            //if number of objects greater than MAX_NUM_OBJECTS we have a noisy filter
-            if(numObjects<MAX_NUM_OBJECTS)
-            {
-                for (index = 0; index >= 0; index = hierarchy[index][0]) 
-                {
-                    Moments moment = moments((cv::Mat)contours[index]);
-                    area = moment.m00;
-                    //if the area is less than 20 px by 20px then it is probably just noise
-                    //if the area is the same as the 3/2 of the image size, probably just a bad filter
-                    //we only want the object with the largest area so we safe a reference area each
-                    //iteration and compare it to the area in the next iteration.
-                    if(area>MIN_OBJECT_AREA && area<MAX_OBJECT_AREA && area>refArea)
-                    {
-                        x = moment.m10/area;
-                        y = moment.m01/area;
-                        bFoundObject = true;
-                        refArea = area;
-                    }
-                    else 
-                        bFoundObject = false;
+        // double refArea = 0;
+	    // bool objectFound = false;
+        // double area;
+        // int index;
+        // if (hierarchy.size() > 0) 
+        // {
+        //     int numObjects = hierarchy.size();
+        //     //if number of objects greater than MAX_NUM_OBJECTS we have a noisy filter
+        //     if(numObjects<MAX_NUM_OBJECTS)
+        //     {
+        //         for (index = 0; index >= 0; index = hierarchy[index][0]) 
+        //         {
+        //             Moments moment = moments((cv::Mat)contours[index]);
+        //             area = moment.m00;
+        //             //if the area is less than 20 px by 20px then it is probably just noise
+        //             //if the area is the same as the 3/2 of the image size, probably just a bad filter
+        //             //we only want the object with the largest area so we safe a reference area each
+        //             //iteration and compare it to the area in the next iteration.
+        //             if(area>MIN_OBJECT_AREA && area<MAX_OBJECT_AREA && area>refArea)
+        //             {
+        //                 x = moment.m10/area;
+        //                 y = moment.m01/area;
+        //                 bFoundObject = true;
+        //                 refArea = area;
+        //             }
+        //             else 
+        //                 bFoundObject = false;
 
 
-                }
+        //         }
 
-            }
-            else 
-            putText(frame,"TOO MUCH NOISE!",Point(0,50),1,2,Scalar(0,0,255),2);
-        }
+        //     }
+        //     else 
+        //     putText(frame,"TOO MUCH NOISE!",Point(0,50),1,2,Scalar(0,0,255),2);
+        // }
         sem_post(&semContourFrameCplt);
         if (count == 1000)
         {
