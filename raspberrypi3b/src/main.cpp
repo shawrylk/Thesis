@@ -317,7 +317,7 @@ void trackingObject(void)
 //         }
         Rect2d bbox(x - RECT_SIZE/2, y - RECT_SIZE/2, RECT_SIZE, RECT_SIZE); 
         rectangle(frame, bbox, Scalar( 255, 0, 0 ), 2, 1 ); 
-        imshow("frame", frame);
+        imshow("frame", thresh);
         waitKey(1);
         // sem_post(&semTrackingObjectCplt);
         if (count == 1000)
