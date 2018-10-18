@@ -261,7 +261,7 @@ int main(int argc, char* argv[])
   vector<Point> approxTriangle;
     for(size_t i = 0; i < contours.size(); i++){
         approxPolyDP(contours[i], approxTriangle, arcLength(Mat(contours[i]), true)*0.05, true);
-        if(approxTriangle.size() >=15){
+        if(approxTriangle.size() >=5){
             drawContours(cameraFeed, contours, i, Scalar(0, 255, 255), FILLED); // fill GREEN
             vector<Point>::iterator vertex;
             for(vertex = approxTriangle.begin(); vertex != approxTriangle.end(); ++vertex){
