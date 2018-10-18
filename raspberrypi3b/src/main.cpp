@@ -30,6 +30,7 @@ using namespace std;
 sem_t semCaptureFrameCplt, semCvtColorFrameCplt, semThreshFrameCplt, semContourFrameCplt, semTrackingObjectCplt;
 bool bFoundObject = false;
 Mat frame, HSV, thresh, contour;
+int8_t thresh_min = 6;
 //Mat erodeElement = getStructuringElement( MORPH_RECT,Size(3,3));
 //dilate with larger element so make sure object is nicely visible
 //Mat dilateElement = getStructuringElement( MORPH_RECT,Size(8,8));
@@ -150,7 +151,10 @@ void cvtColorFrame(void)
 
             }
             else 
-            putText(frame,"TOO MUCH NOISE!",Point(0,50),1,2,Scalar(0,0,255),2);
+            {
+                putText(frame,"TOO MUCH NOISE!",Point(0,50),1,2,Scalar(0,0,255),2);
+                thresh_min++;
+            }
         }
         sem_post(&semCvtColorFrameCplt);
         if (count == 1000)
