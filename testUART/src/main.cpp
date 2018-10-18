@@ -18,7 +18,19 @@ using namespace std;
 int main()
 {
     cv::ocl::setUseOpenCL(false);
-
+    bpsUARTSendDataTypeDef sendData;
+    sendData.ballCoordinate[BPS_X_AXIS] = 640;
+    sendData.ballCoordinate[BPS_Y_AXIS] = 480;
+    sendData.command = BPS_MODE_SETPOINT;
+    sendData.content.pointProperties[BPS_X_AXIS] = 320;
+    sendData.content.pointProperties[BPS_X_AXIS] = 240;
+    senData.nullTerminated = NULL;
+    bpsUARTInit();
+    while (1)
+    {
+        bpsUARTSendData(&sendData);
+        sleep(1);
+    }
 
     return 0;
 }

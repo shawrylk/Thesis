@@ -4,7 +4,7 @@ int fd;
 
 bpsStatusTypeDef bpsUARTInit()
 {
-    if((fd = serialOpen ("/dev/ttyAMA0", 1000000)) < 0 )
+    if((fd = serialOpen ("/dev/ttyAMA0", 96000)) < 0 )
     {
         return BPS_ERROR;
 	}

@@ -1,9 +1,9 @@
 
-BPS_PATH=/home/shawry/Thesis/raspberrypi3b
+BPS_PATH=/home/shawry/Thesis/testUART
 
 bps_run()
 {
-	$BPS_PATH/bin/bpsRaspberryPi3B
+	$BPS_PATH/bin/testUART
 }
 
 bps_install_dependency()
