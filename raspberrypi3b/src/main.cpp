@@ -61,8 +61,8 @@ int main()
     thread1.join();
     thread2.join();
     //thread3.join();
-    thread4.join();
-    thread5.join();
+    //thread4.join();
+    //thread5.join();
     return 0;
 }
 void captureFrame(void)
