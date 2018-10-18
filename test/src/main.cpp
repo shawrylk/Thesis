@@ -20,6 +20,7 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/tracking.hpp>
 #include <opencv2/core/ocl.hpp>
+
 //#include <opencv2\highgui/highgui.hpp>
 //#include <opencv\cv.h>
 
@@ -191,7 +192,7 @@ int main(int argc, char* argv[])
 	//matrix storage for HSV image
 	Mat HSV;
 	//matrix storage for binary threshold image
-	Mat threshold;
+	Mat thresh;
 	//x and y values for the location of the object
 	int x=0, y=0;
 	//create slider bars for HSV filtering
@@ -210,22 +211,24 @@ int main(int argc, char* argv[])
 		//store image to matrix
 		capture.read(cameraFeed);
 		//convert frame from BGR to HSV colorspace
-		cvtColor(cameraFeed,HSV,COLOR_BGR2HSV);
+		//cvtColor(cameraFeed,HSV,COLOR_BGR2HSV);
+		cvtColor(cameraFeed,HSV,COLOR_BGR2GRAY);
 		//filter HSV image between values and store filtered image to
 		//threshold matrix
-		inRange(HSV,Scalar(H_MIN,S_MIN,V_MIN),Scalar(H_MAX,S_MAX,V_MAX),threshold);
+		//inRange(HSV,Scalar(H_MIN,S_MIN,V_MIN),Scalar(H_MAX,S_MAX,V_MAX),threshold);
+		threshold(HSV,thresh,H_MIN,H_MAX,0);
 		//perform morphological operations on thresholded image to eliminate noise
 		//and emphasize the filtered object(s)
 		if(useMorphOps)
-		morphOps(threshold);
+		morphOps(thresh);
 		//pass in thresholded frame to our object tracking function
 		//this function will return the x and y coordinates of the
 		//filtered object
 		if(trackObjects)
-			trackFilteredObject(x,y,threshold,cameraFeed);
+			trackFilteredObject(x,y,thresh,cameraFeed);
 
 		//show frames 
-		imshow(windowName2,threshold);
+		imshow(windowName2,thresh);
 		imshow(windowName,cameraFeed);
 		//imshow(windowName1,HSV);
 		
