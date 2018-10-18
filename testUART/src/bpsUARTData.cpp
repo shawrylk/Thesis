@@ -1,6 +1,6 @@
 #include "../hpp/bpsUARTData.hpp"
 
-int fd;
+static int fd;
 
 bpsStatusTypeDef bpsUARTInit()
 {
@@ -14,7 +14,8 @@ bpsStatusTypeDef bpsUARTInit()
 
 bpsStatusTypeDef bpsUARTSendData(bpsUARTSendDataTypeDef* sendData)
 {
-	serialPuts(fd, (const char*)sendData);
+	//serialPuts(fd, (const char*)sendData);
+    serialPuts(fd, "hello");
 	serialFlush(fd);
     return BPS_OK;
 }
