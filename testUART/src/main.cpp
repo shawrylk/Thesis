@@ -25,6 +25,8 @@ int main()
     sendData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 320;
     sendData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 240;
     sendData.nullTerminated = '\0';
+    std::cout << "SIZE: \n";
+    std::cout << sizeof(bpsUARTSendDataTypeDef) << \n;
     if (bpsUARTInit() != BPS_OK)
     {
         std::cout << "open UART fails \n";
