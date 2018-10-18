@@ -22,9 +22,9 @@ int main()
     sendData.ballCoordinate[BPS_X_AXIS] = 640;
     sendData.ballCoordinate[BPS_Y_AXIS] = 480;
     sendData.command = BPS_MODE_SETPOINT;
-    sendData.content.pointProperties[BPS_X_AXIS] = 320;
-    sendData.content.pointProperties[BPS_X_AXIS] = 240;
-    senData.nullTerminated = NULL;
+    sendData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 320;
+    sendData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 240;
+    sendData.nullTerminated = NULL;
     bpsUARTInit();
     while (1)
     {
