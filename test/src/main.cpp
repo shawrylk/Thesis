@@ -146,7 +146,7 @@ void trackFilteredObject(int &x, int &y, Mat threshold, Mat &cameraFeed){
 	vector< vector<Point> > contours;
 	vector<Vec4i> hierarchy;
 	//find contours of filtered image using openCV findContours function
-	findContours(temp,contours,hierarchy,CV_RETR_CCOMP,CV_CHAIN_APPROX_SIMPLE );
+	findContours(temp,contours,hierarchy,CV_RETR_TREE,CV_CHAIN_APPROX_SIMPLE );
 	//use moments method to find our filtered object
 	double refArea = 0;
 	bool objectFound = false;
@@ -216,7 +216,7 @@ int main(int argc, char* argv[])
 		//filter HSV image between values and store filtered image to
 		//threshold matrix
 		//inRange(HSV,Scalar(H_MIN,S_MIN,V_MIN),Scalar(H_MAX,S_MAX,V_MAX),threshold);
-		threshold(HSV,thresh,H_MIN,H_MAX,0);
+		threshold(HSV,thresh,4,255,0);
 		//perform morphological operations on thresholded image to eliminate noise
 		//and emphasize the filtered object(s)
 		if(useMorphOps)
