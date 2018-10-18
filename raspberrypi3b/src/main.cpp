@@ -115,17 +115,7 @@ void cvtColorFrame(void)
         count++;
         sem_wait(&semCaptureFrameCplt);     
         cvtColor(frame,HSV,COLOR_BGR2GRAY);
-        threshold(HSV,thresh,8,255,0);
-        Mat erodeElement = getStructuringElement( MORPH_RECT,Size(3,3));
-    //dilate with larger element so make sure object is nicely visible
-        Mat dilateElement = getStructuringElement( MORPH_RECT,Size(8,8));
-
-        erode(thresh,thresh,erodeElement);
-        erode(thresh,thresh,erodeElement);
-
-
-        dilate(thresh,thresh,dilateElement);
-        dilate(thresh,thresh,dilateElement);
+        threshold(HSV,thresh,10,255,0);
         findContours(thresh,contours,hierarchy,RETR_TREE,CHAIN_APPROX_SIMPLE );
         double refArea = 0;
 	    bool objectFound = false;
