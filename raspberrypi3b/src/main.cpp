@@ -116,6 +116,8 @@ void cvtColorFrame(void)
         sem_wait(&semCaptureFrameCplt);     
         cvtColor(frame,HSV,COLOR_BGR2GRAY);
         threshold(HSV,thresh,12,255,0);
+        Mat erodeElement = getStructuringElement( MORPH_RECT,Size(10,10));
+	    erode(thresh,thresh,erodeElement);
         findContours(thresh,contours,hierarchy,RETR_TREE,CHAIN_APPROX_SIMPLE );
         double refArea = 0;
 	    bool objectFound = false;
