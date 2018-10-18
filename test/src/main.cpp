@@ -216,7 +216,7 @@ int main(int argc, char* argv[])
 		//filter HSV image between values and store filtered image to
 		//threshold matrix
 		//inRange(HSV,Scalar(H_MIN,S_MIN,V_MIN),Scalar(H_MAX,S_MAX,V_MAX),threshold);
-		threshold(HSV,thresh,H_MIN,H_MAX,0);
+		threshold(HSV,thresh,H_MIN,H_MAX,1);
 		//perform morphological operations on thresholded image to eliminate noise
 		//and emphasize the filtered object(s)
 		if(useMorphOps)
@@ -234,7 +234,7 @@ int main(int argc, char* argv[])
  
 // show the image with a point mark at the centroid
 		circle(cameraFeed, p, 5, Scalar(128,0,0), -1);
-		imshow("Image with center",cameraFeed);
+		//imshow("Image with center",cameraFeed);
 		//show frames 
 		imshow(windowName2,thresh);
 		imshow(windowName,cameraFeed);
