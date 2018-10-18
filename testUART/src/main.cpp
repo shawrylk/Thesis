@@ -34,7 +34,7 @@ int main()
     }
     while (1)
     {
-        bpsUARTSendData(&sendData);
+        bpsUARTSendData("Hello");
         std::cout << "sent \n";
         sleep(1);
     }
