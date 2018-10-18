@@ -225,12 +225,12 @@ int main(int argc, char* argv[])
 		//store image to matrix
 		capture.read(cameraFeed);
 		//convert frame from BGR to HSV colorspace
-		//cvtColor(cameraFeed,HSV,COLOR_BGR2HSV);
-		cvtColor(cameraFeed,HSV,COLOR_BGR2GRAY);
+		cvtColor(cameraFeed,HSV,COLOR_BGR2HSV);
+		//cvtColor(cameraFeed,HSV,COLOR_BGR2GRAY);
 		//filter HSV image between values and store filtered image to
 		//threshold matrix
-		//inRange(HSV,Scalar(H_MIN,S_MIN,V_MIN),Scalar(H_MAX,S_MAX,V_MAX),threshold);
-		threshold(HSV,thresh,H_MIN,H_MAX,1);
+		inRange(HSV,Scalar(H_MIN,S_MIN,V_MIN),Scalar(H_MAX,S_MAX,V_MAX),thresh);
+		//threshold(HSV,thresh,H_MIN,H_MAX,1);
 		//perform morphological operations on thresholded image to eliminate noise
 		//and emphasize the filtered object(s)
 		if(useMorphOps)
@@ -246,6 +246,38 @@ int main(int argc, char* argv[])
 	vector<Vec4i> hierarchy;
 	//find contours of filtered image using openCV findContours function
 	findContours(thresh,contours,hierarchy,CV_RETR_TREE,CV_CHAIN_APPROX_SIMPLE );
+	double refArea = 0;
+	bool objectFound = false;
+	if (hierarchy.size() > 0) {
+		int numObjects = hierarchy.size();
+        //if number of objects greater than MAX_NUM_OBJECTS we have a noisy filter
+        if(numObjects<MAX_NUM_OBJECTS){
+			for (int index = 0; index >= 0; index = hierarchy[index][0]) {
+
+				Moments moment = moments((cv::Mat)contours[index]);
+				double area = moment.m00;
+
+				//if the area is less than 20 px by 20px then it is probably just noise
+				//if the area is the same as the 3/2 of the image size, probably just a bad filter
+				//we only want the object with the largest area so we safe a reference area each
+				//iteration and compare it to the area in the next iteration.
+                if(area>MIN_OBJECT_AREA && area<MAX_OBJECT_AREA && area>refArea){
+					x = moment.m10/area;
+					y = moment.m01/area;
+					objectFound = true;
+					refArea = area;
+				}else objectFound = false;
+
+
+			}
+			//let user know you found an object
+			if(objectFound ==true){
+				putText(cameraFeed,"Tracking Object",Point(0,50),2,1,Scalar(0,255,0),2);
+				//draw object location on screen
+				drawObject(x,y,cameraFeed);}
+
+		}else putText(cameraFeed,"TOO MUCH NOISE! ADJUST FILTER",Point(0,50),1,2,Scalar(0,0,255),2);
+	}
 // 	vector<vector<Point> >hull( contours.size() );
 //    for( int i = 0; i < contours.size(); i++ )
 //       {  convexHull( Mat(contours[i]), hull[i], false ); }
