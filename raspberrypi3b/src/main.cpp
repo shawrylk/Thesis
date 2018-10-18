@@ -57,12 +57,12 @@ int main()
     std::thread thread2(cvtColorFrame);
     //std::thread thread3(threshFrame);
     //std::thread thread4(contourFrame);
-    //std::thread thread5(trackingObject);
+    std::thread thread5(trackingObject);
     thread1.join();
     thread2.join();
     //thread3.join();
     //thread4.join();
-    //thread5.join();
+    thread5.join();
     return 0;
 }
 void captureFrame(void)
