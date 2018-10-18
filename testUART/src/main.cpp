@@ -19,11 +19,11 @@ int main()
 {
     cv::ocl::setUseOpenCL(false);
     bpsUARTSendDataTypeDef sendData;
-    sendData.ballCoordinate[BPS_X_AXIS] = 640;
-    sendData.ballCoordinate[BPS_Y_AXIS] = 480;
+    sendData.ballCoordinate[BPS_X_AXIS] = 0x1234;
+    sendData.ballCoordinate[BPS_Y_AXIS] = 0x5678;
     sendData.command = BPS_MODE_SETPOINT;
-    sendData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 320;
-    sendData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 240;
+    sendData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 0x9ABC;
+    sendData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] = 0xDEF0;
     sendData.nullTerminated = '\0';
     std::cout << "SIZE: \n";
     std::cout << sizeof(bpsUARTSendDataTypeDef) << "\n";
