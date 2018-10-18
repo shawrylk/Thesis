@@ -28,15 +28,16 @@ using namespace cv;
 using namespace std;
 //initial min and max HSV filter values.
 //these will be changed using trackbars
-int H_MIN = 22;
-int H_MAX = 42;
-int S_MIN = 83;
-int S_MAX = 176;
-int V_MIN = 56;
-int V_MAX = 164;
+int H_MIN = 0;
+int H_MAX = 255;
+int S_MIN = 0;
+int S_MAX = 255;
+int V_MIN = 0;
+int V_MAX = 255;
 //default capture width and height
 const int FRAME_WIDTH = 640;
 const int FRAME_HEIGHT = 480;
+const int FPS = 90;
 //max number of objects to be detected in frame
 const int MAX_NUM_OBJECTS=50;
 //minimum and maximum object area
@@ -202,6 +203,7 @@ int main(int argc, char* argv[])
 	//set height and width of capture frame
 	capture.set(CAP_PROP_FRAME_WIDTH,FRAME_WIDTH);
 	capture.set(CAP_PROP_FRAME_HEIGHT,FRAME_HEIGHT);
+	capture.set(CAP_PROP_FPS,FPS);
 	//start an infinite loop where webcam feed is copied to cameraFeed matrix
 	//all of our operations will be performed within this loop
 	while(1){
