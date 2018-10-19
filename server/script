@@ -1,0 +1,213 @@
+
+BPS_PATH=/home/shawry/Thesis/server
+
+bps_run()
+{
+	$BPS_PATH/bin/server
+}
+
+bps_install_dependency()
+{
+	cd ~
+	git clone git://git.drogon.net/wiringPi
+	cd ~/wiringPi
+	git pull origin
+	cd ~/wiringPi
+	./build
+	cd ~
+	sudo apt-get purge wolfram-engine -y
+	sudo apt-get purge libreoffice* -y
+	sudo apt-get clean
+	sudo apt-get autoremove	
+	sudo apt-get update 
+	sudo apt-get upgrade
+	sudo apt-get upgrade --fix-missing
+
+	sudo apt-get install build-essential cmake pkg-config -y
+	sudo apt-get install libjpeg-dev libtiff5-dev libjasper-dev libpng12-dev -y
+	sudo apt-get install libavcodec-dev libavformat-dev libswscale-dev libv4l-dev -y
+	sudo apt-get install libxvidcore-dev libx264-dev -y	
+	sudo apt-get install libgtk2.0-dev libgtk-3-dev -y
+	sudo apt-get install libatlas-base-dev gfortran -y
+
+	sudo apt-get install python3 python3-setuptools python3-dev -y
+	wget https://bootstrap.pypa.io/get-pip.py
+	sudo python3 get-pip.py
+	sudo pip3 install numpy
+	cd ~
+		# Save current working directory
+	cwd=~
+	sudo apt -y update
+	sudo apt -y upgrade
+	sudo apt -y remove x264 libx264-dev
+ 
+	## Install dependencies
+	sudo apt -y install build-essential checkinstall cmake pkg-config yasm
+	sudo apt -y install git gfortran
+	sudo apt -y install libjpeg8-dev libjasper-dev libpng12-dev
+	
+	sudo apt -y install libtiff5-dev
+	
+	sudo apt -y install libtiff-dev
+	
+	sudo apt -y install libavcodec-dev libavformat-dev libswscale-dev libdc1394-22-dev
+	sudo apt -y install libxine2-dev libv4l-dev
+	cd /usr/include/linux
+	sudo ln -s -f ../libv4l1-videodev.h videodev.h
+	cd $cwd
+	
+	sudo apt -y install libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev
+	sudo apt -y install libgtk2.0-dev libtbb-dev qt5-default
+	sudo apt -y install libatlas-base-dev
+	sudo apt -y install libfaac-dev libmp3lame-dev libtheora-dev
+	sudo apt -y install libvorbis-dev libxvidcore-dev
+	sudo apt -y install libopencore-amrnb-dev libopencore-amrwb-dev
+	sudo apt -y install libavresample-dev
+	sudo apt -y install x264 v4l-utils
+	
+	# Optional dependencies
+	sudo apt -y install libprotobuf-dev protobuf-compiler
+	sudo apt -y install libgoogle-glog-dev libgflags-dev
+	sudo apt -y install libgphoto2-dev libeigen3-dev libhdf5-dev doxygen
+	sudo apt -y install python-dev python-pip python3-dev python3-pip
+	sudo -H pip2 install -U pip numpy
+	sudo -H pip3 install -U pip numpy
+	sudo apt -y install python3-testresources
+	# Install virtual environment
+	sudo -H pip2 install virtualenv virtualenvwrapper
+	sudo -H pip3 install virtualenv virtualenvwrapper
+	echo "# Virtual Environment Wrapper" >> ~/.bashrc
+	echo "source /usr/local/bin/virtualenvwrapper.sh" >> ~/.bashrc
+	cd $cwd
+	source /usr/local/bin/virtualenvwrapper.sh
+	mkvirtualenv OpenCV-"$cvVersion"-py3 -p python3
+	workon OpenCV-"$cvVersion"-py3
+	
+	# now install python libraries within this virtual environment
+	pip install numpy scipy matplotlib scikit-image scikit-learn ipython
+	
+	# quit virtual environment
+	deactivate
+	
+
+}
+
+bps_clone_opencv()
+{
+	cd ~
+	git clone https://github.com/opencv/opencv.git
+	cd opencv
+	git checkout $cvVersion
+	cd ..
+ 
+	git clone https://github.com/opencv/opencv_contrib.git
+	cd opencv_contrib
+	git checkout $cvVersion
+	cd ..
+	cd opencv
+	mkdir build
+	cd build
+	cmake -D CMAKE_BUILD_TYPE=RELEASE \
+            -D CMAKE_INSTALL_PREFIX=/usr/local \
+            -D INSTALL_C_EXAMPLES=OFF \
+            -D INSTALL_PYTHON_EXAMPLES=OFF \
+			-D BUILD_EXAMPLES=OFF \
+            -D WITH_TBB=ON \
+            -D WITH_V4L=ON \
+        	-D WITH_QT=ON \
+        	-D WITH_OPENGL=ON \
+			-D WITH_TBB=ON \
+			-D WITH_OPENMP=ON \
+			-D WITH_IPP=ON  \
+			-D WITH_NVCUVID=ON \
+			-D WITH_CUDA=ON \
+			-D BUILD_DOCS=OFF \
+			-D BUILD_PERF_TESTS=OFF \
+			-D BUILD_TESTS=OFF \
+			-D WITH_CSTRIPES=ON \
+			-D WITH_OPENCL=ON \
+			-D OPENCV_EXTRA_MODULES_PATH= ~/opencv_contrib/modules \
+			-D WITH_GSTREAMER_0_10=ON \
+			-D BUILD_opencv_dnn=ON \
+			..
+}
+
+bps_build()
+{
+	mkdir -p $BPS_PATH/build/
+	cd $BPS_PATH/build
+	cmake $BPS_PATH/
+	make -C $BPS_PATH/build/
+	echo "Completed"
+}
+
+bps_clean()
+{
+	rm -rf $BPS_PATH/bin
+	rm -rf $BPS_PATH/build
+	rm -rf $BPS_PATH/build/CMakeFiles
+	rm -f $BPS_PATH/build/CMakeCache.txt
+	rm -f $BPS_PATH/build/cmake_install.cmake
+	rm -f $BPS_PATH/build/Makefile
+}
+
+bps_install_opencv()
+{
+	cd ~/opencv/build
+	ex -sc '%s/CONF_SWAPSIZE=100/CONF_SWAPSIZE=1024/g|x' /etc/dphys-swapfile
+
+	sudo /etc/init.d/dphys-swapfile stop
+	sudo /etc/init.d/dphys-swapfile start
+	
+	make -j4
+	make install
+	
+	sudo mv /usr/local/lib/python3.5/dist-packages/cv2.cpython-35m-arm-linux-gnueabihf.so cv2.so
+	
+	ex -sc '%s/CONF_SWAPSIZE=1024/CONF_SWAPSIZE=100/g|x' /etc/dphys-swapfile
+
+	sudo /etc/init.d/dphys-swapfile stop
+	sudo /etc/init.d/dphys-swapfile start
+
+	line='bcm2835-v4l2'
+	file=/etc/modules-load.d/modules.conf
+	
+	if ! grep -q -x -F -e "$line" <"$file"; 
+	then
+	    echo "$line" >> "$file"
+	fi
+	sudo rpi-update
+}
+
+while test ${#} -gt 0; do
+    case "$1" in
+        build)
+            bps_build
+            ;;
+		clean)
+			bps_clean
+			;;
+		install_dependency)
+			bps_install_dependency
+			;;
+		run)
+			bps_run
+			;;
+		install_opencv)
+			bps_install_opencv
+			;;
+		clone_opencv)
+			bps_clone_opencv
+			;;
+		*)
+            echo "Unknown command: $1"
+            exit 1
+    esac
+    shift
+done
+
+exit 0
+
+#git config --global user.email "shawry.lk@gmail.com"
+#git config --global user.name "shawrylk"
+
