@@ -267,7 +267,7 @@ main (int argc, char *argv[])
           if (strncmp("LOGIN:pi:raspberry", buffer, 18) == 0)
             strncpy(buffer,"SUCCEED:",7);
           else
-            strncpy(buffer,"FAIL:",4)
+            strncpy(buffer,"FAIL:",4);
 
           rc = send(fds[i].fd, buffer, len, 0);
           if (rc < 0)
