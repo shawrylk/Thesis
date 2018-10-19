@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5.1)
 
 
-project(testUART)
+project(RaspiCamTest)
 
 
 find_package(Threads)
@@ -15,6 +15,7 @@ set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package( OpenCV REQUIRED )
+INCLUDE_DIRECTORIES( ${OpenCV_INCLUDE_DIRS} )
 add_executable(${PROJECT_NAME} ${SOURCES})
-add_definitions(-D WITH_GSTREAMER=ON)
-target_link_libraries(${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT} ${OpenCV_LIBS} -lwiringPi)
+#add_definitions(-D_MAIN_OI)
+target_link_libraries(${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT} ${OpenCV_LIBS})

@@ -1,9 +1,9 @@
 
-BPS_PATH=/home/shawry/Thesis/testRaspiCam
+BPS_PATH=/home/shawry/Thesis/RaspiCamTest
 
 bps_run()
 {
-	$BPS_PATH/bin/testRaspiCam
+	$BPS_PATH/bin/RaspiCamTest
 }
 
 bps_install()
