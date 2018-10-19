@@ -9,7 +9,7 @@
 #include <unistd.h>
 #include <string.h>
 
-#define SERVER_PORT  12345
+#define SERVER_PORT  22396
 
 #define TRUE             1
 #define FALSE            0
@@ -264,6 +264,11 @@ main (int argc, char *argv[])
           /*****************************************************/
           /* Echo the data back to the client                  */
           /*****************************************************/
+          if (strncmp("LOGIN:pi:raspberry", buffer, 18) == 0)
+            strncpy(buffer,"SUCCEED:",7);
+          else
+            strncpy(buffer,"FAIL:",4)
+
           rc = send(fds[i].fd, buffer, len, 0);
           if (rc < 0)
           {
