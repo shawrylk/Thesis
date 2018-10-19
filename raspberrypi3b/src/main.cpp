@@ -67,9 +67,9 @@ void captureFrame(void)
     VideoCapture video(0);
     if(!video.isOpened())
         std::cout << "Could not read video file" << endl; 
-    //video.set(CAP_PROP_FRAME_WIDTH,FRAME_WIDTH);
-	//video.set(CAP_PROP_FRAME_HEIGHT,FRAME_HEIGHT);
-    //video.set(CAP_PROP_FPS, FPS);
+    video.set(CAP_PROP_FRAME_WIDTH,FRAME_WIDTH);
+	video.set(CAP_PROP_FRAME_HEIGHT,FRAME_HEIGHT);
+    video.set(CAP_PROP_FPS, FPS);
     int count = 0;
     auto start = std::chrono::high_resolution_clock::now();
     float fps;
