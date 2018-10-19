@@ -15,7 +15,7 @@ using namespace std;
 ( std::ostringstream() << std::dec << x ) ).str()
 #define FRAME_WIDTH     480
 #define FRAME_HEIGHT    480
-#define FPS             90
+#define FPS             30
 #define H_MIN           26
 #define H_MAX           46
 #define S_MIN           22
