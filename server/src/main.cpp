@@ -1,226 +1,329 @@
-#include <opencv2/opencv.hpp>
-#include <opencv2/core/ocl.hpp>
-#include <thread>
-#include <semaphore.h>
-#include <unistd.h>
-#include <iostream>
-#include <chrono>
-#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/ioctl.h>
+#include <sys/poll.h>
 #include <sys/socket.h>
+#include <sys/time.h>
 #include <netinet/in.h>
-#include <poll.h>
-//#include "../hpp/bpsUARTData.hpp"
+#include <errno.h>
+#include <unistd.h>
+#include <string.h>
 
-using namespace cv;
-using namespace std;
- 
-// Convert to string
-#define SSTR( x ) static_cast< std::ostringstream & >( \
-( std::ostringstream() << std::dec << x ) ).str()
-#define FRAME_WIDTH     480
-#define FRAME_HEIGHT    480
-#define FPS             90
-#define H_MIN           26
-#define H_MAX           46
-#define S_MIN           22
-#define S_MAX           187
-#define V_MIN           217
-#define V_MAX           256
-#define MAX_NUM_OBJECTS 50
-#define MIN_OBJECT_AREA 20*20
-#define MAX_OBJECT_AREA FRAME_HEIGHT*FRAME_WIDTH/1.5
-#define RECT_SIZE       130
-#define THRESH_MAX      40
-sem_t semCaptureFrameCplt, semProcessFrameCplt, semThreshFrameCplt, semContourFrameCplt, semTrackingObjectCplt;
-bool bFoundObject = false;
-Mat frame, gray, thresh, contour;
-int8_t thresh_min = 6;
-vector< vector<Point> > contours;
-vector<Vec4i> hierarchy;
-int x,y;
+#define SERVER_PORT  12345
 
-void captureFrame(void);
-void processFrame(void);
-void threshFrame(void);
-void contourFrame(void);
-void showImage(void);
-void sendUARTData(void);
-void server(void);
-int main()
+#define TRUE             1
+#define FALSE            0
+
+main (int argc, char *argv[])
 {
-    cv::ocl::setUseOpenCL(false);
-    sem_init(&semCaptureFrameCplt, 0, 0);
-    sem_init(&semProcessFrameCplt, 0, 0);
-    sem_init(&semThreshFrameCplt, 0, 0);
-    sem_init(&semContourFrameCplt, 0, 0);
-    sem_init(&semTrackingObjectCplt, 0, 0);
-    //std::thread thread1(captureFrame);
-    //std::thread thread2(processFrame);
-    std::thread thread3(server);
-    //std::thread thread4(contourFrame);
-    //std::thread thread5(showImage);
-    //thread1.join();
-    //thread2.join();
-    thread3.join();
-    //thread4.join();
-    //thread5.join();
-    return 0;
-}
-void captureFrame(void)
-{
-    VideoCapture video(0);
-    if(!video.isOpened())
-        std::cout << "Could not read video file" << endl; 
-    video.set(CAP_PROP_FRAME_WIDTH,FRAME_WIDTH);
-	video.set(CAP_PROP_FRAME_HEIGHT,FRAME_HEIGHT);
-    video.set(CAP_PROP_FPS, FPS);
-    int count = 0;
-    auto start = std::chrono::high_resolution_clock::now();
-    float fps;
-    sleep(1);
-    while (1)
-    {
-        if (count == 0)
-            start = std::chrono::high_resolution_clock::now();
-        bool ok = video.read(frame); 
-        count++;
-        if (ok)
-        {    
-            sem_post(&semCaptureFrameCplt);
-        }
-        if (count == 1000)
-        {
-            auto end = std::chrono::high_resolution_clock::now();
-            auto diff = std::chrono::duration_cast<chrono::seconds>(end - start);
-            fps = 1000 / static_cast<double>(diff.count());
-            std::cout << "thread 1 " << fps << "\n";
-            count = 0;
-        }
-    }
-}
+  int    len, rc, on = 1;
+  int    listen_sd = -1, new_sd = -1;
+  int    desc_ready, end_server = FALSE, compress_array = FALSE;
+  int    close_conn;
+  char   buffer[80];
+  struct sockaddr_in6   addr;
+  int    timeout;
+  struct pollfd fds[200];
+  int    nfds = 1, current_size = 0, i, j;
 
-void processFrame(void)
-{
-    int count = 0;
-    auto start = std::chrono::high_resolution_clock::now();
-    float fps;
-    sleep(1);
-    while(1)
-    {     
-        if (count == 0)
-            start = std::chrono::high_resolution_clock::now();
-        count++;
-        sem_wait(&semCaptureFrameCplt);     
-        cvtColor(frame,gray,COLOR_BGR2GRAY);
-        threshold(gray,thresh,15,255,0);
-        findContours(thresh,contours,hierarchy,RETR_TREE,CHAIN_APPROX_SIMPLE );
-        double refArea = 0;
-	    bool objectFound = false;
-        double area;
-        int index;
-        if (hierarchy.size() > 0) 
-        {
-            int numObjects = hierarchy.size();
-            //if number of objects greater than MAX_NUM_OBJECTS we have a noisy filter
-            if(numObjects<MAX_NUM_OBJECTS)
-            {
-                for (index = 0; index >= 0; index = hierarchy[index][0]) 
-                {
-                    Moments moment = moments((cv::Mat)contours[index]);
-                    area = moment.m00;
-                    //if the area is less than 20 px by 20px then it is probably just noise
-                    //if the area is the same as the 3/2 of the image size, probably just a bad filter
-                    //we only want the object with the largest area so we safe a reference area each
-                    //iteration and compare it to the area in the next iteration.
-                    if(area>MIN_OBJECT_AREA && area<MAX_OBJECT_AREA && area>refArea)
-                    {
-                        x = moment.m10/area;
-                        y = moment.m01/area;
-                        bFoundObject = true;
-                        refArea = area;
-                    }
-                    else 
-                        bFoundObject = false;
+  /*************************************************************/
+  /* Create an AF_INET6 stream socket to receive incoming      */
+  /* connections on                                            */
+  /*************************************************************/
+  listen_sd = socket(AF_INET6, SOCK_STREAM, 0);
+  if (listen_sd < 0)
+  {
+    perror("socket() failed");
+    exit(-1);
+  }
 
+  /*************************************************************/
+  /* Allow socket descriptor to be reuseable                   */
+  /*************************************************************/
+  rc = setsockopt(listen_sd, SOL_SOCKET,  SO_REUSEADDR,
+                  (char *)&on, sizeof(on));
+  if (rc < 0)
+  {
+    perror("setsockopt() failed");
+    close(listen_sd);
+    exit(-1);
+  }
 
-                }
+  /*************************************************************/
+  /* Set socket to be nonblocking. All of the sockets for      */
+  /* the incoming connections will also be nonblocking since   */
+  /* they will inherit that state from the listening socket.   */
+  /*************************************************************/
+  rc = ioctl(listen_sd, FIONBIO, (char *)&on);
+  if (rc < 0)
+  {
+    perror("ioctl() failed");
+    close(listen_sd);
+    exit(-1);
+  }
 
-            }
-            else 
-            {
-                putText(frame,"TOO MUCH NOISE!",Point(0,50),1,2,Scalar(0,0,255),2);
-                thresh_min++;
-                if (thresh_min == THRESH_MAX)
-                    thresh_min = THRESH_MAX;
-            }
-        }
-        sem_post(&semProcessFrameCplt);
-        if (count == 1000)
-        {
-            auto end = std::chrono::high_resolution_clock::now();
-            auto diff = std::chrono::duration_cast<chrono::seconds>(end - start);
-            fps = 1000 / static_cast<double>(diff.count());
-            std::cout << "thread 2 " << fps << "\n";
-            count = 0;
-        }
-    }
-}
+  /*************************************************************/
+  /* Bind the socket                                           */
+  /*************************************************************/
+  memset(&addr, 0, sizeof(addr));
+  addr.sin6_family      = AF_INET6;
+  memcpy(&addr.sin6_addr, &in6addr_any, sizeof(in6addr_any));
+  addr.sin6_port        = htons(SERVER_PORT);
+  rc = bind(listen_sd,
+            (struct sockaddr *)&addr, sizeof(addr));
+  if (rc < 0)
+  {
+    perror("bind() failed");
+    close(listen_sd);
+    exit(-1);
+  }
 
-void showImage(void)
-{
-    int count = 0;
-    auto start = std::chrono::high_resolution_clock::now();
-    float fps;
-    Rect2d bbox;
-    sleep(1);
-    while(1)
-    {
-        sem_wait(&semProcessFrameCplt);
-        if (count == 0)
-            start = std::chrono::high_resolution_clock::now();
-        count++;
-        Rect2d bbox(x - RECT_SIZE/2, y - RECT_SIZE/2, RECT_SIZE, RECT_SIZE); 
-        rectangle(frame, bbox, Scalar( 255, 0, 0 ), 2, 1 ); 
-        imshow("frame", frame);
-        waitKey(1);
-        if (count == 1000)
-        {
-            auto end = std::chrono::system_clock::now();
-            auto diff = std::chrono::duration_cast<chrono::seconds>(end - start);
-            fps = 1000 / static_cast<double>(diff.count());
-            std::cout << "thread 5 " << fps << "\n";
-            count = 0;
-        }
-    }
-}
+  /*************************************************************/
+  /* Set the listen back log                                   */
+  /*************************************************************/
+  rc = listen(listen_sd, 32);
+  if (rc < 0)
+  {
+    perror("listen() failed");
+    close(listen_sd);
+    exit(-1);
+  }
 
-void server()
-{
-    int listen_sd, rc;
-    listen_sd = socket(AF_INET, SOCK_STREAM, 0);
-    if (listen_sd < 0)
-    {
-        std::cout << "open socket fails \n";
-    }
+  /*************************************************************/
+  /* Initialize the pollfd structure                           */
+  /*************************************************************/
+  memset(fds, 0 , sizeof(fds));
 
-    struct sockaddr_in addr;
-    memset(&addr, 0, sizeof(addr));
-    addr.sin_family = AF_INET;
-    addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    addr.sin_port = htons(22396);
-    int opt = 1;
-    rc = setsockopt(listen_sd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt));
+  /*************************************************************/
+  /* Set up the initial listening socket                        */
+  /*************************************************************/
+  fds[0].fd = listen_sd;
+  fds[0].events = POLLIN;
+  /*************************************************************/
+  /* Initialize the timeout to 3 minutes. If no                */
+  /* activity after 3 minutes this program will end.           */
+  /* timeout value is based on milliseconds.                   */
+  /*************************************************************/
+  timeout = (3 * 60 * 1000);
+
+  /*************************************************************/
+  /* Loop waiting for incoming connects or for incoming data   */
+  /* on any of the connected sockets.                          */
+  /*************************************************************/
+  do
+  {
+    /***********************************************************/
+    /* Call poll() and wait 3 minutes for it to complete.      */
+    /***********************************************************/
+    printf("Waiting on poll()...\n");
+    rc = poll(fds, nfds, timeout);
+
+    /***********************************************************/
+    /* Check to see if the poll call failed.                   */
+    /***********************************************************/
     if (rc < 0)
     {
-        std::cout << "set socket fails \n";
+      perror("  poll() failed");
+      break;
     }
-    rc = bind(listen_sd, (struct sockaddr *)&addr, sizeof(addr));
-    if (rc < 0)
-    {
-        std::cout << "bind fails \n";
-    }
-    while(1)
-    {
 
+    /***********************************************************/
+    /* Check to see if the 3 minute time out expired.          */
+    /***********************************************************/
+    if (rc == 0)
+    {
+      printf("  poll() timed out.  End program.\n");
+      break;
     }
+
+
+    /***********************************************************/
+    /* One or more descriptors are readable.  Need to          */
+    /* determine which ones they are.                          */
+    /***********************************************************/
+    current_size = nfds;
+    for (i = 0; i < current_size; i++)
+    {
+      /*********************************************************/
+      /* Loop through to find the descriptors that returned    */
+      /* POLLIN and determine whether it's the listening       */
+      /* or the active connection.                             */
+      /*********************************************************/
+      if(fds[i].revents == 0)
+        continue;
+
+      /*********************************************************/
+      /* If revents is not POLLIN, it's an unexpected result,  */
+      /* log and end the server.                               */
+      /*********************************************************/
+      if(fds[i].revents != POLLIN)
+      {
+        printf("  Error! revents = %d\n", fds[i].revents);
+        end_server = TRUE;
+        break;
+
+      }
+      if (fds[i].fd == listen_sd)
+      {
+        /*******************************************************/
+        /* Listening descriptor is readable.                   */
+        /*******************************************************/
+        printf("  Listening socket is readable\n");
+
+        /*******************************************************/
+        /* Accept all incoming connections that are            */
+        /* queued up on the listening socket before we         */
+        /* loop back and call poll again.                      */
+        /*******************************************************/
+        do
+        {
+          /*****************************************************/
+          /* Accept each incoming connection. If               */
+          /* accept fails with EWOULDBLOCK, then we            */
+          /* have accepted all of them. Any other              */
+          /* failure on accept will cause us to end the        */
+          /* server.                                           */
+          /*****************************************************/
+          new_sd = accept(listen_sd, NULL, NULL);
+          if (new_sd < 0)
+          {
+            if (errno != EWOULDBLOCK)
+            {
+              perror("  accept() failed");
+              end_server = TRUE;
+            }
+            break;
+          }
+
+          /*****************************************************/
+          /* Add the new incoming connection to the            */
+          /* pollfd structure                                  */
+          /*****************************************************/
+          printf("  New incoming connection - %d\n", new_sd);
+          fds[nfds].fd = new_sd;
+          fds[nfds].events = POLLIN;
+          nfds++;
+
+          /*****************************************************/
+          /* Loop back up and accept another incoming          */
+          /* connection                                        */
+          /*****************************************************/
+        } while (new_sd != -1);
+      }
+
+      /*********************************************************/
+      /* This is not the listening socket, therefore an        */
+      /* existing connection must be readable                  */
+      /*********************************************************/
+
+      else
+      {
+        printf("  Descriptor %d is readable\n", fds[i].fd);
+        close_conn = FALSE;
+        /*******************************************************/
+        /* Receive all incoming data on this socket            */
+        /* before we loop back and call poll again.            */
+        /*******************************************************/
+
+        do
+        {
+          /*****************************************************/
+          /* Receive data on this connection until the         */
+          /* recv fails with EWOULDBLOCK. If any other         */
+          /* failure occurs, we will close the                 */
+          /* connection.                                       */
+          /*****************************************************/
+          rc = recv(fds[i].fd, buffer, sizeof(buffer), 0);
+          if (rc < 0)
+          {
+            if (errno != EWOULDBLOCK)
+            {
+              perror("  recv() failed");
+              close_conn = TRUE;
+            }
+            break;
+          }
+
+          /*****************************************************/
+          /* Check to see if the connection has been           */
+          /* closed by the client                              */
+          /*****************************************************/
+          if (rc == 0)
+          {
+            printf("  Connection closed\n");
+            close_conn = TRUE;
+            break;
+          }
+
+          /*****************************************************/
+          /* Data was received                                 */
+          /*****************************************************/
+          len = rc;
+          printf("  %d bytes received\n", len);
+
+          /*****************************************************/
+          /* Echo the data back to the client                  */
+          /*****************************************************/
+          rc = send(fds[i].fd, buffer, len, 0);
+          if (rc < 0)
+          {
+            perror("  send() failed");
+            close_conn = TRUE;
+            break;
+          }
+
+        } while(TRUE);
+
+        /*******************************************************/
+        /* If the close_conn flag was turned on, we need       */
+        /* to clean up this active connection. This            */
+        /* clean up process includes removing the              */
+        /* descriptor.                                         */
+        /*******************************************************/
+        if (close_conn)
+        {
+          close(fds[i].fd);
+          fds[i].fd = -1;
+          compress_array = TRUE;
+        }
+
+
+      }  /* End of existing connection is readable             */
+    } /* End of loop through pollable descriptors              */
+
+    /***********************************************************/
+    /* If the compress_array flag was turned on, we need       */
+    /* to squeeze together the array and decrement the number  */
+    /* of file descriptors. We do not need to move back the    */
+    /* events and revents fields because the events will always*/
+    /* be POLLIN in this case, and revents is output.          */
+    /***********************************************************/
+    if (compress_array)
+    {
+      compress_array = FALSE;
+      for (i = 0; i < nfds; i++)
+      {
+        if (fds[i].fd == -1)
+        {
+          for(j = i; j < nfds; j++)
+          {
+            fds[j].fd = fds[j+1].fd;
+          }
+          i--;
+          nfds--;
+        }
+      }
+    }
+
+  } while (end_server == FALSE); /* End of serving running.    */
+
+  /*************************************************************/
+  /* Clean up all of the sockets that are open                 */
+  /*************************************************************/
+  for (i = 0; i < nfds; i++)
+  {
+    if(fds[i].fd >= 0)
+      close(fds[i].fd);
+  }
 }
+
