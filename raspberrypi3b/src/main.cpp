@@ -15,7 +15,7 @@ using namespace std;
 ( std::ostringstream() << std::dec << x ) ).str()
 #define FRAME_WIDTH     480
 #define FRAME_HEIGHT    480
-#define FPS             30
+#define FPS             90
 #define H_MIN           26
 #define H_MAX           46
 #define S_MIN           22
@@ -67,9 +67,9 @@ void captureFrame(void)
     VideoCapture video(0);
     if(!video.isOpened())
         std::cout << "Could not read video file" << endl; 
-    video.set(CAP_PROP_FRAME_WIDTH,FRAME_WIDTH);
-	video.set(CAP_PROP_FRAME_HEIGHT,FRAME_HEIGHT);
-    video.set(CAP_PROP_FPS, FPS);
+    //video.set(CAP_PROP_FRAME_WIDTH,FRAME_WIDTH);
+	//video.set(CAP_PROP_FRAME_HEIGHT,FRAME_HEIGHT);
+    //video.set(CAP_PROP_FPS, FPS);
     int count = 0;
     auto start = std::chrono::high_resolution_clock::now();
     float fps;
