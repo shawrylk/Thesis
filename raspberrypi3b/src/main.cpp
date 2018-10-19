@@ -22,7 +22,7 @@ using namespace std;
 #define S_MAX           187
 #define V_MIN           217
 #define V_MAX           256
-#define MAX_NUM_OBJECTS 50
+#define MAX_NUM_OBJECTS 100
 #define MIN_OBJECT_AREA 20*20
 #define MAX_OBJECT_AREA FRAME_HEIGHT*FRAME_WIDTH/1.5
 #define RECT_SIZE       130
@@ -177,7 +177,7 @@ void showImage(void)
         count++;
         Rect2d bbox(x - RECT_SIZE/2, y - RECT_SIZE/2, RECT_SIZE, RECT_SIZE); 
         rectangle(frame, bbox, Scalar( 255, 0, 0 ), 2, 1 ); 
-        imshow("frame", thresh);
+        imshow("frame", frame);
         waitKey(1);
         if (count == 1000)
         {
