@@ -108,7 +108,7 @@ void processFrame(void)
         count++;
         sem_wait(&semCaptureFrameCplt);     
         cvtColor(frame,gray,COLOR_BGR2GRAY);
-        threshold(gray,thresh,12,255,0);
+        threshold(gray,thresh,16,255,0);
         findContours(thresh,contours,hierarchy,RETR_TREE,CHAIN_APPROX_SIMPLE );
         double refArea = 0;
 	    bool objectFound = false;
@@ -177,7 +177,7 @@ void showImage(void)
         count++;
         Rect2d bbox(x - RECT_SIZE/2, y - RECT_SIZE/2, RECT_SIZE, RECT_SIZE); 
         rectangle(frame, bbox, Scalar( 255, 0, 0 ), 2, 1 ); 
-        imshow("frame", frame);
+        imshow("frame", thresh);
         waitKey(1);
         if (count == 1000)
         {
