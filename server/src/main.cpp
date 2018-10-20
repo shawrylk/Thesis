@@ -8,7 +8,7 @@
 #include <errno.h>
 #include <unistd.h>
 #include <string.h>
-
+#include "../hpp/bpsUARTData.hpp"
 #define SERVER_PORT  22396
 
 #define TRUE             1
@@ -20,12 +20,13 @@ main (int argc, char *argv[])
   int    listen_sd = -1, new_sd = -1;
   int    desc_ready, end_server = FALSE, compress_array = FALSE;
   int    close_conn;
-  char   buffer[80];
+  char   buffer[40];
   struct sockaddr_in6   addr;
   int    timeout;
   struct pollfd fds[200];
   int    nfds = 1, current_size = 0, i, j;
-
+  bpsUARTReceiveDataTypeDef recvData;
+  int16_t						ballCoordinate[BPS_NUMBER_OF_AXIS] = { 240, 240};
   /*************************************************************/
   /* Create an AF_INET6 stream socket to receive incoming      */
   /* connections on                                            */
@@ -116,7 +117,7 @@ main (int argc, char *argv[])
     /* Call poll() and wait 3 minutes for it to complete.      */
     /***********************************************************/
     printf("Waiting on poll()...\n");
-    rc = poll(fds, nfds, timeout);
+    rc = poll(fds, nfds, -1);
 
     /***********************************************************/
     /* Check to see if the poll call failed.                   */
@@ -200,40 +201,7 @@ main (int argc, char *argv[])
           /* pollfd structure                                  */
           /*****************************************************/
           printf("  New incoming connection - %d\n", new_sd);
-          fds[nfds].fd = new_sd;
-          fds[nfds].events = POLLIN;
-          nfds++;
-
-          /*****************************************************/
-          /* Loop back up and accept another incoming          */
-          /* connection                                        */
-          /*****************************************************/
-        } while (new_sd != -1);
-      }
-
-      /*********************************************************/
-      /* This is not the listening socket, therefore an        */
-      /* existing connection must be readable                  */
-      /*********************************************************/
-
-      else
-      {
-        printf("  Descriptor %d is readable\n", fds[i].fd);
-        close_conn = FALSE;
-        /*******************************************************/
-        /* Receive all incoming data on this socket            */
-        /* before we loop back and call poll again.            */
-        /*******************************************************/
-
-        do
-        {
-          /*****************************************************/
-          /* Receive data on this connection until the         */
-          /* recv fails with EWOULDBLOCK. If any other         */
-          /* failure occurs, we will close the                 */
-          /* connection.                                       */
-          /*****************************************************/
-          rc = recv(fds[i].fd, buffer, sizeof(buffer), 0);
+          rc = recv(new_sd, buffer, sizeof(buffer), 0);
           if (rc < 0)
           {
             if (errno != EWOULDBLOCK)
@@ -265,11 +233,87 @@ main (int argc, char *argv[])
           /* Echo the data back to the client                  */
           /*****************************************************/
           if (strncmp("LOGIN:pi:raspberry", buffer, 18) == 0)
+          {
             strncpy(buffer,"SUCCEED:",8);
+            fds[nfds].fd = new_sd;
+            fds[nfds].events = POLLIN;
+            nfds++;
+          }
           else
             strncpy(buffer,"FAIL:",5);
 
-          rc = send(fds[i].fd, buffer, len, 0);
+          rc = send(new_sd, buffer, len, 0);
+          if (rc < 0)
+          {
+            perror("  send() failed");
+            close_conn = TRUE;
+            break;
+          }
+          new_sd = -1;
+
+          /*****************************************************/
+          /* Loop back up and accept another incoming          */
+          /* connection                                        */
+          /*****************************************************/
+        } while (new_sd != -1);
+      }
+
+      /*********************************************************/
+      /* This is not the listening socket, therefore an        */
+      /* existing connection must be readable                  */
+      /*********************************************************/
+
+      else
+      {
+        printf("  Descriptor %d is readable\n", fds[i].fd);
+        close_conn = FALSE;
+        /*******************************************************/
+        /* Receive all incoming data on this socket            */
+        /* before we loop back and call poll again.            */
+        /*******************************************************/
+
+        do
+        {
+          /*****************************************************/
+          /* Receive data on this connection until the         */
+          /* recv fails with EWOULDBLOCK. If any other         */
+          /* failure occurs, we will close the                 */
+          /* connection.                                       */
+          /*****************************************************/
+          rc = recv(fds[i].fd, &recvData, sizeof(bpsUARTReceiveDataTypeDef), 0);
+          if (rc < 0)
+          {
+            if (errno != EWOULDBLOCK)
+            {
+              perror("  recv() failed");
+              close_conn = TRUE;
+            }
+            break;
+          }
+
+          /*****************************************************/
+          /* Check to see if the connection has been           */
+          /* closed by the client                              */
+          /*****************************************************/
+          if (rc == 0)
+          {
+            printf("  Connection closed\n");
+            close_conn = TRUE;
+            break;
+          }
+
+          /*****************************************************/
+          /* Data was received                                 */
+          /*****************************************************/
+          len = rc;
+          printf("  %d bytes received\n", len);
+          std::cout << recvData.command << std::endl;
+          /*****************************************************/
+          /* Echo the data back to the client                  */
+          /*****************************************************/
+         
+
+          rc = send(fds[i].fd, &ballCoordinate, sizeof(ballCoordinate), 0);
           if (rc < 0)
           {
             perror("  send() failed");
