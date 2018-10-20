@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <string.h>
 #include "../hpp/bpsUARTData.hpp"
+#include <iostream>
 #define SERVER_PORT  22396
 
 #define TRUE             1
