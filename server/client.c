@@ -7,9 +7,11 @@
 #include <string.h> 
 #include <arpa/inet.h>
 #include "./hpp/bpsUARTData.hpp"
-#define PORT 12345
+#include <iostream>
+#define PORT 22396
    
 bpsUARTSendDataTypeDef sendData;
+ int16_t						ballCoordinate[BPS_NUMBER_OF_AXIS];
 int main(int argc, char const *argv[]) 
 { 
     struct sockaddr_in address; 
@@ -29,7 +31,7 @@ int main(int argc, char const *argv[])
     serv_addr.sin_port = htons(PORT); 
        
     // Convert IPv4 and IPv6 addresses from text to binary form 
-    if(inet_pton(AF_INET, "192.168.1.116", &serv_addr.sin_addr)<=0)  
+    if(inet_pton(AF_INET, "192.168.0.16", &serv_addr.sin_addr)<=0)  
     { 
         printf("\nInvalid address/ Address not supported \n"); 
         return -1; 
@@ -48,7 +50,11 @@ int main(int argc, char const *argv[])
     sendData.ballCoordinate[BPS_X_AXIS] = 120;
     sendData.ballCoordinate[BPS_Y_AXIS] = 120;
     send(sock , &sendData , sizeof(bpsUARTSendDataTypeDef) , 0 ); 
-    while(1);
+    while(1)
+    {
+        valread = read( sock , &ballCoordinate, sizeof(ballCoordinate); 
+        std::cout << "x = " << ballCoordinate[BPS_X_AXIS] << " y = " << ballCoordinate[BPS_Y_AXIS] << "\n";
+    }
     return 0; 
 } 
 

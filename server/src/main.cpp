@@ -308,6 +308,8 @@ main (int argc, char *argv[])
           /*****************************************************/
           len = rc;
           printf("  %d bytes received\n", len);
+          std::cout << "x: " << recvData.ballCoordinate[BPS_X_AXIS] << std::endl;
+          std::cout << "y: " << recvData.ballCoordinate[BPS_Y_AXIS] << std::endl;
           std::cout << recvData.command << std::endl;
           /*****************************************************/
           /* Echo the data back to the client                  */
