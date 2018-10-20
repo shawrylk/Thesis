@@ -56,7 +56,7 @@ int main(int argc, char const *argv[])
         send(sock , &sendData , sizeof(bpsUARTSendDataTypeDef) , 0 ); 
         valread = read( sock , &ballCoordinate, sizeof(ballCoordinate)); 
         printf("x = %d; y = %d\n" ,ballCoordinate[BPS_X_AXIS] ,ballCoordinate[BPS_Y_AXIS] );
-        sleep(1);
+        usleep(100);
     }
     return 0; 
 } 
