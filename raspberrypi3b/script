@@ -17,21 +17,19 @@ bps_install_dependency()
 	cd ~
 	sudo apt-get purge wolfram-engine -y
 	sudo apt-get purge libreoffice* -y
-	sudo apt-get remove x264 libx264-dev
-	sudo apt-get clean
-	sudo apt-get autoremove	
-	sudo apt-get update 
-	sudo apt-get upgrade
-	sudo apt-get upgrade --fix-missing
+	sudo apt-get remove x264 libx264-dev -y
+	sudo apt-get clean -y
+	sudo apt-get autoremove	 -y
+	sudo apt-get update  -y
+	sudo apt-get upgrade -y
+	sudo apt-get upgrade --fix-missing -y
 
 	sudo apt-get install build-essential checkinstall cmake pkg-config yasm -y
 	sudo apt-get install git gfortran -y
 	sudo apt-get install libjpeg8-dev libjasper-dev libpng12-dev -y
 	
-	# If you are using Ubuntu 14.04
-	sudo apt-get install libtiff4-dev
 	# If you are using Ubuntu 16.04
-	sudo apt-get install libtiff5-dev
+	sudo apt-get install libtiff5-dev -y
 	
 	sudo apt-get install libavcodec-dev libavformat-dev libswscale-dev libdc1394-22-dev -y
 	sudo apt-get install libxine2-dev libv4l-dev -y
