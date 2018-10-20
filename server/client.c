@@ -7,7 +7,7 @@
 #include <string.h> 
 #include <arpa/inet.h>
 #include "./hpp/bpsUARTData.hpp"
-#include <iostream>
+#include <unistd.h>
 #define PORT 22396
    
 bpsUARTSendDataTypeDef sendData;
@@ -52,8 +52,11 @@ int main(int argc, char const *argv[])
     send(sock , &sendData , sizeof(bpsUARTSendDataTypeDef) , 0 ); 
     while(1)
     {
-        valread = read( sock , &ballCoordinate, sizeof(ballCoordinate); 
-        std::cout << "x = " << ballCoordinate[BPS_X_AXIS] << " y = " << ballCoordinate[BPS_Y_AXIS] << "\n";
+        printf("size of UART %ld",sizeof(bpsUARTSendDataTypeDef));
+        send(sock , &sendData , sizeof(bpsUARTSendDataTypeDef) , 0 ); 
+        valread = read( sock , &ballCoordinate, sizeof(ballCoordinate)); 
+        printf("x = %d; y = %d\n" ,ballCoordinate[BPS_X_AXIS] ,ballCoordinate[BPS_Y_AXIS] );
+        sleep(1);
     }
     return 0; 
 } 

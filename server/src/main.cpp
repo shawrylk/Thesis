@@ -281,7 +281,7 @@ main (int argc, char *argv[])
           /* failure occurs, we will close the                 */
           /* connection.                                       */
           /*****************************************************/
-          rc = recv(fds[i].fd, &recvData, sizeof(bpsUARTReceiveDataTypeDef), 0);
+          rc = recv(fds[i].fd, &recvData, 60, 0);
           if (rc < 0)
           {
             if (errno != EWOULDBLOCK)
