@@ -113,7 +113,7 @@ main (int argc, char *argv[])
             }
             break;
           }
-          std::cout << "about to recv\n";
+          //std::cout << "about to recv\n";
           rc = recv(new_sd, buffer, sizeof(buffer), 0);
           if (rc < 0)
           {
@@ -157,7 +157,7 @@ main (int argc, char *argv[])
               }
             }
           while (rc <= 0);
-          std::cout << "sent\n";
+          //std::cout << "sent\n";
           new_sd = -1;
         } while (new_sd != -1);
       }
