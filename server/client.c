@@ -62,16 +62,16 @@ int main(int argc, char const *argv[])
     int count = 0;
     while(1)
     {
-        if (count == 200)
-        {
+        // if (count == 200)
+        // {
             sendData.content.circleProperties.centerCoordinate[BPS_X_AXIS]++;
             sendData.content.circleProperties.centerCoordinate[BPS_Y_AXIS]++;
             sendData.content.circleProperties.radius+=0.01;
             sendData.content.circleProperties.speed+=1;
             send(sock , &sendData , sizeof(bpsUARTSendDataTypeDef) , 0 ); 
-            count = 0;
-        }
-        count++;
+        //    count = 0;
+        // }
+        // count++;
         //printf("size of UART %ld",sizeof(bpsUARTSendDataTypeDef));
         //send(sock , &sendData , sizeof(bpsUARTSendDataTypeDef) , 0 ); 
         valread = recv( sock , &ballCoordinate, sizeof(ballCoordinate),0); 
