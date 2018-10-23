@@ -5,8 +5,8 @@
 #include <unistd.h>
 #include <iostream>
 #include <chrono>
-//#include "../hpp/bpsUARTData.hpp"
-
+#include "../hpp/bpsUARTData.hpp"
+#include "../hpp/bpsServer.hpp"
 using namespace cv;
 using namespace std;
  
@@ -27,7 +27,7 @@ using namespace std;
 #define MAX_OBJECT_AREA FRAME_HEIGHT*FRAME_WIDTH/1.5
 #define RECT_SIZE       130
 #define THRESH_MAX      40
-sem_t semCaptureFrameCplt, semProcessFrameCplt, semThreshFrameCplt, semContourFrameCplt, semTrackingObjectCplt;
+sem_t semCaptureFrameCplt, semProcessFrameCplt, semSendDataCplt, semContourFrameCplt, semTrackingObjectCplt;
 bool bFoundObject = false;
 Mat frame, gray, thresh, contour;
 int8_t thresh_min = 6;
@@ -37,27 +37,27 @@ int x,y;
 
 void captureFrame(void);
 void processFrame(void);
-void threshFrame(void);
-void contourFrame(void);
 void showImage(void);
-void sendUARTData(void);
+void server(void)
+int sendFunc (char *sendData, int sendLen);
+int recvFunc (char *recvData, int recvLen);
 
 int main()
 {
     cv::ocl::setUseOpenCL(false);
     sem_init(&semCaptureFrameCplt, 0, 0);
     sem_init(&semProcessFrameCplt, 0, 0);
-    sem_init(&semThreshFrameCplt, 0, 0);
+    sem_init(&semSendDataCplt, 0, 0);
     sem_init(&semContourFrameCplt, 0, 0);
     sem_init(&semTrackingObjectCplt, 0, 0);
     std::thread thread1(captureFrame);
     std::thread thread2(processFrame);
-    //std::thread thread3(threshFrame);
+    std::thread thread3(server);
     //std::thread thread4(contourFrame);
     std::thread thread5(showImage);
     thread1.join();
     thread2.join();
-    //thread3.join();
+    thread3.join();
     //thread4.join();
     thread5.join();
     return 0;
@@ -171,7 +171,7 @@ void showImage(void)
     sleep(1);
     while(1)
     {
-        sem_wait(&semProcessFrameCplt);
+        sem_wait(&semSendDataCplt);
         if (count == 0)
             start = std::chrono::high_resolution_clock::now();
         count++;
@@ -190,3 +190,36 @@ void showImage(void)
     }
 }
 
+void server(void)
+{
+    Server server((char *)"pi",(char *)"raspberry",4,60);
+    std::cout << server.Start(sendFunc, recvFunc) << "\n";
+}
+
+int sendFunc (char *sendData, int sendLen)
+{
+    sem_wait(&semProcessFrameCplt);
+    bpsPointTypeDef *data = (bpsPointTypeDef*)sendData;
+    data->setpointCoordinate[BPS_X_AXIS] = x;
+    data->setpointCoordinate[BPS_Y_AXIS] = y;
+    sem_post(&semSendDataCplt);
+}
+
+int recvFunc (char *recvData, int recvLen)
+{
+    bpsUARTReceiveDataTypeDef *data = (bpsUARTReceiveDataTypeDef*)recvData ;
+    switch (data->command)
+    {
+        case  BPS_MODE_CIRCLE:
+        std::cout << "circle mode \n";
+        std::cout << "x: " << data->content.circleProperties.centerCoordinate[BPS_X_AXIS] << std::endl;
+        std::cout << "y: " << data->content.circleProperties.centerCoordinate[BPS_Y_AXIS] << std::endl;
+        std::cout << "r: " << data->content.circleProperties.radius << std::endl;
+        std::cout << "s: " << data->content.circleProperties.speed << std::endl;
+        break;
+        default:
+        std::cout << "other mode \n";
+        break;
+    }
+    return 0;
+}
