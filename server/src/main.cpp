@@ -135,7 +135,7 @@ main (int argc, char *argv[])
           printf("%s",(char*)buff);
           std::cout << "get here\n";
           try {
-            if (strncmp(loginString.c_str(), (char*)buff, loginString.length()) == 0)
+            if (strncmp("LOGIN:pi:raspberry:" , (char*)buff, 19) == 0)
             {
               std::cout<< "cant get here\n";
               len = 8;
