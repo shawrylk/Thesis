@@ -149,7 +149,7 @@ main (int argc, char *argv[])
               close_conn = TRUE;
             }
           }
-          catch (Exception e)
+          catch (std::exception e)
           {
             std::cout << "recv fails: " + e.message << "\n";
           }
