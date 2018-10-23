@@ -133,7 +133,7 @@ main (int argc, char *argv[])
           
           std::cout << " adbout here\n";
           try {
-            if (strncmp(loginString.c_str(), &buff, loginString.length()) == 0)
+            if (strncmp(loginString.c_str(), buff, loginString.length()) == 0)
             {
               std::cout<< "cant get here\n";
               len = 8;
