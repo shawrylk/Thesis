@@ -22,7 +22,7 @@ main (int argc, char *argv[])
   int    listen_sd = -1, new_sd = -1;
   int    desc_ready, end_server = FALSE, compress_array = FALSE;
   int    close_conn;
-  char   buffer[40];
+  char   buffer[19];
   struct sockaddr_in6   addr;
   struct pollfd fds[3];
   int    nfds = 1, current_size = 0, i, j;
@@ -108,40 +108,52 @@ main (int argc, char *argv[])
           {
             if (errno != EWOULDBLOCK)
             {
-              std::cerr << "  accept() failed";
+              std::cout << "  accept() failed";
               end_server = TRUE;
+              break;
             }
-            break;
+            
           }
-          //std::cout << "about to recv\n";
-          rc = recv(new_sd, buffer, sizeof(buffer), 0);
-          if (rc < 0)
+          std::cout << "about to recv\n";
+          do
           {
-            if (errno != EWOULDBLOCK)
-            {
-              std::cerr << "  recv() failed";
-              close_conn = TRUE;
-            }
-            break;
-          }
-          if (rc == 0)
-          {
-            std::cout << "  Connection closed\n";
-            close_conn = TRUE;
-            break;
-          }
+			  rc = recv(new_sd, buffer, sizeof(buffer), 0);
+			  std::cout << "again\n";
+			  if (rc < 0)
+			  {
+				if (errno != EWOULDBLOCK)
+				{
+				  std::cout << "  recv() failed";
+				  close_conn = TRUE;
+				  break;
+				}
+				
+			  }
+
+			  if (rc == 0)
+			  {
+				std::cout << "  Connection closed\n";
+				close_conn = TRUE;
+				break;
+			  }
+		  } while (rc <= 0);
+          
           if (strncmp(loginString.c_str(), buffer, loginString.length()) == 0)
           {
+			  std::cout<< "here\n";
             len = 8;
             strncpy(buffer,"SUCCEED:",len);
             fds[nfds].fd = new_sd;
             fds[nfds].events = POLLIN;
             nfds++;
+            std::cout << "SUCCEED\n";
           }
           else
           {
-            len = 5;
-            strncpy(buffer,"FAIL:",len);
+            len = 8;
+            strncpy(buffer,"LOGFAIL:",len);
+            std::cout << "FAIL\n";
+            close_conn = TRUE;
           }
           do
             {
@@ -150,14 +162,14 @@ main (int argc, char *argv[])
               {
                 if (errno != EWOULDBLOCK)
                 {
-                  std::cerr << "  send() failed";
+                  std::cout << "  send() failed";
                   close_conn = TRUE;
                   break;
                 }
               }
             }
           while (rc <= 0);
-          //std::cout << "sent\n";
+          std::cout << "sent\n";
           new_sd = -1;
         } while (new_sd != -1);
       }
@@ -225,6 +237,7 @@ main (int argc, char *argv[])
           close(fds[i].fd);
           fds[i].fd = -1;
           compress_array = TRUE;
+          printf("closed con\n");
         }
 
 
@@ -245,6 +258,7 @@ main (int argc, char *argv[])
           nfds--;
         }
       }
+      printf("compressed\n");
     }
 
   } while (end_server == FALSE); /* End of serving running.    */
