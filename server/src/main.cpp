@@ -23,6 +23,7 @@ main (int argc, char *argv[])
   int    desc_ready, end_server = FALSE, compress_array = FALSE;
   int    close_conn;
   char   buffer[40];
+  int size = 40;
   struct sockaddr_in6   addr;
   struct pollfd fds[3];
   int    nfds = 1, current_size = 0, i, j;
@@ -166,6 +167,7 @@ main (int argc, char *argv[])
               }
             }
           } while (rc <= 0);
+          memset(buffer, 0, size);
           std::cout << "sent\n";
           new_sd = -1;
         } while (new_sd != -1);
