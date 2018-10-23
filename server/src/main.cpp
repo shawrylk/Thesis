@@ -127,7 +127,7 @@ main (int argc, char *argv[])
             break;
             }
 		      } while (rc <= 0);
-          
+          std::cout << "about here\n";
           try {
             if (strncmp("LOGIN:pi:raspberry:" , (char*)buff, 19) == 0)
             {
