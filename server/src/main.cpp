@@ -27,7 +27,6 @@ main (int argc, char *argv[])
   struct sockaddr_in6   addr;
   struct pollfd fds[3];
   int    nfds = 1, current_size = 0, i, j;
-  std::string   loginString = "LOGIN:pi:raspberry:";
   bpsUARTReceiveDataTypeDef recvData;
   int16_t						ballCoordinate[BPS_NUMBER_OF_AXIS] = { 0, 0};
 
@@ -112,7 +111,6 @@ main (int argc, char *argv[])
           do
           {
             rc = recv(new_sd, buff, sizeof(buff), 0);
-            std::cout << "again\n";
             if (rc < 0)
             {
               if (errno != EWOULDBLOCK)
@@ -131,9 +129,6 @@ main (int argc, char *argv[])
             }
 		      } while (rc <= 0);
           
-          std::cout << " adbout here\n";
-          printf("%s",(char*)buff);
-          std::cout << "get here\n";
           try {
             if (strncmp("LOGIN:pi:raspberry:" , (char*)buff, 19) == 0)
             {
@@ -170,13 +165,11 @@ main (int argc, char *argv[])
             }
           } while (rc <= 0);
           memset(buff, 0, size);
-          std::cout << "sent\n";
           new_sd = -1;
         } while (new_sd != -1);
       }
       else
       {
-        printf("  Descriptor %d is readable\n", fds[i].fd);
         close_conn = FALSE;
         do
         {
@@ -193,7 +186,7 @@ main (int argc, char *argv[])
           }
           if (rc == 0)
           {
-            printf("  Connection closed\n");
+            std::cout << "  Connection closed\n";
             close_conn = TRUE;
             break;
           }
@@ -238,7 +231,6 @@ main (int argc, char *argv[])
           close(fds[i].fd);
           fds[i].fd = -1;
           compress_array = TRUE;
-          printf("closed con\n");
         }
 
 
@@ -246,7 +238,6 @@ main (int argc, char *argv[])
     } /* End of loop through pollable descriptors              */
     if (compress_array)
     {
-      std::cout << "before nfds = " << nfds << " i = " << i << "\n";
       compress_array = FALSE;
       for (i = 0; i < nfds; i++)
       {
@@ -258,10 +249,8 @@ main (int argc, char *argv[])
           }
           i--;
           nfds--;
-          std::cout << "after nfds = " << nfds << " i = " << i << "\n";
         }
       }
-      printf("compressed\n");
     }
 
   } while (end_server == FALSE); /* End of serving running.    */
