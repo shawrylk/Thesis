@@ -232,6 +232,7 @@ main (int argc, char *argv[])
           close(fds[i].fd);
           fds[i].fd = -1;
           compress_array = TRUE;
+          std::cout <<"close con\n";
         }
 
 
@@ -250,6 +251,7 @@ main (int argc, char *argv[])
           }
           i--;
           nfds--;
+          std::cout << "compressed\n";
         }
       }
     }
