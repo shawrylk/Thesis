@@ -46,14 +46,6 @@ main (int argc, char *argv[])
     exit(-1);
   }
 
-  // rc = ioctl(listen_sd, FIONBIO, (char *)&on);
-  // if (rc < 0)
-  // {
-  //   std::cerr << "ioctl() failed";
-  //   close(listen_sd);
-  //   exit(-1);
-  // }
-
   memset(&addr, 0, sizeof(addr));
   addr.sin6_family      = AF_INET6;
   memcpy(&addr.sin6_addr, &in6addr_any, sizeof(in6addr_any));
@@ -117,30 +109,30 @@ main (int argc, char *argv[])
           std::cout << "about to recv\n";
           do
           {
-			  rc = recv(new_sd, buffer, sizeof(buffer), 0);
-			  std::cout << "again\n";
-			  if (rc < 0)
-			  {
-				if (errno != EWOULDBLOCK)
-				{
-				  std::cout << "  recv() failed";
-				  close_conn = TRUE;
-				  break;
-				}
-				
-			  }
+            rc = recv(new_sd, buffer, sizeof(buffer), 0);
+            std::cout << "again\n";
+            if (rc < 0)
+            {
+              if (errno != EWOULDBLOCK)
+              {
+                std::cout << "  recv() failed";
+                close_conn = TRUE;
+                break;
+              }			
+            }
 
-			  if (rc == 0)
-			  {
-				std::cout << "  Connection closed\n";
-				close_conn = TRUE;
-				break;
-			  }
-		  } while (rc <= 0);
+            if (rc == 0)
+            {
+            std::cout << "  Connection closed\n";
+            close_conn = TRUE;
+            break;
+            }
+		      } while (rc <= 0);
           
+          std::cout << " adbout here\n";
           if (strncmp(loginString.c_str(), buffer, loginString.length()) == 0)
           {
-			  std::cout<< "here\n";
+			      std::cout<< "cant get here\n";
             len = 8;
             strncpy(buffer,"SUCCEED:",len);
             fds[nfds].fd = new_sd;
@@ -155,20 +147,18 @@ main (int argc, char *argv[])
             std::cout << "FAIL\n";
             close_conn = TRUE;
           }
-          do
+          do {
+            rc = send(new_sd, buffer, len, 0);
+            if (rc < 0)
             {
-              rc = send(new_sd, buffer, len, 0);
-              if (rc < 0)
+              if (errno != EWOULDBLOCK)
               {
-                if (errno != EWOULDBLOCK)
-                {
-                  std::cout << "  send() failed";
-                  close_conn = TRUE;
-                  break;
-                }
+                std::cout << "  send() failed";
+                close_conn = TRUE;
+                break;
               }
             }
-          while (rc <= 0);
+          } while (rc <= 0);
           std::cout << "sent\n";
           new_sd = -1;
         } while (new_sd != -1);
