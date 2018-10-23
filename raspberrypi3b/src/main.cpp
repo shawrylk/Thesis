@@ -38,7 +38,7 @@ int x,y;
 void captureFrame(void);
 void processFrame(void);
 void showImage(void);
-void server(void)
+void server(void);
 int sendFunc (char *sendData, int sendLen);
 int recvFunc (char *recvData, int recvLen);
 
