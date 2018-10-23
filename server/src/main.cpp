@@ -22,7 +22,7 @@ main (int argc, char *argv[])
   int    listen_sd = -1, new_sd = -1;
   int    desc_ready, end_server = FALSE, compress_array = FALSE;
   int    close_conn;
-  char   buffer[40];
+  char   buff[40];
   int size = 40;
   struct sockaddr_in6   addr;
   struct pollfd fds[3];
@@ -111,7 +111,7 @@ main (int argc, char *argv[])
           std::cout << "about to recv\n";
           do
           {
-            rc = recv(new_sd, buffer, sizeof(buffer), 0);
+            rc = recv(new_sd, buff, sizeof(buff), 0);
             std::cout << "again\n";
             if (rc < 0)
             {
@@ -133,11 +133,11 @@ main (int argc, char *argv[])
           
           std::cout << " adbout here\n";
           try {
-            if (strncmp(loginString.c_str(), buffer, loginString.length()) == 0)
+            if (strncmp(&loginString.c_str(), &(char*)buff, loginString.length()) == 0)
             {
               std::cout<< "cant get here\n";
               len = 8;
-              strncpy(buffer,"SUCCEED:",len);
+              strncpy(buff,"SUCCEED:",len);
               fds[nfds].fd = new_sd;
               fds[nfds].events = POLLIN;
               nfds++;
@@ -146,7 +146,7 @@ main (int argc, char *argv[])
             else
             {
               len = 8;
-              strncpy(buffer,"LOGFAIL:",len);
+              strncpy(buff,"LOGFAIL:",len);
               std::cout << "FAIL\n";
               close_conn = TRUE;
             }
@@ -156,7 +156,7 @@ main (int argc, char *argv[])
             std::cout << "exception occurrs \n";
           }
           do {
-            rc = send(new_sd, buffer, len, 0);
+            rc = send(new_sd, buff, len, 0);
             if (rc < 0)
             {
               if (errno != EWOULDBLOCK)
@@ -167,7 +167,7 @@ main (int argc, char *argv[])
               }
             }
           } while (rc <= 0);
-          memset(buffer, 0, size);
+          memset(buff, 0, size);
           std::cout << "sent\n";
           new_sd = -1;
         } while (new_sd != -1);
