@@ -151,7 +151,7 @@ main (int argc, char *argv[])
           }
           catch (std::exception e)
           {
-            std::cout << "exception occurrs << "\n";
+            std::cout << "exception occurrs \n";
           }
           do {
             rc = send(new_sd, buffer, len, 0);
