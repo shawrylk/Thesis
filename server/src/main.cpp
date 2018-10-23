@@ -260,3 +260,203 @@ main (int argc, char *argv[])
   }
 }
 
+public class Server
+{
+  private int lenRecv, lenSend;
+  public Server(int lenRecv, int lenSend) : this.lenRecv(lenRecv), this.lenSend(lenSend);
+  public int Start()
+  {
+    int on = 1, nfds = -1, listen_sd = -1, new_sd = -1;
+    struct sockaddr_in6   addr;
+    struct pollfd fds[3];
+    char   buff[40];
+    bool    close_conn, end_server = false, compress_array = false;
+
+    listen_sd = socket(AF_INET6, SOCK_STREAM, 0);
+    if (listen_sd < 0)
+      return -1;
+
+    if (setsockopt(listen_sd, SOL_SOCKET,  SO_REUSEADDR, (char *)&on, sizeof(on)) < 0)
+    {
+      close(listen_sd);
+      return -2;
+    }
+    memset(&addr, 0, sizeof(addr));
+    addr.sin6_family      = AF_INET6;
+    memcpy(&addr.sin6_addr, &in6addr_any, sizeof(in6addr_any));
+    addr.sin6_port        = htons(SERVER_PORT);
+
+    if (bind(listen_sd, (struct sockaddr *)&addr, sizeof(addr)) < 0)
+    {
+      close(listen_sd);
+      return -3;
+    }
+
+    if (listen(listen_sd, 3) < 0)
+    {
+      close(listen_sd);
+      return -4;
+    }
+
+    memset(fds, 0 , sizeof(fds));
+    fds[0].fd = listen_sd;
+    fds[0].events = POLLIN;
+
+    do {
+      std::cout << "Waiting on poll()...\n";
+      if (poll(fds, nfds, -1) < 0)
+        break;
+      int current_size = nfds;
+      for (i = 0; i < current_size; i++)
+      {
+        if(fds[i].revents == 0)
+          continue;
+        if(fds[i].revents != POLLIN)
+        {
+          end_server = TRUE;
+          break;
+        }
+        if (fds[i].fd == listen_sd)
+        {
+          std::cout << " Incoming connection \n";
+          do
+          {
+            new_sd = accept4(listen_sd, NULL, NULL, SOCK_NONBLOCK);
+            if (new_sd < 0)
+            {
+              if (errno != EWOULDBLOCK)
+              {
+                end_server = TRUE;
+                break;
+              }
+            }
+            if (sendSync(new_sd, buff, sizeof(buff), 0) <= 0)
+              close_conn = true;
+            int len = 8;
+            if (strncmp("LOGIN:pi:raspberry:" , (char*)buff, 19) == 0)
+            {
+              strncpy(buff,"SUCCEED:",len);
+              fds[nfds].fd = new_sd;
+              fds[nfds].events = POLLIN;
+              nfds++;
+            }
+            else
+            {
+              strncpy(buff,"LOGFAIL:",len);
+              close_conn = TRUE;
+            }
+            if(sendSync(new_sd, buff, len, 0) <= 0)
+              close_conn = true;
+            new_sd = -1;
+          } while (new_sd != -1);
+        }
+        else
+        {
+          std::cout <<"  Descriptor " << fds[i].fd << " is readable\n";
+          close_conn = FALSE;
+          do
+          {
+            int rc = recvAsync(fds[i].fd, &recvData, 60, 0);
+            if (rc <= -1)
+                close_conn = TRUE;
+            else if (rc = 0)
+              continue;
+            else 
+            {
+              processRecvData(&recvData)
+            }
+            std::cout << ballCoordinate[BPS_X_AXIS]++ << "\n";
+            std::cout << ballCoordinate[BPS_Y_AXIS]++ << "\n";
+            if (sendSync(fds[i].fd, &ballCoordinate, sizeof(ballCoordinate), 0) <= 0)
+              close_conn = true;
+            usleep(16000);
+          } while(TRUE);
+
+          if (close_conn)
+          {
+            close(fds[i].fd);
+            fds[i].fd = -1;
+            compress_array = TRUE;
+          }
+
+
+        }  /* End of existing connection is readable             */
+      } /* End of loop through pollable descriptors              */
+      if (compress_array)
+      {
+        compress_array = FALSE;
+        for (i = 0; i < nfds; i++)
+        {
+          if (fds[i].fd == -1)
+          {
+            for(j = i; j < nfds; j++)
+            {
+              fds[j].fd = fds[j+1].fd;
+            }
+            i--;
+            nfds--;
+          }
+        }
+      }
+
+    } while (end_server == FALSE); /* End of serving running.    */
+
+    for (int i = 0; i < nfds; i++)
+    {
+      if(fds[i].fd >= 0)
+        close(fds[i].fd);
+    }
+  }
+
+  private int sendSync(int fd, char* buff, int len)
+  {
+    int rc = -1;
+    do 
+    {
+      rc = send(fd, buff, len, 0);
+      if (rc < 0)
+        if (errno != EWOULDBLOCK)
+          break;
+      if (rc == 0)
+        break;
+    } 
+    while (rc <= 0);
+    if (rc < 0) return -1;
+    if (rc == 0) return 0;
+    return rc;
+  }
+
+  private int recvSync(int fd, char* buff, int len)
+  {
+    int rc = -1;
+    do
+    {
+      rc = recv(fd, buff, len, 0);
+      if (rc < 0)
+        if (errno != EWOULDBLOCK)
+          break;
+      if (rc == 0)
+        break;
+    } 
+    while (rc <= 0);
+    if (rc < 0) return -1;
+    if (rc == 0) return 0;
+    return rc;
+  }
+  
+  private int recvAsync(int fd, char* buff, int len)
+  {
+    int rc = -1;
+    rc = recv(fd, buff, len, 0);
+    if (rc < 0)
+      if (errno != EWOULDBLOCK)
+        return -1;
+      else
+        return 0;
+    if (rc == 0)
+      return -2;
+    return rc;
+  }
+
+  virtual int processRecvData(char* data) = 0;
+}
