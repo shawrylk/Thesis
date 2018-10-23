@@ -22,11 +22,12 @@ main (int argc, char *argv[])
   int    listen_sd = -1, new_sd = -1;
   int    desc_ready, end_server = FALSE, compress_array = FALSE;
   int    close_conn;
-  char   buff[19];
-  int size = 19;
+  char   buff[40];
+  int size = 40;
   struct sockaddr_in6   addr;
   struct pollfd fds[3];
   int    nfds = 1, current_size = 0, i, j;
+  std::string   loginString = "LOGIN:pi:raspberry:";
   bpsUARTReceiveDataTypeDef recvData;
   int16_t						ballCoordinate[BPS_NUMBER_OF_AXIS] = { 0, 0};
 
@@ -107,10 +108,11 @@ main (int argc, char *argv[])
             }
             
           }
+          std::cout << "about to recv\n";
           do
           {
-            std:: cout <<"recv\n";
             rc = recv(new_sd, buff, sizeof(buff), 0);
+            std::cout << "again\n";
             if (rc < 0)
             {
               if (errno != EWOULDBLOCK)
@@ -128,7 +130,10 @@ main (int argc, char *argv[])
             break;
             }
 		      } while (rc <= 0);
-          std::cout << "about here\n";
+          
+          std::cout << " adbout here\n";
+          printf("%s",(char*)buff);
+          std::cout << "get here\n";
           try {
             if (strncmp("LOGIN:pi:raspberry:" , (char*)buff, 19) == 0)
             {
@@ -165,13 +170,14 @@ main (int argc, char *argv[])
             }
           } while (rc <= 0);
           memset(buff, 0, size);
+          std::cout << "sent\n";
           new_sd = -1;
         } while (new_sd != -1);
       }
       else
       {
+        printf("  Descriptor %d is readable\n", fds[i].fd);
         close_conn = FALSE;
-        std::cout << "fd " << i << " has something to read\n";
         do
         {
           rc = recv(fds[i].fd, &recvData, 60, 0);
@@ -187,7 +193,7 @@ main (int argc, char *argv[])
           }
           if (rc == 0)
           {
-            std::cout << "  Connection closed\n";
+            printf("  Connection closed\n");
             close_conn = TRUE;
             break;
           }
@@ -232,7 +238,7 @@ main (int argc, char *argv[])
           close(fds[i].fd);
           fds[i].fd = -1;
           compress_array = TRUE;
-          std::cout <<"close con\n";
+          printf("closed con\n");
         }
 
 
@@ -240,6 +246,7 @@ main (int argc, char *argv[])
     } /* End of loop through pollable descriptors              */
     if (compress_array)
     {
+      std::cout << "before nfds = " << nfds << " i = " << i << "\n";
       compress_array = FALSE;
       for (i = 0; i < nfds; i++)
       {
@@ -251,9 +258,10 @@ main (int argc, char *argv[])
           }
           i--;
           nfds--;
-          std::cout << "compressed\n";
+          std::cout << "after nfds = " << nfds << " i = " << i << "\n";
         }
       }
+      printf("compressed\n");
     }
 
   } while (end_server == FALSE); /* End of serving running.    */
