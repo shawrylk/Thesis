@@ -109,6 +109,7 @@ main (int argc, char *argv[])
           }
           do
           {
+            std:: cout <<"recv\n";
             rc = recv(new_sd, buff, sizeof(buff), 0);
             if (rc < 0)
             {
@@ -170,7 +171,7 @@ main (int argc, char *argv[])
       else
       {
         close_conn = FALSE;
-        std::cout << "fd " << i << "has something to read\n";
+        std::cout << "fd " << i << " has something to read\n";
         do
         {
           rc = recv(fds[i].fd, &recvData, 60, 0);
