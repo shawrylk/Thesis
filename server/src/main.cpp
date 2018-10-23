@@ -22,7 +22,7 @@ main (int argc, char *argv[])
   int    listen_sd = -1, new_sd = -1;
   int    desc_ready, end_server = FALSE, compress_array = FALSE;
   int    close_conn;
-  char   buffer[19];
+  char   buffer[40];
   struct sockaddr_in6   addr;
   struct pollfd fds[3];
   int    nfds = 1, current_size = 0, i, j;
@@ -130,22 +130,28 @@ main (int argc, char *argv[])
 		      } while (rc <= 0);
           
           std::cout << " adbout here\n";
-          if (strncmp(loginString.c_str(), buffer, loginString.length()) == 0)
-          {
-			      std::cout<< "cant get here\n";
-            len = 8;
-            strncpy(buffer,"SUCCEED:",len);
-            fds[nfds].fd = new_sd;
-            fds[nfds].events = POLLIN;
-            nfds++;
-            std::cout << "SUCCEED\n";
+          try {
+            if (strncmp(loginString.c_str(), buffer, loginString.length()) == 0)
+            {
+              std::cout<< "cant get here\n";
+              len = 8;
+              strncpy(buffer,"SUCCEED:",len);
+              fds[nfds].fd = new_sd;
+              fds[nfds].events = POLLIN;
+              nfds++;
+              std::cout << "SUCCEED\n";
+            }
+            else
+            {
+              len = 8;
+              strncpy(buffer,"LOGFAIL:",len);
+              std::cout << "FAIL\n";
+              close_conn = TRUE;
+            }
           }
-          else
+          catch (Exception e)
           {
-            len = 8;
-            strncpy(buffer,"LOGFAIL:",len);
-            std::cout << "FAIL\n";
-            close_conn = TRUE;
+            std::cout << "recv fails: " + e.message << "\n";
           }
           do {
             rc = send(new_sd, buffer, len, 0);
