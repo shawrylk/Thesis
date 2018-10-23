@@ -22,8 +22,8 @@ main (int argc, char *argv[])
   int    listen_sd = -1, new_sd = -1;
   int    desc_ready, end_server = FALSE, compress_array = FALSE;
   int    close_conn;
-  char   buff[40];
-  int size = 40;
+  char   buff[19];
+  int size = 19;
   struct sockaddr_in6   addr;
   struct pollfd fds[3];
   int    nfds = 1, current_size = 0, i, j;
