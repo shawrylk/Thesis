@@ -241,6 +241,7 @@ main (int argc, char *argv[])
     } /* End of loop through pollable descriptors              */
     if (compress_array)
     {
+      std::cout << "before nfds = " << nfds << " i = " << i << "\n";
       compress_array = FALSE;
       for (i = 0; i < nfds; i++)
       {
@@ -252,6 +253,7 @@ main (int argc, char *argv[])
           }
           i--;
           nfds--;
+          std::cout << "after nfds = " << nfds << " i = " << i << "\n";
         }
       }
       printf("compressed\n");
