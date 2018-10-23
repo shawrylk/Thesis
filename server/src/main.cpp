@@ -82,6 +82,7 @@ main (int argc, char *argv[])
     current_size = nfds;
     for (i = 0; i < current_size; i++)
     {
+      std::cout << "fd " << i << "\n";
       if(fds[i].revents == 0)
         continue;
       if(fds[i].revents != POLLIN)
