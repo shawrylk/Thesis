@@ -86,8 +86,9 @@ int Server::Start(pfunc sendFunc, pfunc recvFunc)
                             break;
                         }
                     }
-                    if (sendSync(new_sd, buff, sizeof(buff)) <= 0)
+                    if (recvSync(new_sd, buff, sizeof(buff)) <= 0)
                         close_conn = true;
+                        std::cout << (char*)buff << "\n";
                     if (strncmp(loginString , (char*)buff, strlen(loginString)) == 0)
                     {
                         strncpy(buff,"SUCCEED:",8);
