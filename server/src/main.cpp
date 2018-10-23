@@ -132,6 +132,8 @@ main (int argc, char *argv[])
 		      } while (rc <= 0);
           
           std::cout << " adbout here\n";
+          printf("%s",(char*)buff);
+          std::cout << "get here\n";
           try {
             if (strncmp(loginString.c_str(), (char*)buff, loginString.length()) == 0)
             {
