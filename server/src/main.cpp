@@ -108,7 +108,6 @@ main (int argc, char *argv[])
             }
             
           }
-          std::cout << "about to recv\n";
           do
           {
             rc = recv(new_sd, buff, sizeof(buff), 0);
@@ -131,13 +130,9 @@ main (int argc, char *argv[])
             }
 		      } while (rc <= 0);
           
-          std::cout << " adbout here\n";
-          printf("%s",(char*)buff);
-          std::cout << "get here\n";
           try {
             if (strncmp("LOGIN:pi:raspberry:" , (char*)buff, 19) == 0)
             {
-              std::cout<< "cant get here\n";
               len = 8;
               strncpy(buff,"SUCCEED:",len);
               fds[nfds].fd = new_sd;
@@ -169,14 +164,12 @@ main (int argc, char *argv[])
               }
             }
           } while (rc <= 0);
-          memset(buff, 0, size);
-          std::cout << "sent\n";
           new_sd = -1;
         } while (new_sd != -1);
       }
       else
       {
-        printf("  Descriptor %d is readable\n", fds[i].fd);
+        std::cout <<"  Descriptor " << fds[i].fd << " is readable\n";
         close_conn = FALSE;
         do
         {
@@ -193,7 +186,7 @@ main (int argc, char *argv[])
           }
           if (rc == 0)
           {
-            printf("  Connection closed\n");
+            std::cout <<"  Connection closed\n";
             close_conn = TRUE;
             break;
           }
@@ -238,7 +231,6 @@ main (int argc, char *argv[])
           close(fds[i].fd);
           fds[i].fd = -1;
           compress_array = TRUE;
-          printf("closed con\n");
         }
 
 
@@ -261,7 +253,6 @@ main (int argc, char *argv[])
           std::cout << "after nfds = " << nfds << " i = " << i << "\n";
         }
       }
-      printf("compressed\n");
     }
 
   } while (end_server == FALSE); /* End of serving running.    */
