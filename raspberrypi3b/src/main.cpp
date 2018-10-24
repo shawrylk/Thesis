@@ -7,6 +7,7 @@
 #include <chrono>
 #include "../hpp/bpsUARTData.hpp"
 #include "../hpp/bpsServer.hpp"
+#include "../hpp/bpsKalmanFilter.hpp"
 using namespace cv;
 using namespace std;
  
@@ -41,6 +42,7 @@ void showImage(void);
 void server(void);
 int sendFunc (char *sendData, int sendLen);
 int recvFunc (char *recvData, int recvLen);
+KalmanFilter KF(0, 1, 1);
 
 int main()
 {
@@ -200,8 +202,8 @@ int sendFunc (char *sendData, int sendLen)
 {
     sem_wait(&semProcessFrameCplt);
     bpsPointTypeDef *data = (bpsPointTypeDef*)sendData;
-    data->setpointCoordinate[BPS_X_AXIS] = x;
-    data->setpointCoordinate[BPS_Y_AXIS] = y;
+    data->setpointCoordinate[BPS_X_AXIS] = KF.predict(x);
+    data->setpointCoordinate[BPS_Y_AXIS] = KF.predict(y);
     sem_post(&semSendDataCplt);
 }
 
