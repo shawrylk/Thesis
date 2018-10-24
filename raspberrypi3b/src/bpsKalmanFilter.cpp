@@ -17,12 +17,8 @@ float KalmanFilter::CalEest(float KG, float Eest1)
 
 float KalmanFilter::predict(float MEA)
 {
-    std::cout << "hello\n";
     KG = CalKG(Eest1, Emeas);
-    std::cout << KG << "\n";
     EST1 = CalEST(EST1, KG, MEA);
-    std::cout << EST1 << "\n";
     Eest1 = CalEest(KG, Eest1);
-    std::cout << Eest1 << "\n";
     return EST1;
 }
