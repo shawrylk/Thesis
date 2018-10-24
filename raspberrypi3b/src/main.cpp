@@ -202,7 +202,7 @@ int sendFunc (char *sendData, int sendLen)
 {
     sem_wait(&semProcessFrameCplt);
     bpsPointTypeDef *data = (bpsPointTypeDef*)sendData;
-    data->setpointCoordinate[BPS_X_AXIS] = KF.predict(x);
+    data->setpointCoordinate[BPS_X_AXIS] = x;
     data->setpointCoordinate[BPS_Y_AXIS] = KF.predict(y);
     sem_post(&semSendDataCplt);
 }
