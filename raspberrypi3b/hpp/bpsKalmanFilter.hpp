@@ -1,3 +1,6 @@
+
+#pragma once
+
 class KalmanFilter
 {
     private:
@@ -9,4 +12,4 @@ class KalmanFilter
         KalmanFilter(float EST1, float Eest1, float Emeas)
             : EST1(EST1), Eest1(Eest1), Emeas(Emeas){};
         float predict(float MEA);
-}
+};
