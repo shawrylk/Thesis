@@ -42,7 +42,7 @@ void showImage(void);
 void server(void);
 int sendFunc (char *sendData, int sendLen);
 int recvFunc (char *recvData, int recvLen);
-KalmanFilter KF(0, 1, 1);
+::KalmanFilter KF(0, 1, 1);
 
 int main()
 {
