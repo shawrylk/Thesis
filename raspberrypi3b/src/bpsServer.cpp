@@ -10,7 +10,6 @@ Server::Server(char *user, char *pass, int sendLen, int recvlen)
     strcat(loginString,":");
     strcat(loginString,pass);
     strcat(loginString,":");
-    std::cout << strlen(loginString) <<"\n";
 };
 
 int Server::Start(pfunc sendFunc, pfunc recvFunc)

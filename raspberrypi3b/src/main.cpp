@@ -220,7 +220,6 @@ int recvFunc (char *recvData, int recvLen)
         std::cout << "s: " << data->content.circleProperties.speed << std::endl;
         break;
         default:
-        std::cout << "other mode \n";
         break;
     }
     return 0;
