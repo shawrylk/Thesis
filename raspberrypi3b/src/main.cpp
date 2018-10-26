@@ -194,7 +194,7 @@ void showImage(void)
 
 void server(void)
 {
-    Server server((char *)"pi",(char *)"raspberry",4,52);
+    Server server((char *)"pi",(char *)"raspberry", 4, 52);
     std::cout << server.Start(sendFunc, recvFunc) << "\n";
 }
 

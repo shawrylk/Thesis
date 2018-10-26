@@ -2,7 +2,7 @@
 #include "../hpp/bpsServer.hpp"
 
 Server::Server(char *user, char *pass, int sendLen, int recvlen)
-    : recvLen(recvLen), sendLen(sendLen)
+    : sendLen(sendLen), recvLen(recvLen)
 {
     loginString = new char[40];
     memcpy(loginString,"LOGIN:",40);
