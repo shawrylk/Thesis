@@ -194,7 +194,8 @@ void showImage(void)
 
 void server(void)
 {
-    Server server((char *)"pi",(char *)"raspberry", 4, 52);
+    int16_t sendLen = 4, recvLen = 52;
+    Server server((char *)"pi",(char *)"raspberry", sendLen, recvLen);
     std::cout << server.Start(sendFunc, recvFunc) << "\n";
 }
 
