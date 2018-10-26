@@ -100,7 +100,6 @@ bpsDataTypeDef; //48
 
 typedef struct 
 {
-	int16_t						ballCoordinate[BPS_NUMBER_OF_AXIS];
 	bpsCommandTypeDef			command;
 	bpsDataTypeDef				content;
 }	
