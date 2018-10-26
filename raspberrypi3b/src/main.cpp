@@ -213,13 +213,19 @@ int recvFunc (char *recvData, int recvLen)
     switch (data->command)
     {
         case  BPS_MODE_CIRCLE:
-        std::cout << "circle mode \n";
-        std::cout << "x: " << data->content.circleProperties.centerCoordinate[BPS_X_AXIS] << std::endl;
-        std::cout << "y: " << data->content.circleProperties.centerCoordinate[BPS_Y_AXIS] << std::endl;
-        std::cout << "r: " << data->content.circleProperties.radius << std::endl;
-        std::cout << "s: " << data->content.circleProperties.speed << std::endl;
-        break;
+            std::cout << "circle mode \n";
+            std::cout << "x: " << data->content.circleProperties.centerCoordinate[BPS_X_AXIS] << std::endl;
+            std::cout << "y: " << data->content.circleProperties.centerCoordinate[BPS_Y_AXIS] << std::endl;
+            std::cout << "r: " << data->content.circleProperties.radius << std::endl;
+            std::cout << "s: " << data->content.circleProperties.speed << std::endl;
+            break;
+        case BPS_MODE_SETPOINT:
+            std::cout << "setpoint mode \n";
+            std::cout << "x: " << data->content.pointProperties.ballCoordinate[BPS_X_AXIS] << std::endl;
+            std::cout << "y: " << data->content.pointProperties.ballCoordinate[BPS_Y_AXIS] << std::endl;
+
         default:
+            std::cout << "other: " << data->command << std::endl;
         break;
     }
     return 0;
