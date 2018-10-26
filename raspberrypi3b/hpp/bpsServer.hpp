@@ -31,6 +31,6 @@ class Server
     int recvSync(int fd, char* buff, int len);
     int recvAsync(int fd, char* buff, int len);
   public:
-    Server(char *user, char *pass, int sendLen, int recvLen);
+    Server(char *user, char *pass, int16_t sendLen, int16_t recvLen);
     int Start(pfunc sendFunc, pfunc recvFunc);
 };
