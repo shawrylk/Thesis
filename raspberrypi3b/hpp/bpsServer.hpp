@@ -23,7 +23,7 @@ using pfunc = std::function<int (char *data, int len)>;
 class Server
 {
   private:
-    int recvLen, sendLen;
+    int16_t recvLen, sendLen;
     char *loginString;
     char *sendData, *recvData;
     int sendSync(int fd, char* buff, int len);
