@@ -194,7 +194,7 @@ void showImage(void)
 
 void server(void)
 {
-    Server server((char *)"pi",(char *)"raspberry",4,60);
+    Server server((char *)"pi",(char *)"raspberry",4,52);
     std::cout << server.Start(sendFunc, recvFunc) << "\n";
 }
 
@@ -256,7 +256,7 @@ int recvFunc (char *recvData, int recvLen)
 
             std::cout << "Kd Inner x: " << data->content.PIDProperties.Kd[BPS_INNER_PID][BPS_X_AXIS] << " -- ";
             std::cout << "Kd Inner y: " << data->content.PIDProperties.Kd[BPS_INNER_PID][BPS_Y_AXIS] << std::endl;
-            
+
             std::cout << "Kd Outer x: " << data->content.PIDProperties.Kd[BPS_OUTER_PID][BPS_X_AXIS] << " -- ";
             std::cout << "Kd Outer y: " << data->content.PIDProperties.Kd[BPS_OUTER_PID][BPS_Y_AXIS] << std::endl;
 
