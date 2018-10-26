@@ -10,6 +10,9 @@ Server::Server(char *user, char *pass, int sendLen, int recvlen)
     strcat(loginString,":");
     strcat(loginString,pass);
     strcat(loginString,":");
+    std::cout << "send length: " << sendLen << std::endl;
+    std::cout << "recv length: " << recvLen << std::endl;
+
 };
 
 int Server::Start(pfunc sendFunc, pfunc recvFunc)
@@ -87,7 +90,6 @@ int Server::Start(pfunc sendFunc, pfunc recvFunc)
                     }
                     if (recvSync(new_sd, buff, sizeof(buff)) <= 0)
                         close_conn = true;
-                        std::cout << (char*)buff << "\n";
                     if (strncmp(loginString , (char*)buff, strlen(loginString)) == 0)
                     {
                         strncpy(buff,"SUCCEED:",8);
