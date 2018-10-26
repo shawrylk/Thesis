@@ -226,7 +226,10 @@ int recvFunc (char *recvData, int recvLen)
 
         default:
             std::cout << "size of command: " << sizeof(bpsCommandTypeDef);
-            std::cout << "other: " << data->command << std::endl;
+            std::cout << "command: " << data->command << std::endl;
+            std::cout << "x: " << data->content.pointProperties.setpointCoordinate[BPS_X_AXIS] << std::endl;
+            std::cout << "y: " << data->content.pointProperties.setpointCoordinate[BPS_Y_AXIS] << std::endl;
+
         break;
     }
     return 0;
