@@ -212,6 +212,7 @@ int recvFunc (char *recvData, int recvLen)
     bpsUARTReceiveDataTypeDef *data = (bpsUARTReceiveDataTypeDef*)recvData ;
     switch (data->command)
     {
+        std::cout << "size of command: " << sizeof(bpsCommandTypeDef);
         case  BPS_MODE_CIRCLE:
             std::cout << "circle mode \n";
             std::cout << "x: " << data->content.circleProperties.centerCoordinate[BPS_X_AXIS] << std::endl;
