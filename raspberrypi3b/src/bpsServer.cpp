@@ -1,7 +1,7 @@
 
 #include "../hpp/bpsServer.hpp"
 
-Server::Server(char *user, char *pass, int sendLen = 8, int recvlen = 52)
+Server::Server(char *user, char *pass, int sendLen, int recvlen)
     : sendLen(sendLen), recvLen(recvLen)
 {
     loginString = new char[40];
