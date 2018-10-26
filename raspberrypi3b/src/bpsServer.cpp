@@ -1,9 +1,10 @@
 
 #include "../hpp/bpsServer.hpp"
 
-Server::Server(char *user, char *pass, int16_t sendLen, int16_t recvlen)
-    : sendLen(sendLen), recvLen(recvLen)
+Server::Server(char *user, char *pass, int16_t msendLen, int16_t mrecvlen)
 {
+    sendLen = msendLen;
+    recvLen = mrecvLen;
     loginString = new char[40];
     memcpy(loginString,"LOGIN:",40);
     strcat(loginString,user);
