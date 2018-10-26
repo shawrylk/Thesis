@@ -117,7 +117,7 @@ int Server::Start(pfunc sendFunc, pfunc recvFunc)
                         close_conn = true;
                         break;
                     }
-                    else if (rc = 1)
+                    else if (rc > 0)
                         {
                             if (recvFunc != NULL)
                                 recvFunc(recvData, recvLen);
