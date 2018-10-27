@@ -4,7 +4,7 @@ int fdes;
 
 bpsStatusTypeDef bpsUARTInit(void)
 {
-	if ((fdes= serialOpen ("/dev/serial0", 115200)) < 0 )
+	if ((fdes= serialOpen ("/dev/serial0", 9600)) < 0 )
     {
         return BPS_ERROR;
 	}
@@ -14,17 +14,18 @@ bpsStatusTypeDef bpsUARTInit(void)
 
 bpsStatusTypeDef bpsUARTSendData(bpsUARTSendDataTypeDef* sendData, int len)
  {
-    int i = 0;
-    char *buff = new char[len];
-    memcpy(buff, sendData, len);
+    // int i = 0;
+    // char *buff = new char[len];
+    // memcpy(buff, sendData, len);
     std::cout << "about to send \n";
-    while (i < len)
-    {
-        //serialPutchar(fdes, *(buff+i++));
-        //serialFlush(fdes);
-        write(fdes, sendData, len);
-        std::cout << i << std::endl;
-    }
+    // while (i < len)
+    // {
+    //     serialPutchar(fdes, *(buff+i++));
+    //     serialFlush(fdes);
+    //     std::cout << i << std::endl;
+    // }
+    serialPuts(fdes, "disconmemay");
+    serialFlush(fdes);
 	return BPS_OK;
 }
 
@@ -35,11 +36,11 @@ bpsStatusTypeDef bpsUARTReceiveData	(bpsUARTSendDataTypeDef* recvData, int len)
     std::cout << "recv sth\n";
     do
     {
-            //buff[i++] = serialGetchar(fdes);
-            read(fdes, buff, len);
-            std::cout << i << std::endl;
+        buff[i++] = serialGetchar(fdes);
+        std::cout << i << std::endl;
     }
     while(serialDataAvail(fdes));
+    printf("%s",buff);
     memcpy(recvData, buff, len);
 	return BPS_OK;
 }
