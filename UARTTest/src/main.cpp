@@ -1,60 +1,55 @@
-#include <opencv2/opencv.hpp>
-#include <opencv2/core/ocl.hpp>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <wiringPi.h>
+#include <wiringSerial.h>
 #include <thread>
-#include <semaphore.h>
-#include <unistd.h>
-#include <iostream>
-#include <chrono>
-#include "../hpp/bpsUARTData.hpp"
-
-using namespace cv;
-using namespace std;
- 
-// Convert to string
-#define SSTR( x ) static_cast< std::ostringstream & >( \
-( std::ostringstream() << std::dec << x ) ).str()
-
-
+int send(int);
+int recv(int);
+int fdes;
 int main()
 {
-    cv::ocl::setUseOpenCL(false);
-    // bpsUARTSendDataTypeDef sendData;
-    // sendData.ballCoordinate[BPS_X_AXIS] = 0x1234;
-    // sendData.ballCoordinate[BPS_Y_AXIS] = 0x5678;
-    // sendData.command = BPS_MODE_SETPOINT;
-    // sendData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 0x9ABC;
-    // sendData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] = 0xDEF0;
-    // sendData.nullTerminated = '\0';
-    // std::cout << "SIZE: \n";
-    // std::cout << sizeof(bpsUARTSendDataTypeDef) << "\n";
-    // if (bpsUARTInit() != BPS_OK)
-    // {
-    //     std::cout << "open UART fails \n";
-    //     return -1;
-    // }
-    // while (1)
-    // {
-    //     bpsUARTSendData(&sendData);
-    //     std::cout << "sent \n";
-    //     sleep(1);
-    // }
-    int fds;
+	if((fdes= serialOpen ("/dev/serial0", 9600)) < 0 )
+    {
+        return -1;
+	}
+  std::thread thread1(send,fdes);
+  std::thread thread2(recv,fdes);
+  thread1.join();
+  thread2.join();
+      return 0;
+
+}
+
+int send(int fdes) {
+ 
+ 
+	printf("Raspberry's sending : \n");
+ 
+	while(1) {
+		serialPuts(fdes, "hello");
+		serialFlush(fdes);
+		//printf("%s\n", "hello");
+		fflush(stdout);
+		delay(1000);
+	}
+	return 0;
+}
+
+int recv(int fdes) {
+ 
 	char c;
 	printf("Raspberry's receiving : \n");
  
 	while(1) {
-		if((fds = serialOpen ("/dev/serial0", 9600)) < 0 ){
-			fprintf (stderr, "Unable to open serial device: %s\n", strerror (errno)) ;
-		}else{
 			do{
-				c = serialGetchar(fds);
+				c = serialGetchar(fdes);
 				printf("%c",c);
 				fflush (stdout);
-			}while(serialDataAvail(fds));
+			}while(serialDataAvail(fdes));
 		}
-	};
+	
+	return 0;
 }
-
-
-
 
