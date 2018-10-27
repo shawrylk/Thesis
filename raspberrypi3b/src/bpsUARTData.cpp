@@ -20,7 +20,7 @@ bpsStatusTypeDef bpsUARTSendData(bpsUARTSendDataTypeDef* sendData, int len)
     std::cout << "about to send \n";
     for(int i = 0 ; i < len; i+=8)
     {
-        serialPuts(fdes,(buff + i));
+        serialPuts(fdes,"cho_ma_bon_me_may_sao_deo_chay_thu_vien_ngu_nhu_cac");
     }
     // while (i < len)
     // {
