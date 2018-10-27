@@ -20,8 +20,9 @@ bpsStatusTypeDef bpsUARTSendData(bpsUARTSendDataTypeDef* sendData, int len)
     std::cout << "about to send \n";
     while (i < len)
     {
-        serialPutchar(fdes, *(buff+i++));
-        serialFlush(fdes);
+        //serialPutchar(fdes, *(buff+i++));
+        //serialFlush(fdes);
+        write(fdes, sendData, len);
         std::cout << i << std::endl;
     }
 	return BPS_OK;
@@ -34,7 +35,8 @@ bpsStatusTypeDef bpsUARTReceiveData	(bpsUARTSendDataTypeDef* recvData, int len)
     std::cout << "recv sth\n";
     do
     {
-            buff[i++] = serialGetchar(fdes);
+            //buff[i++] = serialGetchar(fdes);
+            read(fdes, buff, len);
             std::cout << i << std::endl;
     }
     while(serialDataAvail(fdes));
