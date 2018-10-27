@@ -211,7 +211,7 @@ int sendFunc (char *sendData, int sendLen)
     bpsPointTypeDef *data = (bpsPointTypeDef*)sendData;
     data->setpointCoordinate[BPS_X_AXIS] = (int)KF.predict(STMData.ballCoordinate[BPS_X_AXIS]);
     data->setpointCoordinate[BPS_Y_AXIS] = (int)KF.predict(STMData.ballCoordinate[BPS_Y_AXIS]);
-    bpsUARTSendData(&STMData, sizeof(bpsUARTSendDataTypeDef));
+    while(bpsUARTSendData(&STMData, sizeof(bpsUARTSendDataTypeDef)) != sizeof(bpsUARTSendDataTypeDef));
     sem_post(&semSendDataCplt);
 }
 
