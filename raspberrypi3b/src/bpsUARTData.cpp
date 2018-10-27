@@ -44,9 +44,10 @@ bpsStatusTypeDef bpsUARTReceiveData	(bpsUARTSendDataTypeDef* recvData, int len)
         std::cout << i << std::endl;
     }
     while(serialDataAvail(fdes));
-    printf("%s",buff);
+    
     if (i == 64)
     {
+        printf("%s",buff);
         memcpy(recvData, buff, len);
         i = 0;
     }
