@@ -285,8 +285,7 @@ void testUART()
     bpsUARTSendDataTypeDef recvData;
     while(1)
     {
-        if (bpsUARTReceiveData(&recvData, sizeof(bpsUARTSendDataTypeDef)) != sizeof(bpsUARTSendDataTypeDef))
-            continue;
+        bpsUARTReceiveData(&recvData, sizeof(bpsUARTSendDataTypeDef));
         std::cout << "ball x: " << recvData.ballCoordinate[BPS_X_AXIS] << " -- ";
         std::cout << "ball y: " << recvData.ballCoordinate[BPS_Y_AXIS] << std::endl;
         switch (recvData.command)
