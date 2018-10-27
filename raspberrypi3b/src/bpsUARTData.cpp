@@ -25,15 +25,14 @@ bpsStatusTypeDef bpsUARTReceiveData	(bpsUARTReceiveDataTypeDef* recvData, int le
 	char c;
     char *buff = new char[len];
     int i = 0;
+    std::cout << "recv sth\n";
     do
     {
-        if (i = len)
-            break;
         buff[i++] = serialGetchar(fdes);
         fflush (stdout);
     }
     while(serialDataAvail(fdes));
-    printf("%s\n",buff);
+    printf("%s\n",*buff);
 	return BPS_OK;
 }
 
