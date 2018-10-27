@@ -152,8 +152,8 @@ void processFrame(void)
                     thresh_min = THRESH_MAX;
             }
         }
-        STMData.ballCoordinate[BPS_X_AXIS] = 0xFF; //x;
-        STMData.ballCoordinate[BPS_Y_AXIS] = 0xFF; //y;
+        STMData.ballCoordinate[BPS_X_AXIS] = x;
+        STMData.ballCoordinate[BPS_Y_AXIS] = y;
         STMData.command = BPS_MODE_DEFAULT;
         sem_post(&semProcessFrameCplt);
         if (count == 1000)
@@ -198,7 +198,7 @@ void showImage(void)
 
 void server(void)
 {
-    Server server((char *)"pi",(char *)"raspberry", 4, 52);
+    Server server((char *)"pi",(char *)"raspberry", sizeof(bpsSocketSendDataTypeDef), sizeof(bpsSocketReceiveDataTypeDef));
     // recvFuncv runs async, so it will be ignored when there no command from client, 
     // then server runs sendFunc
     // both functions run in loop
@@ -208,10 +208,10 @@ void server(void)
 int sendFunc (char *sendData, int sendLen)
 {
     sem_wait(&semProcessFrameCplt);
-    // wrong implementation here
-    bpsPointTypeDef *data = (bpsPointTypeDef*)sendData;
-    data->setpointCoordinate[BPS_X_AXIS] = (int)KF.predict(STMData.ballCoordinate[BPS_X_AXIS]);
-    data->setpointCoordinate[BPS_Y_AXIS] = (int)KF.predict(STMData.ballCoordinate[BPS_Y_AXIS]);
+    // wrong implementation here, lack of encoder value
+    bpsSocketSendDataTypeDef *data = (bpsSocketSendDataTypeDef*)sendData;
+    data->ballCoordinate[BPS_X_AXIS] = (int)KF.predict(STMData.ballCoordinate[BPS_X_AXIS]);
+    data->ballCoordinate[BPS_Y_AXIS] = (int)KF.predict(STMData.ballCoordinate[BPS_Y_AXIS]);
     bpsUARTSendData(&STMData, sizeof(bpsUARTSendDataTypeDef));
     sem_post(&semSendDataCplt);
 }
