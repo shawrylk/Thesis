@@ -12,13 +12,20 @@ bpsStatusTypeDef bpsUARTInit(void)
 
 }
 
-bpsStatusTypeDef bpsUARTSendData(bpsUARTSendDataTypeDef* sendData, int len)
+bpsStatusTypeDef bpsUARTSendData(bpsUARTSendDataTypeDef* sendData1, int len)
  {
     //int i = 0;
-    char *buff = new char[len];
-    memcpy((void *)buff, (void *)sendData, len);
-    std::cout << "about to send \n";
-    serialPuts(fdes,(const char*)sendData);
+    // char *buff = new char[len];
+    // memcpy((void *)buff, (void *)sendData, len);
+    // std::cout << "about to send \n";
+    bpsUARTSendDataTypeDef sendData;
+    sendData.ballCoordinate[BPS_X_AXIS] = 111;
+    sendData.ballCoordinate[BPS_Y_AXIS] = 222;
+    sendData.command = BPS_MODE_SETPOINT;
+    sendData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 123;
+    sendData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] = 456;
+    sendData.nullTerminated = '\0';
+    serialPuts(fdes,(const char*)&sendData);
     // while (i < len)
     // {
     //     serialPutchar(fdes, *(buff+i++));
