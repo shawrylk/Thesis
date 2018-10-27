@@ -9,9 +9,9 @@
 #include <unistd.h>
 #include <iostream>
 #include <fcntl.h>
-#include <termios.h>
-#include <sys/types.h>
-#include <sys/socket.h>
+// #include <termios.h>
+// #include <sys/types.h>
+// #include <sys/socket.h>
 
 #define MIN_PWM_DUTY				0
 #define	MAX_PWM_DUTY				9599
