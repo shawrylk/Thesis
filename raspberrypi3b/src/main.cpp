@@ -141,7 +141,7 @@ void processFrame(void)
                         refArea = area;
                         STMData.ballCoordinate[BPS_X_AXIS] = x;
                         STMData.ballCoordinate[BPS_Y_AXIS] = y;
-                        STMData.command = BPS_UPDATE_PID;
+                        STMData.command = BPS_MODE_DEFAULT;
                     }
                     else 
                         bFoundObject = false;
