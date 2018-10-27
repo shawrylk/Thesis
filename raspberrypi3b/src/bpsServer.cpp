@@ -15,8 +15,8 @@ Server::Server(char *user, char *pass, int16_t sendLen, int16_t recvLen)
 
 int Server::Start(pfunc sendFunc, pfunc recvFunc)
 {
-    char* recvData = new char(recvLen);
-    char* sendData = new char(sendLen);
+    char* recvData = new char[recvLen];
+    char* sendData = new char[sendLen];
     int on = 1, nfds = 1, listen_sd = -1, new_sd = -1;
     struct sockaddr_in6   addr;
     struct pollfd fds[3];
