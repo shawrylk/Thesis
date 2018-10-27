@@ -4,29 +4,27 @@ int fdes;
 
 bpsStatusTypeDef bpsUARTInit(void)
 {
-    struct termios tio;
-    
-
-
-    // make the reads non-blocking
-
-    memset(&tio,0,sizeof(tio));
-    tio.c_iflag=0;
-    tio.c_oflag=0;
-    tio.c_cflag=CS8|CREAD|CLOCAL;           // 8n1, see termios.h for more information
-    tio.c_lflag=0;
-    tio.c_cc[VMIN]=1;
-    tio.c_cc[VTIME]=5;
-
+    struct termios oldtio,newtio;
     fdes = open("/dev/serial0", O_RDWR | O_NONBLOCK);
 	if (fdes < 0 )
     {
         return BPS_ERROR;
 	}
-    bpsUARTSendDataTypeDef sendData, recvData;
-    cfsetospeed(&tio,B115200);            // 115200 baud
-    cfsetispeed(&tio,B115200);            // 115200 baud
-    tcsetattr(fdes,TCSANOW,&tio);
+    tcgetattr(fdes,&oldtio); /* save current port settings */
+        
+        bzero(&newtio, sizeof(newtio));
+        newtio.c_cflag = BAUDRATE | CRTSCTS | CS8 | CLOCAL | CREAD;
+        newtio.c_iflag = IGNPAR;
+        newtio.c_oflag = 0;
+        
+        /* set input mode (non-canonical, no echo,...) */
+        newtio.c_lflag = 0;
+         
+        newtio.c_cc[VTIME]    = 0;   /* inter-character timer unused */
+        newtio.c_cc[VMIN]     = 5;   /* blocking read until 5 chars received */
+        
+        tcflush(fdes, TCIFLUSH);
+        tcsetattr(fdes,TCSANOW,&newtio);
     return BPS_OK;
 }
 
