@@ -15,12 +15,12 @@ bpsStatusTypeDef bpsUARTInit(void)
 
 int bpsUARTSendData(bpsUARTSendDataTypeDef* sendData, int len)
 {
-    return recv(fdes, sendData, len, 0);
+    return send(fdes, sendData, len, 0);
 }
 
 int bpsUARTReceiveData	(bpsUARTSendDataTypeDef* recvData, int len)
 {
   
-    return send(fdes, recvData, len, 0);
+    return recv(fdes, recvData, len, 0);
  
 }
