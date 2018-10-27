@@ -12,11 +12,17 @@ bpsStatusTypeDef bpsUARTInit(void)
 
 }
 
-bpsStatusTypeDef bpsUARTSendData(bpsUARTSendDataTypeDef* sendData)
+bpsStatusTypeDef bpsUARTSendData(bpsUARTSendDataTypeDef* sendData, int len)
  {
-    std::cout << (char*)sendData << std::endl;
-    serialPuts(fdes, (char*)sendData);
-    serialFlush(fdes);
+    int i = 0;
+    char *buff = new char[len];
+    memcpy(buff, sendData, len);
+    while (i < len)
+    {
+        std::cout << *(buff+i) << std::endl;
+        serialPutchar(fdes, *(buff+i++));
+        serialFlush(fdes);
+    }
 	return BPS_OK;
 }
 
