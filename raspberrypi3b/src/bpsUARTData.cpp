@@ -2,30 +2,6 @@
 
 int fdes;
 
-bpsStatusTypeDef bpsUARTInit(void)
-{
-    fdes = open("/dev/serial0", O_RDWR | O_NOCTTY | O_SYNC);
-	if (fdes < 0 )
-    {
-        return BPS_ERROR;
-	}
-    set_interface_attribs (fdes, B115200, 0);  // set speed to 115,200 bps, 8n1 (no parity)
-    set_blocking (fdes, 1);   
-    return BPS_OK;
-}
-
-int bpsUARTSendData(bpsUARTSendDataTypeDef* sendData, int len)
-{
-    return write(fdes, sendData, len);
-}
-
-int bpsUARTReceiveData	(bpsUARTSendDataTypeDef* recvData, int len)
-{
-  
-    return read(fdes, recvData, len);
- 
-}
-
 int
 set_interface_attribs (int fd, int speed, int parity)
 {
@@ -84,3 +60,28 @@ set_blocking (int fd, int should_block)
         if (tcsetattr (fd, TCSANOW, &tty) != 0)
                 error_message ("error %d setting term attributes", errno);
 }
+
+bpsStatusTypeDef bpsUARTInit(void)
+{
+    fdes = open("/dev/serial0", O_RDWR | O_NOCTTY | O_SYNC);
+	if (fdes < 0 )
+    {
+        return BPS_ERROR;
+	}
+    set_interface_attribs (fdes, B115200, 0);  // set speed to 115,200 bps, 8n1 (no parity)
+    set_blocking (fdes, 1);   
+    return BPS_OK;
+}
+
+int bpsUARTSendData(bpsUARTSendDataTypeDef* sendData, int len)
+{
+    return write(fdes, sendData, len);
+}
+
+int bpsUARTReceiveData	(bpsUARTSendDataTypeDef* recvData, int len)
+{
+  
+    return read(fdes, recvData, len);
+ 
+}
+
