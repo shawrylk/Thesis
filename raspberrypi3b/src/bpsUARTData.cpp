@@ -4,7 +4,7 @@ int fdes;
 
 bpsStatusTypeDef bpsUARTInit(void)
 {
-	if ((fdes= serialOpen ("/dev/serial0", 9600)) < 0 )
+	if ((fdes= serialOpen ("/dev/serial0", 115200)) < 0 )
     {
         return BPS_ERROR;
 	}
@@ -34,11 +34,8 @@ bpsStatusTypeDef bpsUARTReceiveData	(bpsUARTSendDataTypeDef* recvData, int len)
     std::cout << "recv sth\n";
     do
     {
-        while (i < len)
-        {
             buff[i++] = serialGetchar(fdes);
             std::cout << i << std::endl;
-        }
     }
     while(serialDataAvail(fdes));
     memcpy(recvData, buff, len);
