@@ -14,25 +14,29 @@ bpsStatusTypeDef bpsUARTInit(void)
 
 bpsStatusTypeDef bpsUARTSendData(bpsUARTSendDataTypeDef* sendData, int len)
  {
-    // int i = 0;
-    // char *buff = new char[len];
-    // memcpy(buff, sendData, len);
+    //int i = 0;
+    char *buff = new char[len];
+    memcpy(buff, sendData, len);
     std::cout << "about to send \n";
+    for(int i = 0 ; i < len; i+=8)
+    {
+        serialPuts(fdes,(buff + i));
+    }
     // while (i < len)
     // {
     //     serialPutchar(fdes, *(buff+i++));
     //     serialFlush(fdes);
     //     std::cout << i << std::endl;
     // }
-    serialPuts(fdes, "disconmemay");
-    serialFlush(fdes);
+    // serialPuts(fdes, "disconmemay");
+    // serialFlush(fdes);
 	return BPS_OK;
 }
 
 bpsStatusTypeDef bpsUARTReceiveData	(bpsUARTSendDataTypeDef* recvData, int len)
 {
     char *buff = new char[len];
-    int i = 0;
+    static int i = 0;
     std::cout << "recv sth\n";
     do
     {
@@ -41,7 +45,11 @@ bpsStatusTypeDef bpsUARTReceiveData	(bpsUARTSendDataTypeDef* recvData, int len)
     }
     while(serialDataAvail(fdes));
     printf("%s",buff);
-    memcpy(recvData, buff, len);
+    if (i == 64)
+    {
+        memcpy(recvData, buff, len);
+        i = 0;
+    }
 	return BPS_OK;
 }
 
