@@ -9,6 +9,7 @@ set_interface_attribs (int fd, int speed, int parity)
         memset (&tty, 0, sizeof tty);
         if (tcgetattr (fd, &tty) != 0)
         {
+                printf ("error %d from tcgetattr", errno);
                 return -1;
         }
 
@@ -36,6 +37,7 @@ set_interface_attribs (int fd, int speed, int parity)
 
         if (tcsetattr (fd, TCSANOW, &tty) != 0)
         {
+                printf ("error %d from tcsetattr", errno);
                 return -1;
         }
         return 0;
@@ -48,14 +50,15 @@ set_blocking (int fd, int should_block)
         memset (&tty, 0, sizeof tty);
         if (tcgetattr (fd, &tty) != 0)
         {
+                printf ("error %d from tggetattr", errno);
                 return;
         }
 
         tty.c_cc[VMIN]  = should_block ? 1 : 0;
         tty.c_cc[VTIME] = 5;            // 0.5 seconds read timeout
 
-        tcsetattr (fd, TCSANOW, &tty);
-
+        if (tcsetattr (fd, TCSANOW, &tty) != 0)
+                printf ("error %d setting term attributes", errno);
 }
 
 bpsStatusTypeDef bpsUARTInit(void)
