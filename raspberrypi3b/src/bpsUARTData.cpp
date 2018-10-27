@@ -18,6 +18,7 @@ bpsStatusTypeDef bpsUARTSendData(bpsUARTSendDataTypeDef* sendData, int len)
     char *buff = new char[len];
     memcpy(buff, sendData, len);
     std::cout << "about to send \n";
+    buff = "dis me co chay khong day la sao day troi";
     serialPuts(fdes,(const char*)buff);
     // while (i < len)
     // {
