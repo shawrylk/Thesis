@@ -2,13 +2,12 @@
 #ifndef USER_FUNCTION
 #define USER_FUNCTION
 
-#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>
-// #include <wiringPi.h>
-// #include <wiringSerial.h>
+#include <wiringPi.h>
+#include <wiringSerial.h>
 
 #define MIN_PWM_DUTY				0
 #define	MAX_PWM_DUTY				9599
@@ -121,7 +120,7 @@ typedef enum
 }
 bpsStatusTypeDef;
 
-// bpsStatusTypeDef		bpsUARTSendData				(bpsUARTSendDataTypeDef* sendData);
-// bpsStatusTypeDef 		bpsUARTInit					(void);
-
+bpsStatusTypeDef		bpsUARTSendData				(bpsUARTSendDataTypeDef* sendData);
+bpsStatusTypeDef 		bpsUARTInit					(void);
+bpsStatusTypeDef		bpsUARTReceiveData			(bpsUARTReceiveData* recvData);
 #endif
