@@ -34,8 +34,11 @@ bpsStatusTypeDef bpsUARTReceiveData	(bpsUARTSendDataTypeDef* recvData, int len)
     std::cout << "recv sth\n";
     do
     {
-        buff[i++] = serialGetchar(fdes);
-        std::cout << i << std::endl;
+        while (i < len)
+        {
+            buff[i++] = serialGetchar(fdes);
+            std::cout << i << std::endl;
+        }
     }
     while(serialDataAvail(fdes));
     memcpy(recvData, buff, len);
