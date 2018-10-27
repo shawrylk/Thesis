@@ -276,6 +276,7 @@ void testUART()
     sendData.command = BPS_MODE_SETPOINT;
     sendData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 123;
     sendData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] = 456;
+    bpsUARTReceiveData(&recvData, sizeof(bpsUARTSendDataTypeDef));
     while(1)
     {
         sleep(1);
