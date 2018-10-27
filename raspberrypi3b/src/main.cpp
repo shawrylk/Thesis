@@ -152,8 +152,8 @@ void processFrame(void)
                     thresh_min = THRESH_MAX;
             }
         }
-        STMData.ballCoordinate[BPS_X_AXIS] = x;
-        STMData.ballCoordinate[BPS_Y_AXIS] = y;
+        STMData.ballCoordinate[BPS_X_AXIS] = 0xFF; //x;
+        STMData.ballCoordinate[BPS_Y_AXIS] = 0xFF; //y;
         STMData.command = BPS_MODE_DEFAULT;
         sem_post(&semProcessFrameCplt);
         if (count == 1000)
@@ -208,6 +208,7 @@ void server(void)
 int sendFunc (char *sendData, int sendLen)
 {
     sem_wait(&semProcessFrameCplt);
+    // wrong implementation here
     bpsPointTypeDef *data = (bpsPointTypeDef*)sendData;
     data->setpointCoordinate[BPS_X_AXIS] = (int)KF.predict(STMData.ballCoordinate[BPS_X_AXIS]);
     data->setpointCoordinate[BPS_Y_AXIS] = (int)KF.predict(STMData.ballCoordinate[BPS_Y_AXIS]);
