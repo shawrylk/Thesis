@@ -273,15 +273,18 @@ void testUART()
     bpsUARTInit();
     bpsUARTSendDataTypeDef sendData, recvData;
     //bpsUARTReceiveDataTypeDef recvData;
+    sendData.ballCoordinate[BPS_X_AXIS] = 0xFF;
+    sendData.ballCoordinate[BPS_Y_AXIS] = 0xFF;
     sendData.command = BPS_MODE_SETPOINT;
-    sendData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 123;
-    sendData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] = 456;
-    bpsUARTReceiveData(&recvData, sizeof(bpsUARTSendDataTypeDef));
+    sendData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 0xFF;
+    sendData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] = 0xFF;
     while(1)
     {
         sleep(1);
         bpsUARTSendData(&sendData, sizeof(bpsUARTSendDataTypeDef));
         bpsUARTReceiveData(&recvData, sizeof(bpsUARTSendDataTypeDef));
+        std::cout << "ball x: " << recvData.ballCoordinate[BPS_X_AXIS] << " -- ";
+        std::cout << "ball y: " << recvData.ballCoordinate[BPS_Y_AXIS] << std::endl;
         std::cout << "mode: " << recvData.command;
         std::cout << "x: " << recvData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] << " -- ";
         std::cout << "y: " << recvData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] << std::endl;
