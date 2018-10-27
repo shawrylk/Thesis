@@ -56,12 +56,12 @@ int main()
     std::thread thread1(captureFrame);
     std::thread thread2(processFrame);
     std::thread thread3(server);
-    //std::thread thread4(testUART);
+    std::thread thread4(testUART);
     //std::thread thread5(showImage);
     thread1.join();
     thread2.join();
     thread3.join();
-    //thread4.join();
+    thread4.join();
     //thread5.join();
     return 0;
 }
@@ -270,24 +270,24 @@ int recvFunc (char *recvData, int recvLen)
 
 void testUART()
 {
-    // bpsUARTInit();
-    // bpsUARTSendDataTypeDef sendData, recvData;
-    // //bpsUARTReceiveDataTypeDef recvData;
-    // memset(&sendData, 0 , sizeof(bpsUARTSendDataTypeDef));
-    // sendData.ballCoordinate[BPS_X_AXIS] = 111;
-    // sendData.ballCoordinate[BPS_Y_AXIS] = 222;
-    // sendData.command = BPS_MODE_SETPOINT;
-    // sendData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 123;
-    // sendData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] = 456;
-    // sendData.nullTerminated = '\0';
-    // while(1)
-    // {
-    //     sleep(1);
-    //     bpsUARTSendData(&sendData, sizeof(bpsUARTSendDataTypeDef));
-    //     bpsUARTReceiveData(&recvData, sizeof(bpsUARTSendDataTypeDef));
-    //     std::cout << "mode: " << recvData.command;
-    //     std::cout << "x: " << recvData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] << " -- ";
-    //     std::cout << "y: " << recvData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] << std::endl;
+    bpsUARTInit();
+    bpsUARTSendDataTypeDef sendData, recvData;
+    //bpsUARTReceiveDataTypeDef recvData;
+    memset(&sendData, 0 , sizeof(bpsUARTSendDataTypeDef));
+    sendData.ballCoordinate[BPS_X_AXIS] = 111;
+    sendData.ballCoordinate[BPS_Y_AXIS] = 222;
+    sendData.command = BPS_MODE_SETPOINT;
+    sendData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 123;
+    sendData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] = 456;
+    sendData.nullTerminated = '\0';
+    while(1)
+    {
+        sleep(1);
+        bpsUARTSendData(&sendData, sizeof(bpsUARTSendDataTypeDef));
+        bpsUARTReceiveData(&recvData, sizeof(bpsUARTSendDataTypeDef));
+        std::cout << "mode: " << recvData.command;
+        std::cout << "x: " << recvData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] << " -- ";
+        std::cout << "y: " << recvData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] << std::endl;
         
-    // }
+    }
 }

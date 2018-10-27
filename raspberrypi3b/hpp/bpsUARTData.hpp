@@ -6,10 +6,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>
-#include <wiringPi.h>
-#include <wiringSerial.h>
 #include <unistd.h>
 #include <iostream>
+#include <fcntl.h>
+#include <termios.h>
 
 #define MIN_PWM_DUTY				0
 #define	MAX_PWM_DUTY				9599
