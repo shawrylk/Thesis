@@ -13,36 +13,14 @@ bpsStatusTypeDef bpsUARTInit(void)
     return BPS_OK;
 }
 
-bpsStatusTypeDef bpsUARTSendData(bpsUARTSendDataTypeDef* sendData, int len)
+int bpsUARTSendData(bpsUARTSendDataTypeDef* sendData, int len)
 {
-    int rc = -1;
-    do
-    {
-        rc = write(fdes, sendData, len);
-        if (rc < 0)
-        if (errno != EWOULDBLOCK)
-            break;
-        if (rc == 0)
-        break;
-    } 
-    while (rc <= 0);
-    if (rc <= 0 || rc != len) return BPS_ERROR;
-    return BPS_OK;
+    return write(fdes, sendData, len);
 }
 
-bpsStatusTypeDef bpsUARTReceiveData	(bpsUARTSendDataTypeDef* recvData, int len)
+int bpsUARTReceiveData	(bpsUARTSendDataTypeDef* recvData, int len)
 {
-    int rc = -1;
-    do
-    {
-        rc = read(fdes, recvData, len);
-        if (rc < 0)
-        if (errno != EWOULDBLOCK)
-            break;
-        if (rc == 0)
-        break;
-    } 
-    while (rc <= 0);
-    if (rc <= 0 || rc != len) return BPS_ERROR;
-    return BPS_OK;
+  
+    return read(fdes, recvData, len);
+ 
 }

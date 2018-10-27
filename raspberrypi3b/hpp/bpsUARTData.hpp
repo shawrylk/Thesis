@@ -118,7 +118,7 @@ typedef enum
 }
 bpsStatusTypeDef;
 
-bpsStatusTypeDef		bpsUARTSendData				(bpsUARTSendDataTypeDef* sendData, int len);
+int						bpsUARTSendData				(bpsUARTSendDataTypeDef* sendData, int len);
 bpsStatusTypeDef 		bpsUARTInit					(void);
-bpsStatusTypeDef		bpsUARTReceiveData			(bpsUARTSendDataTypeDef* recvData, int len);
+int						bpsUARTReceiveData			(bpsUARTSendDataTypeDef* recvData, int len);
 #endif
