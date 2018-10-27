@@ -16,7 +16,6 @@ bpsStatusTypeDef bpsUARTSendData(bpsUARTSendDataTypeDef* sendData)
  {
     serialPuts(fdes, (char*)sendData);
     serialFlush(fdes);
-    fflush(stdout);
 	return BPS_OK;
 }
 
