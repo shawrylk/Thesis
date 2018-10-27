@@ -32,6 +32,7 @@ bpsStatusTypeDef bpsUARTReceiveData	(bpsUARTReceiveDataTypeDef* recvData, int le
         fflush (stdout);
     }
     while(serialDataAvail(fdes));
+    buff[i] = '\0';
     printf("%s\n",*buff);
 	return BPS_OK;
 }

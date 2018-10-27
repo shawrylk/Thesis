@@ -280,7 +280,7 @@ void testUART()
     {
         bpsUARTSendData(&sendData);
         usleep(1000);
-        bpsUARTReceiveData(&recvData, 5);
+        bpsUARTReceiveData(&recvData, 6);
         // std::cout << "mode: " << recvData.command;
         // std::cout << "x: " << recvData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] << " -- ";
         // std::cout << "y: " << recvData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] << std::endl;
