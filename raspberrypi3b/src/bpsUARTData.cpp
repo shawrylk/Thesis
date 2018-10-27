@@ -12,7 +12,6 @@ bpsStatusTypeDef bpsUARTInit(void)
     unsigned char c='D';
     tcgetattr(STDOUT_FILENO,&old_stdio);
 
-    printf("Please start with %s /dev/ttyS1 (for example)\n",argv[0]);
     memset(&stdio,0,sizeof(stdio));
     stdio.c_iflag=0;
     stdio.c_oflag=0;
