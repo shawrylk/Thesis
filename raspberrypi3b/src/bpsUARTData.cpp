@@ -9,6 +9,7 @@ bpsStatusTypeDef bpsUARTInit(void)
     {
         return BPS_ERROR;
 	}
+    sleep(3);
     return BPS_OK;
 }
 
