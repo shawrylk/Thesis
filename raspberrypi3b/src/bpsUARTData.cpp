@@ -5,23 +5,10 @@ int fdes;
 bpsStatusTypeDef bpsUARTInit(void)
 {
     struct termios tio;
-    struct termios stdio;
-    struct termios old_stdio;
-    int tty_fd;
+    
 
-    unsigned char c='D';
-    tcgetattr(STDOUT_FILENO,&old_stdio);
 
-    memset(&stdio,0,sizeof(stdio));
-    stdio.c_iflag=0;
-    stdio.c_oflag=0;
-    stdio.c_cflag=0;
-    stdio.c_lflag=0;
-    stdio.c_cc[VMIN]=1;
-    stdio.c_cc[VTIME]=0;
-    tcsetattr(STDOUT_FILENO,TCSANOW,&stdio);
-    tcsetattr(STDOUT_FILENO,TCSAFLUSH,&stdio);
-    fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK);       // make the reads non-blocking
+    // make the reads non-blocking
 
     memset(&tio,0,sizeof(tio));
     tio.c_iflag=0;
@@ -39,7 +26,7 @@ bpsStatusTypeDef bpsUARTInit(void)
     bpsUARTSendDataTypeDef sendData, recvData;
     cfsetospeed(&tio,B115200);            // 115200 baud
     cfsetispeed(&tio,B115200);            // 115200 baud
-    tcsetattr(tty_fd,TCSANOW,&tio);
+    tcsetattr(fdes,TCSANOW,&tio);
     return BPS_OK;
 }
 
