@@ -154,7 +154,7 @@ void processFrame(void)
         }
         STMData.ballCoordinate[BPS_X_AXIS] = x;
         STMData.ballCoordinate[BPS_Y_AXIS] = y;
-        STMData.command = BPS_MODE_DEFAULT;
+        STMData.command = BPS_MODE_SETPOINT;
         sem_post(&semProcessFrameCplt);
         if (count == 1000)
         {
