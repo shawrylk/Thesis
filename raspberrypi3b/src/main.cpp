@@ -154,7 +154,7 @@ void processFrame(void)
         }
         STMData.ballCoordinate[BPS_X_AXIS] = x;
         STMData.ballCoordinate[BPS_Y_AXIS] = y;
-        STMData.command = BPS_MODE_SETPOINT;
+        STMData.command = BPS_MODE_DEFAULT;
         sem_post(&semProcessFrameCplt);
         if (count == 1000)
         {
@@ -288,6 +288,7 @@ void testUART()
         bpsUARTReceiveData(&recvData, sizeof(bpsUARTSendDataTypeDef));
         std::cout << "ball x: " << recvData.ballCoordinate[BPS_X_AXIS] << " -- ";
         std::cout << "ball y: " << recvData.ballCoordinate[BPS_Y_AXIS] << std::endl;
+        std::cout << "**********************" << recvData.command << "****************\n";
         switch (recvData.command)
         {
             case BPS_MODE_CIRCLE:
