@@ -103,15 +103,14 @@ typedef struct
 	bpsCommandTypeDef			command;
 	bpsDataTypeDef				content;
 }	
-bpsUARTReceiveDataTypeDef; //56
+bpsSocketReceiveDataTypeDef; //52
 
 typedef	struct	
 {
-	//int16_t		            encoderCnt[2];
 	int16_t						ballCoordinate[BPS_NUMBER_OF_AXIS];
 	bpsCommandTypeDef			command;
 	bpsDataTypeDef				content;
- char                        nullTerminated;
+ 	char                        nullTerminated;
 }	
 bpsUARTSendDataTypeDef; //56
 
@@ -124,5 +123,5 @@ bpsStatusTypeDef;
 
 bpsStatusTypeDef		bpsUARTSendData				(bpsUARTSendDataTypeDef* sendData);
 bpsStatusTypeDef 		bpsUARTInit					(void);
-bpsStatusTypeDef		bpsUARTReceiveData			(bpsUARTReceiveDataTypeDef* recvData, int len);
+bpsStatusTypeDef		bpsUARTReceiveData			(bpsUARTSendDataTypeDef* recvData, int len);
 #endif

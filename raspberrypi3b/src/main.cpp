@@ -210,7 +210,7 @@ int sendFunc (char *sendData, int sendLen)
 
 int recvFunc (char *recvData, int recvLen)
 {
-    bpsUARTReceiveDataTypeDef *data = (bpsUARTReceiveDataTypeDef*)recvData ;
+    bpsSocketReceiveDataTypeDef *data = (bpsSocketReceiveDataTypeDef*)recvData ;
     switch (data->command)
     {
         case  BPS_MODE_CIRCLE:
@@ -271,8 +271,8 @@ int recvFunc (char *recvData, int recvLen)
 void testUART()
 {
     bpsUARTInit();
-    bpsUARTSendDataTypeDef sendData;
-    bpsUARTReceiveDataTypeDef recvData;
+    bpsUARTSendDataTypeDef sendData, recvData;
+    //bpsUARTReceiveDataTypeDef recvData;
     sendData.command = BPS_MODE_SETPOINT;
     sendData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 123;
     sendData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] = 456;
@@ -280,10 +280,10 @@ void testUART()
     {
         bpsUARTSendData(&sendData);
         usleep(1000);
-        bpsUARTReceiveData(&recvData, 6);
-        // std::cout << "mode: " << recvData.command;
-        // std::cout << "x: " << recvData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] << " -- ";
-        // std::cout << "y: " << recvData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] << std::endl;
+        bpsUARTReceiveData(&recvData, sizeof(bpsUARTSendDataTypeDef));
+        std::cout << "mode: " << recvData.command;
+        std::cout << "x: " << recvData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] << " -- ";
+        std::cout << "y: " << recvData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] << std::endl;
         sleep(1);
     }
 }

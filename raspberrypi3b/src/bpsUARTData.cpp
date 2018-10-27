@@ -14,13 +14,13 @@ bpsStatusTypeDef bpsUARTInit(void)
 
 bpsStatusTypeDef bpsUARTSendData(bpsUARTSendDataTypeDef* sendData)
  {
-    serialPuts(fdes, "hello"); //(char*)sendData);
+    serialPuts(fdes, (char*)sendData);
     serialFlush(fdes);
     fflush(stdout);
 	return BPS_OK;
 }
 
-bpsStatusTypeDef bpsUARTReceiveData	(bpsUARTReceiveDataTypeDef* recvData, int len)
+bpsStatusTypeDef bpsUARTReceiveData	(bpsUARTSendDataTypeDef* recvData, int len)
 {
 	char c;
     char *buff = new char[len];
@@ -32,7 +32,7 @@ bpsStatusTypeDef bpsUARTReceiveData	(bpsUARTReceiveDataTypeDef* recvData, int le
         fflush (stdout);
     }
     while(serialDataAvail(fdes));
-    buff[i] = '\0';
+    memcpy(recvData, buff, len);
     std::cout << *buff << std::endl;
 	return BPS_OK;
 }
