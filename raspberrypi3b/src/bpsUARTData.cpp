@@ -10,8 +10,13 @@ bpsStatusTypeDef bpsUARTInit(void)
         return BPS_ERROR;
 	}
     bpsUARTSendDataTypeDef sendData, recvData;
+
     bpsUARTSendData(&sendData, sizeof(bpsUARTSendDataTypeDef));
     bpsUARTReceiveData(&recvData, sizeof(bpsUARTSendDataTypeDef));
+    sleep(1);
+    bpsUARTSendData(&sendData, sizeof(bpsUARTSendDataTypeDef));
+    bpsUARTReceiveData(&recvData, sizeof(bpsUARTSendDataTypeDef));
+    sleep(1);
     return BPS_OK;
 }
 
