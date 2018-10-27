@@ -9,9 +9,6 @@
 #include <unistd.h>
 #include <iostream>
 #include <fcntl.h>
-#include <termios.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 
 #define MIN_PWM_DUTY				0
 #define	MAX_PWM_DUTY				9599
@@ -19,7 +16,6 @@
 #define	DT_OUTER_LOOP				0.016f  // 16 ms
 #define	DT_INNER_LOOP				0.001f	//  1 ms
 #define PULSE_PER_REVOLUTION        3072
-#define BAUDRATE B115200
 typedef enum
 {
     BPS_OUTER_PID,
