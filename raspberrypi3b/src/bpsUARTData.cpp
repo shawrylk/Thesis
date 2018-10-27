@@ -26,7 +26,7 @@ bpsStatusTypeDef bpsUARTSendData(bpsUARTSendDataTypeDef* sendData, int len)
         break;
     } 
     while (rc <= 0);
-    if (rc <= 0) return BPS_ERROR;
+    if (rc <= 0 || rc != len) return BPS_ERROR;
     return BPS_OK;
 }
 
@@ -43,6 +43,6 @@ bpsStatusTypeDef bpsUARTReceiveData	(bpsUARTSendDataTypeDef* recvData, int len)
         break;
     } 
     while (rc <= 0);
-    if (rc <= 0) return BPS_ERROR;
+    if (rc <= 0 || rc != len) return BPS_ERROR;
     return BPS_OK;
 }
