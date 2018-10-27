@@ -1,11 +1,5 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <wiringPi.h>
-#include <wiringSerial.h>
-#include <thread>
 
+#include "../hpp/bpsUARTData.hpp"
 int fdes;
 
 bpsStatusTypeDef bpsUARTInit(void)
@@ -26,10 +20,10 @@ bpsStatusTypeDef bpsUARTSendData(bpsUARTSendDataTypeDef* sendData)
 	return BPS_OK;
 }
 
-bpsStatusTypeDef bpsUARTReceiveData	(bpsUARTReceiveData* recvData, int len)
+bpsStatusTypeDef bpsUARTReceiveData	(bpsUARTReceiveDataTypeDef* recvData, int len)
 {
 	char c;
-    char buff[] = new char(len);
+    char *buff = new char[len];
     int i = 0;
     do
     {

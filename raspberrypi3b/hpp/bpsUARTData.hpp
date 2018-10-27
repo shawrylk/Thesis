@@ -8,6 +8,8 @@
 #include <errno.h>
 #include <wiringPi.h>
 #include <wiringSerial.h>
+#include <unistd.h>
+#include <iostream>
 
 #define MIN_PWM_DUTY				0
 #define	MAX_PWM_DUTY				9599
@@ -122,5 +124,5 @@ bpsStatusTypeDef;
 
 bpsStatusTypeDef		bpsUARTSendData				(bpsUARTSendDataTypeDef* sendData);
 bpsStatusTypeDef 		bpsUARTInit					(void);
-bpsStatusTypeDef		bpsUARTReceiveData			(bpsUARTReceiveData* recvData);
+bpsStatusTypeDef		bpsUARTReceiveData			(bpsUARTReceiveDataTypeDef* recvData, int len);
 #endif

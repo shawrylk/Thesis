@@ -40,6 +40,7 @@ void captureFrame(void);
 void processFrame(void);
 void showImage(void);
 void server(void);
+void testUART(void);
 int sendFunc (char *sendData, int sendLen);
 int recvFunc (char *recvData, int recvLen);
 ::KalmanFilter KF(240, 0.01, 1);
@@ -55,12 +56,12 @@ int main()
     std::thread thread1(captureFrame);
     std::thread thread2(processFrame);
     std::thread thread3(server);
-    //std::thread thread4(contourFrame);
+    std::thread thread4(testUART);
     //std::thread thread5(showImage);
     thread1.join();
     thread2.join();
     thread3.join();
-    //thread4.join();
+    thread4.join();
     //thread5.join();
     return 0;
 }
@@ -265,4 +266,23 @@ int recvFunc (char *recvData, int recvLen)
             break;
     }
     return 0;
+}
+
+void testUART()
+{
+    bpsUARTInit();
+    bpsUARTSendDataTypeDef sendData;
+    bpsUARTReceiveDataTypeDef recvData;
+    sendData.command = BPS_MODE_SETPOINT;
+    sendData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 123;
+    sendData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] = 456;
+    while(1)
+    {
+        bpsUARTSendData(&sendData);
+        bpsUARTReceiveData(&recvData, 52);
+        std::cout << "mode: " << recvData.command;
+        std::cout << "x: " << recvData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] << " -- ";
+        std::cout << "y: " << recvData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] << std::endl;
+        sleep(1);
+    }
 }

@@ -1,4 +1,6 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/bpsRaspberryPi3B.dir/src/bpsKalmanFilter.cpp.o"
+  "CMakeFiles/bpsRaspberryPi3B.dir/src/bpsServer.cpp.o"
   "CMakeFiles/bpsRaspberryPi3B.dir/src/bpsUARTData.cpp.o"
   "CMakeFiles/bpsRaspberryPi3B.dir/src/main.cpp.o"
   "../bin/bpsRaspberryPi3B.pdb"
