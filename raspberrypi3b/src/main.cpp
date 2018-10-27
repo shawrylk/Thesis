@@ -274,6 +274,8 @@ void testUART()
     bpsUARTSendDataTypeDef sendData, recvData;
     //bpsUARTReceiveDataTypeDef recvData;
     memset(&sendData, 0 , sizeof(bpsUARTSendDataTypeDef));
+    sendData.ballCoordinate[BPS_X_AXIS] = 111;
+    sendData.ballCoordinate[BPS_Y_AXIS] = 222;
     sendData.command = BPS_MODE_SETPOINT;
     sendData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 123;
     sendData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] = 456;
