@@ -139,16 +139,10 @@ void processFrame(void)
                         y = moment.m01/area;
                         bFoundObject = true;
                         refArea = area;
-                        STMData.ballCoordinate[BPS_X_AXIS] = x;
-                        STMData.ballCoordinate[BPS_Y_AXIS] = y;
-                        STMData.command = BPS_MODE_DEFAULT;
                     }
                     else 
                         bFoundObject = false;
-
-
                 }
-
             }
             else 
             {
@@ -158,6 +152,9 @@ void processFrame(void)
                     thresh_min = THRESH_MAX;
             }
         }
+        STMData.ballCoordinate[BPS_X_AXIS] = x;
+        STMData.ballCoordinate[BPS_Y_AXIS] = y;
+        STMData.command = BPS_MODE_DEFAULT;
         sem_post(&semProcessFrameCplt);
         if (count == 1000)
         {
@@ -288,6 +285,7 @@ void testUART()
     bpsUARTSendDataTypeDef recvData;
     while(1)
     {
+        std::cout << "********************** testUART *********************\n";
         bpsUARTReceiveData(&recvData, sizeof(bpsUARTSendDataTypeDef));
         std::cout << "ball x: " << recvData.ballCoordinate[BPS_X_AXIS] << " -- ";
         std::cout << "ball y: " << recvData.ballCoordinate[BPS_Y_AXIS] << std::endl;
