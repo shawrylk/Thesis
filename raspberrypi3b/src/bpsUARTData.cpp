@@ -20,19 +20,19 @@ bpsStatusTypeDef bpsUARTInit(void)
      if (n = tcgetattr(fdes, &term) == -1)
     {
         perror("tcgetattr");
-        return;
+        return BPS_ERROR;
     }
 
     if (n = cfsetispeed(&term, B115200) == -1)
     {
         perror("cfsetispeed");
-        return;
+        return BPS_ERROR;
     }
 
     if (n = cfsetospeed(&term, B115200) == -1)
     {
         perror("cfsetospeed");
-        return;
+        return BPS_ERROR;
     }
 
     term.c_cflag |= (CLOCAL | CREAD);
@@ -48,7 +48,7 @@ bpsStatusTypeDef bpsUARTInit(void)
     if (n = tcsetattr(fdes, TCSANOW, &term) == -1)
     {
         perror("tcsetattr");
-        return;
+        return BPS_ERROR;
     }
     return BPS_OK;
 }
