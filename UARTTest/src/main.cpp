@@ -41,14 +41,14 @@ int msend(int fdes) {
 
 int mrecv(int fdes) {
  
-	char* buff = new char[10];
+	char* buff = new char[52];
 	printf("Raspberry's receiving : \n");
  
 	while(1) {
 			int n;
 			do
 			{
-				n = read(fdes, recvData, len);
+				n = read(fdes, buff, 52);
 			}
     		while (serialDataAvail(fdes));
 			std::cout << buff << std::endl;
