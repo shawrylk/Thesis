@@ -189,6 +189,7 @@ void bpsTaskUARTSendData(void* pointer)
 //	sendData.command = BPS_MODE_SETPOINT;
 //	bpsUARTSendData(&sendData);
 //	vTaskDelay(pdMS_TO_TICKS(16));
+	memset((void*)&sendData, 0 , sizeof(bpsUARTSendDataTypeDef));
 	while(1)
 	{
 //		vTaskDelay(pdMS_TO_TICKS(16));
@@ -196,13 +197,13 @@ void bpsTaskUARTSendData(void* pointer)
 //		sendData.ballCoordinate[BPS_Y_AXIS] = 0xFF;
 //		sendData.command = BPS_MODE_DEFAULT;
 //		bpsUARTSendData(&sendData);
-		sendData.ballCoordinate[BPS_X_AXIS] = 0x22;
-	sendData.ballCoordinate[BPS_Y_AXIS] = 0x22;
-	sendData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 0x55;
-	sendData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] = 0x55;
-	sendData.command = BPS_MODE_SETPOINT;
-	bpsUARTSendData(&sendData);
-	vTaskDelay(pdMS_TO_TICKS(100));
+//		sendData.ballCoordinate[BPS_X_AXIS] = 0x11;
+//	sendData.ballCoordinate[BPS_Y_AXIS] = 0x22;
+//	sendData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 0x33;
+//	sendData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] = 0x44;
+//	sendData.command = BPS_MODE_SETPOINT;
+//	bpsUARTSendData(&sendData);
+//	vTaskDelay(pdMS_TO_TICKS(100));
 	}
 }
 
