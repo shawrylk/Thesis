@@ -50,7 +50,7 @@ int mrecv(int fdes) {
 	char* buff = new char[10];
 	memset(buff,0,10);
 	printf("Raspberry's receiving : \n");
- 
+	sleep(1);
 	while(1) {
 			fcntl(fdes, F_SETFL, 0);
 			read(fdes, buff, 5);
