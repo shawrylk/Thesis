@@ -167,7 +167,7 @@ int mrecv(int fdes) {
 				read(fdes, buff, 64);
 				std::cout << buff << std::endl;
 			}
-		}
+		
 	
 	return 0;
 }
