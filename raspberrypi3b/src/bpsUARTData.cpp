@@ -18,7 +18,7 @@ int bpsUARTSendData(bpsUARTSendDataTypeDef* sendData, int len)
 {
     int n;
     n = write(fdes, "hello con cac ajinomoto wtf troi oi la troi chay asd iasd xcxzc ", 64);
-    usleep(5000);
+    usleep(10000);
     return n;
 }
 
