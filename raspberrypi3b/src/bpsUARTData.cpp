@@ -16,13 +16,20 @@ bpsStatusTypeDef bpsUARTInit(void)
 
 int bpsUARTSendData(bpsUARTSendDataTypeDef* sendData, int len)
 {
-    return write(fdes, sendData, len);
+    int n;
+    n = write(fdes, sendData, len);
+    serialFlush(fdes);
+    return n;
 }
 
 int bpsUARTReceiveData	(bpsUARTSendDataTypeDef* recvData, int len)
 {
-  
-    return read(fdes, recvData, len);
- 
+    int n;
+    do
+    {
+        n = read(fdes, recvData, len);
+    }
+    while (serialDataAvail(fdes));
+    return n;
 }
 
