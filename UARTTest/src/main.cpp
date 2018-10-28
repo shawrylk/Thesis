@@ -167,6 +167,8 @@ int mrecv(int fdes) {
 			do
 			{
 				read(fdes, &buff[i++], 1);
+				if (i == 52)
+				break;
 			}
 			while (serialDataAvail(fdes));
 			if (i == 52)
