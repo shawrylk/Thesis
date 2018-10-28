@@ -68,7 +68,7 @@ int recv(int fdes) {
 			do{
 				buff[i++] = serialGetchar(fdes);
 				
-			}while(serialDataAvail(fdes));
+			}while(serialDataAvail(fdes) || i < 20);
 			memcpy(ball, buff, 20);
 			printf("number: %d\n", i);
 			
