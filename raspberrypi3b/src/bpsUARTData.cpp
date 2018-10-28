@@ -141,7 +141,7 @@ int bpsUARTReceiveData	(bpsUARTSendDataTypeDef* recvData, int len)
       i = i + 1;
 	  }
     for (int j = 0; j< len; j+=4)
-      printf("%x -- %x -- %x -- %x",buff[j],buff[j+1],buff[j+2],buff[j+3])
+      printf("%x -- %x -- %x -- %x",buff[j],buff[j+1],buff[j+2],buff[j+3]);
     memcpy(recvData, buff, len);
     return len;
 }
