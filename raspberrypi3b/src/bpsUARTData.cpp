@@ -117,7 +117,7 @@ bpsStatusTypeDef bpsUARTInit(void)
     serialFlush(fdes);
     do
     {
-        read(fdes, null, 1);
+        read(fdes, NULL, 1);
     }
     while (serialDataAvail(fdes));
     return BPS_OK;
