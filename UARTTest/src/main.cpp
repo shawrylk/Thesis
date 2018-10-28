@@ -25,26 +25,20 @@ int main()
 int send(int fdes) {
  
 	int16_t ball[2];
+	int i = 0;
 	char *buff = new char[10];
 	ball[0] = 0x1111;
 	ball[1] = 0xFFFF;
 	memcpy(buff,(char*)&ball, sizeof(int16_t) * 2);
-	buff[4] = '\0';
-	printf("string: %s\n",buff);
-	printf("char: %c\n",buff[0]);
-	printf("char: %c\n",buff[1]);
-	printf("char: %c\n",buff[2]);
-	printf("char: %c\n",buff[3]);
-	printf("char: %c\n",buff[4]);
-	printf("hexa: %x\n",buff[0]);
-	printf("hexa: %x\n",buff[1]);
-	printf("hexa: %x\n",buff[2]);
-	printf("hexa: %x\n",buff[3]);
-	printf("hexa: %x\n",buff[4]);
 	printf("Raspberry's sending : \n");
  
 	while(1) {
-		serialPuts(fdes,buff);
+		i = 0;
+		while (i < 4)
+		{
+			serialPuts(fdes,buff+i);
+			i++;
+		}
 		serialFlush(fdes);
 		//printf("%s\n", "hello");
 		fflush(stdout);
