@@ -38,7 +38,7 @@ int msend(int fdes) {
 		if (n < 0)
   			fputs("write() of 5 bytes failed!\n", stdout);
 		else
-			fputs("send %d bytes", n, stdout);
+			printf("send %d bytes", n);
 	fflush(stdout);
 	sleep(1);
 	}
