@@ -28,7 +28,9 @@ int send(int fdes) {
 	char *buff = new char[10];
 	ball[0] = 0x11;
 	ball[1] = 0xFF;
-	memcpy(buff,(char*)ball, sizeof(int16_t) * 2);
+	memcpy(buff,(char*)&ball, sizeof(int16_t) * 2);
+	buff[5] = '\0';
+	printf("%s\n",buff);
 	printf("Raspberry's sending : \n");
  
 	while(1) {
