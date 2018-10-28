@@ -70,11 +70,12 @@ int recv(int fdes) {
 				
 			}while(serialDataAvail(fdes));
 			memcpy(ball, buff, 20);
-			printf("number: %d", i);
-			fflush(stdout);
+			printf("number: %d\n", i);
+			
 			for (int j =0; j < 10; j++)
 				printf("%d ",ball[j]);
 			printf("\n");
+			fflush(stdout);
 		}
 	
 	return 0;
