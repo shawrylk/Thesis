@@ -60,7 +60,7 @@ int serialOpen (const char *device, const int baud)
       return -2 ;
   }
 
-  if ((fd = open (device, O_RDWR | O_NOCTTY | O_NDELAY | O_NONBLOCK)) == -1)
+  if ((fd = open (device, O_RDWR | O_NOCTTY | O_NDELAY)) == -1)
     return -1 ;
 
   fcntl (fd, F_SETFL, O_RDWR) ;
