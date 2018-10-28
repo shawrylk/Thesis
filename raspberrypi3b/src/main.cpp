@@ -58,12 +58,12 @@ int main()
     std::thread thread1(captureFrame);
     std::thread thread2(processFrame);
     std::thread thread3(server);
-    //std::thread thread4(testUART);
+    std::thread thread4(testUART);
     //std::thread thread5(showImage);
     thread1.join();
     thread2.join();
     thread3.join();
-    //thread4.join();
+    thread4.join();
     //thread5.join();
     return 0;
 }
