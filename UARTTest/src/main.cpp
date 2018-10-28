@@ -153,7 +153,7 @@ int msend(int fdes) {
  
 	while(1) {
 		write(fdes, "hello con cac ajinomoto wtf troi oi la troi chay asd iasd xcxzc ", 64);
-		
+		usleep(1000);
 	}
 	return 0;
 }
