@@ -15,7 +15,7 @@ int fdes;
 
 int main()
 {
-	fdes = open("/dev/serial0", O_RDWR | O_NOCTTY | O_NDELAY);
+	fdes = open("/dev/serial0", O_RDWR);
 	if (fdes < 0 )
     {
         return -1;
