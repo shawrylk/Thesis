@@ -25,7 +25,7 @@ int main()
 int send(int fdes) {
  
 	int16_t ball[2];
-	char *buff = new buff[10];
+	char *buff = new char[10];
 	ball[0] = 0x11;
 	ball[1] = 0xFF;
 	memcpy(buff,(char*)ball, sizeof(int16_t*2));
