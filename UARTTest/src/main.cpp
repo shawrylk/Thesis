@@ -153,7 +153,6 @@ int msend(int fdes) {
  
 	while(1) {
 		write(fdes, "hello con cac ajinomoto wtf troi oi la troi chay asdiasdxcxzc ", 52);
-		serialFlush(fdes);
 		usleep(1000);
 	}
 	return 0;
@@ -165,12 +164,7 @@ int mrecv(int fdes) {
 	printf("Raspberry's receiving : \n");
  
 	while(1) {
-			int n;
-			do
-			{
-				n = read(fdes, buff, 52);
-			}
-    		while (serialDataAvail(fdes));
+			n = read(fdes, buff, 52);
 			std::cout << buff << std::endl;
 		}
 	
