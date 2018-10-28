@@ -109,7 +109,7 @@ int serialDataAvail (const int fd)
 
 bpsStatusTypeDef bpsUARTInit(void)
 {
-    fdes = serialOpen ("/dev/serial0",4000000);
+    fdes = serialOpen ("/dev/serial0", 1000000);
 	if (fdes < 0 )
     {
         return BPS_ERROR;
