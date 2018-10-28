@@ -52,10 +52,15 @@ int mrecv(int fdes) {
 	char* buff = new char[10];
 	memset(buff,0,10);
 	printf("Raspberry's receiving : \n");
+	int n;
 	sleep(1);
 	while(1) {
 			
-			read(fdes, buff, 5);
+			n = read(fdes, buff, 5);
+			if (n < 0)
+  				fputs("read() of 5 bytes failed!\n", stdout);
+			else
+				printf("read %d bytes\n", n);
 			printf("%c\n", buff[0]);
 			fflush(stdout);
 		}
