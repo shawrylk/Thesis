@@ -18,7 +18,8 @@ int bpsUARTSendData(bpsUARTSendDataTypeDef* sendData, int len)
 {
     int n;
     n = write(fdes, sendData, len);
-    usleep(10000);
+    while(n != len);
+    serialFlush(fdes);
     return n;
 }
 
