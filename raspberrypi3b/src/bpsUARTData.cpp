@@ -24,12 +24,18 @@ int bpsUARTSendData(bpsUARTSendDataTypeDef* sendData, int len)
 
 int bpsUARTReceiveData	(bpsUARTSendDataTypeDef* recvData, int len)
 {
-    int n;
-    do
-    {
-        n = read(fdes, recvData, len);
-    }
-    while (serialDataAvail(fdes));
-    return n;
+    int i = 0, n =0;
+    while(i != len) {
+			do
+			{
+				read(fdes, &buff[i++], 1);
+				if (i == len)
+				break;
+			}
+			while (serialDataAvail(fdes));
+			if (i == len)
+                break;
+		}
+    return len;
 }
 
