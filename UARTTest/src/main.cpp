@@ -11,7 +11,8 @@
 #include <sys/ioctl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-
+#include <thread>
+#include <iostream>
 #include "wiringSerial.h"
 
 
