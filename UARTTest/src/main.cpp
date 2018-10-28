@@ -164,17 +164,8 @@ int mrecv(int fdes) {
 	printf("Raspberry's receiving : \n");
 	int i =0;
 	while(1) {
-			do
-			{
-				read(fdes, &buff[i++], 1);
-				if (i == 64)
-				break;
-			}
-			while (serialDataAvail(fdes));
-			if (i == 64)
-			{
+				read(fdes, buff, 64);
 				std::cout << buff << std::endl;
-				i= 0;
 			}
 		}
 	
