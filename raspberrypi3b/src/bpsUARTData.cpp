@@ -17,14 +17,13 @@ bpsStatusTypeDef bpsUARTInit(void)
 int bpsUARTSendData(bpsUARTSendDataTypeDef* sendData, int len)
 {
     int n;
-    n = write(fdes, "hello con cac ajinomoto wtf troi oi la troi chay asd iasd xcxzc ", 64);
+    n = write(fdes, sendData, len);
     usleep(10000);
     return n;
 }
 
 int bpsUARTReceiveData	(bpsUARTSendDataTypeDef* recvData, int len)
 {
-    len = 64;
     int i = 0, n =0;
     char* buff = new char[len];
     while(i != len) 
@@ -39,8 +38,7 @@ int bpsUARTReceiveData	(bpsUARTSendDataTypeDef* recvData, int len)
         if (i == len)
             break;
 	}
-    //memcpy(recvData, buff, len);
-    std::cout << buff << std::endl;
+    memcpy(recvData, buff, len);
     return len;
 }
 
