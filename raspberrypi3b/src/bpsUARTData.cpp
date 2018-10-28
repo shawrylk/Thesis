@@ -25,6 +25,7 @@ int bpsUARTSendData(bpsUARTSendDataTypeDef* sendData, int len)
 int bpsUARTReceiveData	(bpsUARTSendDataTypeDef* recvData, int len)
 {
     int i = 0, n =0;
+    char* buff = new char[len];
     while(i != len) {
 			do
 			{
@@ -36,6 +37,7 @@ int bpsUARTReceiveData	(bpsUARTSendDataTypeDef* recvData, int len)
 			if (i == len)
                 break;
 		}
+    memccpy(recvData, buff, len);
     return len;
 }
 
