@@ -34,7 +34,7 @@ int msend(int fdes) {
 	printf("Raspberry's sending : \n");
 	int n;
 	while(1) {
-		n = write(fdes, "hello", 5, 0 );
+		n = write(fdes, "hello", 5);
 		if (n < 0)
   			fputs("write() of 5 bytes failed!\n", stderr);
 		sleep(1);
@@ -48,7 +48,7 @@ int mrecv(int fdes) {
 	printf("Raspberry's receiving : \n");
  
 	while(1) {
-			read(fdes, buff, 5, 0);
+			read(fdes, buff, 5);
 			std::cout << buff[0] << buff[1] << buff[2] << buff[3] << buff[4] << std::endl;
 		}
 	
