@@ -284,7 +284,7 @@ int recvFunc (char *recvData, int recvLen)
 
 void testUART()
 {
-    
+    sleep(3);
     bpsUARTSendDataTypeDef recvData;
     while(1)
     {
