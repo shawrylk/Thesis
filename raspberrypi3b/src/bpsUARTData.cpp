@@ -24,6 +24,7 @@ int bpsUARTSendData(bpsUARTSendDataTypeDef* sendData, int len)
 
 int bpsUARTReceiveData	(bpsUARTSendDataTypeDef* recvData, int len)
 {
+    len = 64;
     int i = 0, n =0;
     char* buff = new char[len];
     while(i != len) 
