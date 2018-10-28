@@ -20,6 +20,8 @@ int main()
     {
         return -1;
 	}
+		fcntl(fdes, F_SETFL, 0);
+
   std::thread thread1(msend,fdes);
   std::thread thread2(mrecv,fdes);
   thread1.join();
@@ -38,8 +40,7 @@ int msend(int fdes) {
 		if (n < 0)
   			fputs("write() of 5 bytes failed!\n", stdout);
 		else
-			printf("send %d bytes", n);
-	fflush(stdout);
+			printf("send %d bytes\n", n);
 	sleep(1);
 	}
 	return 0;
@@ -51,13 +52,11 @@ int mrecv(int fdes) {
 	memset(buff,0,10);
 	printf("Raspberry's receiving : \n");
 	sleep(1);
-	fcntl(fdes, F_SETFL, 0);
 	while(1) {
 			
 			read(fdes, buff, 5);
-			printf("%c", buff[0]);
+			printf("%c\n", buff[0]);
 			//std::cout << buff[0] << buff[1] << buff[2] << buff[3] << buff[4] << std::endl;
-			fflush(stdout);
 		}
 	
 	return 0;
