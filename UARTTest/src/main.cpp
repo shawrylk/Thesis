@@ -164,7 +164,7 @@ int mrecv(int fdes) {
 	printf("Raspberry's receiving : \n");
  
 	while(1) {
-			n = read(fdes, buff, 52);
+			read(fdes, buff, 52);
 			std::cout << buff << std::endl;
 		}
 	
