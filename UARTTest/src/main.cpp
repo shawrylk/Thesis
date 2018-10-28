@@ -26,8 +26,8 @@ int send(int fdes) {
  
 	int16_t ball[2];
 	char *buff = new char[10];
-	ball[0] = 0x11;
-	ball[1] = 0xFF;
+	ball[0] = 0x1111;
+	ball[1] = 0xFFFF;
 	memcpy(buff,(char*)&ball, sizeof(int16_t) * 2);
 	buff[4] = '\0';
 	printf("string: %s\n",buff);
