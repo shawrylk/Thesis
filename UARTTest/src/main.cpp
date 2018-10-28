@@ -29,12 +29,12 @@ int send(int fdes) {
 	ball[0] = 0x11;
 	ball[1] = 0xFF;
 	memcpy(buff,(char*)&ball, sizeof(int16_t) * 2);
-	buff[5] = '\0';
+	buff[4] = '\0';
 	printf("%s\n",buff);
 	printf("Raspberry's sending : \n");
  
 	while(1) {
-		serialPuts(fdes,(char*)&ball[0]);
+		serialPuts(fdes,buff);
 		serialFlush(fdes);
 		//printf("%s\n", "hello");
 		fflush(stdout);
