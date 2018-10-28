@@ -20,12 +20,10 @@ int main()
     {
         return -1;
 	}
-		fcntl(fdes, F_SETFL, 0);
-
-  std::thread thread1(msend,fdes);
-  std::thread thread2(mrecv,fdes);
-  thread1.join();
-  thread2.join();
+	std::thread thread1(msend,fdes);
+	std::thread thread2(mrecv,fdes);
+	thread1.join();
+	thread2.join();
       return 0;
 
 }
