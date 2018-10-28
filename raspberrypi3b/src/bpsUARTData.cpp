@@ -6,7 +6,7 @@ int fdes;
 
 bpsStatusTypeDef bpsUARTInit(void)
 {
-    fdes = serialOpen ("/dev/serial0", 9600);
+    fdes = serialOpen ("/dev/serial0", 1000000);
 	if (fdes < 0 )
     {
         return BPS_ERROR;
