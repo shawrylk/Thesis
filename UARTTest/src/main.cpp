@@ -160,7 +160,7 @@ int msend(int fdes) {
 
 int mrecv(int fdes) {
  
-	char* buff = new char[52];
+	char* buff = new char[64];
 	printf("Raspberry's receiving : \n");
 	int i =0;
 	while(1) {
@@ -169,7 +169,7 @@ int mrecv(int fdes) {
 				read(fdes, &buff[i++], 1);
 			}
 			while (serialDataAvail(fdes));
-			if (i >= 52)
+			if (i == 52)
 			{
 				std::cout << buff << std::endl;
 				i= 0;
