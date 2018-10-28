@@ -51,8 +51,9 @@ int mrecv(int fdes) {
 	memset(buff,0,10);
 	printf("Raspberry's receiving : \n");
 	sleep(1);
+	fcntl(fdes, F_SETFL, 0);
 	while(1) {
-			fcntl(fdes, F_SETFL, 0);
+			
 			read(fdes, buff, 5);
 			printf("%c", buff[0]);
 			//std::cout << buff[0] << buff[1] << buff[2] << buff[3] << buff[4] << std::endl;
