@@ -26,7 +26,7 @@ int send(int fdes) {
  
 	int16_t ball[10];
 	int i = 0;
-	char *buff = new char[10];
+	char *buff = new char[20];
 	ball[0] = 1;
 	ball[1] = 2;
 	ball[2] = 3;
@@ -42,7 +42,7 @@ int send(int fdes) {
  
 	while(1) {
 		i = 0;
-		while (i < 10)
+		while (i < 20)
 		{
 			serialPuts(fdes,buff+i);
 			i++;
@@ -60,18 +60,21 @@ int recv(int fdes) {
 	char c;
 	int i = 0;
 	printf("Raspberry's receiving : \n");
-	char *buff = new char[10];
+	char *buff = new char[20];
 	int16_t ball[10];
 	while(1) {
 			i = 0;
-			memset(buff,0,10);
+			memset(buff,0,20);
 			do{
 				buff[i++] = serialGetchar(fdes);
 				
-			}while(serialDataAvail(fdes) || i < 10);
-			memcpy(ball, buff, 10);
+			}while(serialDataAvail(fdes));
+			memcpy(ball, buff, 20);
 			printf("number: %d", i);
 			fflush(stdout);
+			for (int j =0; j < 10; j++)
+				printf("%d ",ball[j]);
+			printf("\n");
 		}
 	
 	return 0;
