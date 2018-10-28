@@ -85,6 +85,7 @@ int recv(int fdes) {
 				printf("number: %d\n", i);
 				for (int j =0; j < 20; j++)
 					printf("%x ",buff[j]);
+				printf("\n");
 				for (int j =0; j < 10; j++)
 					printf("%x ",ball[j]);
 				printf("\n");
