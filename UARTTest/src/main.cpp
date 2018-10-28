@@ -166,9 +166,9 @@ int mrecv(int fdes) {
 	while(1) {
 			do
 			{
-				read(fdes, buff[i++], 1);
+				read(fdes, &buff[i++], 1);
 			}
-			while serialDataAvail(fdes);
+			while (serialDataAvail(fdes));
 			if (i == 52)
 			{
 				std::cout << buff << std::endl;
