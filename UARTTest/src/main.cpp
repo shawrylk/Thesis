@@ -15,7 +15,7 @@ int fdes;
 
 int main()
 {
-	fdes = open("/dev/serial0", O_RDWR);
+	fdes = open("/dev/serial0", O_RDWR | O_NOCTTY | O_NDELAY);
 	if (fdes < 0 )
     {
         return -1;
@@ -32,9 +32,11 @@ int msend(int fdes) {
  
  
 	printf("Raspberry's sending : \n");
- 
+	int n;
 	while(1) {
-		send(fdes, "hello", 5, 0 );
+		n = write(fdes, "hello", 5, 0 );
+		if (n < 0)
+  			fputs("write() of 5 bytes failed!\n", stderr);
 		sleep(1);
 	}
 	return 0;
@@ -46,7 +48,7 @@ int mrecv(int fdes) {
 	printf("Raspberry's receiving : \n");
  
 	while(1) {
-			recv(fdes, buff, 5, 0);
+			read(fdes, buff, 5, 0);
 			std::cout << buff[0] << buff[1] << buff[2] << buff[3] << buff[4] << std::endl;
 		}
 	
