@@ -58,14 +58,20 @@ int send(int fdes) {
 int recv(int fdes) {
  
 	char c;
+	int i = 0;
 	printf("Raspberry's receiving : \n");
- 
+	char *buff = new char[10];
+	int16_t ball[10];
 	while(1) {
+			i = 0;
+			memset(buff,0,10);
 			do{
-				c = serialGetchar(fdes);
-				printf("%c",c);
-				fflush (stdout);
+				buff[i++] = serialGetchar(fdes);
+				
 			}while(serialDataAvail(fdes));
+			memcpy(ball, buff, 10);
+			printf("number: %d", i);
+			fflush(stdout);
 		}
 	
 	return 0;
