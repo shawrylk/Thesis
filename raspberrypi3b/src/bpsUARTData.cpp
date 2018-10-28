@@ -18,7 +18,6 @@ int bpsUARTSendData(bpsUARTSendDataTypeDef* sendData, int len)
 {
     int n;
     n = write(fdes, sendData, len);
-    serialFlush(fdes);
     return n;
 }
 
