@@ -152,9 +152,9 @@ int msend(int fdes) {
 	printf("Raspberry's sending : \n");
  
 	while(1) {
-		write(fdes, "hello con cac ajinomoto wtf troi oi la troi chay asdiasdxcxzc ..", 64);
-		serialFlush(fdes);
-		usleep(1000);
+		write(fdes, "hello con cac ajinomoto wtf troi oi la troi chay asd iasd xcxzc ", 64);
+		//serialFlush(fdes);
+		usleep(10000);
 	}
 	return 0;
 }
