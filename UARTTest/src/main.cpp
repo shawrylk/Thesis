@@ -48,12 +48,15 @@ int msend(int fdes) {
 int mrecv(int fdes) {
  
 	char* buff = new char[10];
+	memset(buff,0,10);
 	printf("Raspberry's receiving : \n");
  
 	while(1) {
+			fcntl(fd, F_SETFL, 0);
 			read(fdes, buff, 5);
+			printf("%c", buff[0]);
 			//std::cout << buff[0] << buff[1] << buff[2] << buff[3] << buff[4] << std::endl;
-			//fflush(stdout);
+			fflush(stdout);
 		}
 	
 	return 0;
