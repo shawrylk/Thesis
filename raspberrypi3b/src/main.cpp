@@ -58,12 +58,12 @@ int main()
     std::thread thread1(captureFrame);
     std::thread thread2(processFrame);
     std::thread thread3(server);
-    std::thread thread4(testUART);
+    //std::thread thread4(testUART);
     //std::thread thread5(showImage);
     thread1.join();
     thread2.join();
     thread3.join();
-    thread4.join();
+    //thread4.join();
     //thread5.join();
     return 0;
 }
@@ -225,55 +225,55 @@ int recvFunc (char *recvData, int recvLen)
     {
         case  BPS_MODE_CIRCLE:
             memcpy(&(STMData.command), data, sizeof(bpsSocketReceiveDataTypeDef));
-            // std::cout << "circle mode \n";
-            // std::cout << "x: " << data->content.circleProperties.centerCoordinate[BPS_X_AXIS] << " -- ";
-            // std::cout << "y: " << data->content.circleProperties.centerCoordinate[BPS_Y_AXIS] << std::endl;
-            // std::cout << "r: " << data->content.circleProperties.radius << std::endl;
-            // std::cout << "s: " << data->content.circleProperties.speed << std::endl;
+            std::cout << "circle mode \n";
+            std::cout << "x: " << data->content.circleProperties.centerCoordinate[BPS_X_AXIS] << " -- ";
+            std::cout << "y: " << data->content.circleProperties.centerCoordinate[BPS_Y_AXIS] << std::endl;
+            std::cout << "r: " << data->content.circleProperties.radius << std::endl;
+            std::cout << "s: " << data->content.circleProperties.speed << std::endl;
             break;
         case BPS_MODE_SETPOINT:
             memcpy(&(STMData.command), data, sizeof(bpsSocketReceiveDataTypeDef));
-            // std::cout << "setpoint mode \n";
-            // std::cout << "x: " << data->content.pointProperties.setpointCoordinate[BPS_X_AXIS] << " -- ";
-            // std::cout << "y: " << data->content.pointProperties.setpointCoordinate[BPS_Y_AXIS] << std::endl;
+            std::cout << "setpoint mode \n";
+            std::cout << "x: " << data->content.pointProperties.setpointCoordinate[BPS_X_AXIS] << " -- ";
+            std::cout << "y: " << data->content.pointProperties.setpointCoordinate[BPS_Y_AXIS] << std::endl;
             break;
         case BPS_MODE_RECTANGLE:
             memcpy(&(STMData.command), data, sizeof(bpsSocketReceiveDataTypeDef));
-            // std::cout << "rectangle mode \n";
-            // std::cout << "TL x: " << data->content.rectangleProperties.vertexCoordinate[BPS_TOP_LEFT][BPS_X_AXIS] << " -- ";
-            // std::cout << "TL y: " << data->content.rectangleProperties.vertexCoordinate[BPS_TOP_LEFT][BPS_Y_AXIS] << std::endl;
+            std::cout << "rectangle mode \n";
+            std::cout << "TL x: " << data->content.rectangleProperties.vertexCoordinate[BPS_TOP_LEFT][BPS_X_AXIS] << " -- ";
+            std::cout << "TL y: " << data->content.rectangleProperties.vertexCoordinate[BPS_TOP_LEFT][BPS_Y_AXIS] << std::endl;
 
-            // std::cout << "TR x: " << data->content.rectangleProperties.vertexCoordinate[BPS_TOP_RIGHT][BPS_X_AXIS] << " -- ";
-            // std::cout << "TR y: " << data->content.rectangleProperties.vertexCoordinate[BPS_TOP_RIGHT][BPS_Y_AXIS] << std::endl;
+            std::cout << "TR x: " << data->content.rectangleProperties.vertexCoordinate[BPS_TOP_RIGHT][BPS_X_AXIS] << " -- ";
+            std::cout << "TR y: " << data->content.rectangleProperties.vertexCoordinate[BPS_TOP_RIGHT][BPS_Y_AXIS] << std::endl;
 
-            // std::cout << "BL x: " << data->content.rectangleProperties.vertexCoordinate[BPS_BOT_LEFT][BPS_X_AXIS] << " -- ";
-            // std::cout << "BL y: " << data->content.rectangleProperties.vertexCoordinate[BPS_BOT_LEFT][BPS_Y_AXIS] << std::endl;
+            std::cout << "BL x: " << data->content.rectangleProperties.vertexCoordinate[BPS_BOT_LEFT][BPS_X_AXIS] << " -- ";
+            std::cout << "BL y: " << data->content.rectangleProperties.vertexCoordinate[BPS_BOT_LEFT][BPS_Y_AXIS] << std::endl;
 
-            // std::cout << "BR x: " << data->content.rectangleProperties.vertexCoordinate[BPS_BOT_RIGHT][BPS_X_AXIS] << " -- ";
-            // std::cout << "BR y: " << data->content.rectangleProperties.vertexCoordinate[BPS_BOT_RIGHT][BPS_Y_AXIS] << std::endl;
+            std::cout << "BR x: " << data->content.rectangleProperties.vertexCoordinate[BPS_BOT_RIGHT][BPS_X_AXIS] << " -- ";
+            std::cout << "BR y: " << data->content.rectangleProperties.vertexCoordinate[BPS_BOT_RIGHT][BPS_Y_AXIS] << std::endl;
 
             break;
         case BPS_UPDATE_PID:
             memcpy(&(STMData.command), data, sizeof(bpsSocketReceiveDataTypeDef));
-            // std::cout << "update PID \n";
+            std::cout << "update PID \n";
 
-            // std::cout << "Kp Outer x: " << data->content.PIDProperties.Kp[BPS_OUTER_PID][BPS_X_AXIS] << " -- ";
-            // std::cout << "Kp Outer y: " << data->content.PIDProperties.Kp[BPS_OUTER_PID][BPS_Y_AXIS] << std::endl;
+            std::cout << "Kp Outer x: " << data->content.PIDProperties.Kp[BPS_OUTER_PID][BPS_X_AXIS] << " -- ";
+            std::cout << "Kp Outer y: " << data->content.PIDProperties.Kp[BPS_OUTER_PID][BPS_Y_AXIS] << std::endl;
 
-            // std::cout << "Kp Inner x: " << data->content.PIDProperties.Kp[BPS_INNER_PID][BPS_X_AXIS] << " -- ";
-            // std::cout << "Kp Inner y: " << data->content.PIDProperties.Kp[BPS_INNER_PID][BPS_Y_AXIS] << std::endl;
+            std::cout << "Kp Inner x: " << data->content.PIDProperties.Kp[BPS_INNER_PID][BPS_X_AXIS] << " -- ";
+            std::cout << "Kp Inner y: " << data->content.PIDProperties.Kp[BPS_INNER_PID][BPS_Y_AXIS] << std::endl;
 
-            // std::cout << "Ki Outer x: " << data->content.PIDProperties.Ki[BPS_OUTER_PID][BPS_X_AXIS] << " -- ";
-            // std::cout << "Ki Outer y: " << data->content.PIDProperties.Ki[BPS_OUTER_PID][BPS_Y_AXIS] << std::endl;
+            std::cout << "Ki Outer x: " << data->content.PIDProperties.Ki[BPS_OUTER_PID][BPS_X_AXIS] << " -- ";
+            std::cout << "Ki Outer y: " << data->content.PIDProperties.Ki[BPS_OUTER_PID][BPS_Y_AXIS] << std::endl;
 
-            // std::cout << "Ki Inner x: " << data->content.PIDProperties.Ki[BPS_INNER_PID][BPS_X_AXIS] << " -- ";
-            // std::cout << "Ki Inner y: " << data->content.PIDProperties.Ki[BPS_INNER_PID][BPS_Y_AXIS] << std::endl;
+            std::cout << "Ki Inner x: " << data->content.PIDProperties.Ki[BPS_INNER_PID][BPS_X_AXIS] << " -- ";
+            std::cout << "Ki Inner y: " << data->content.PIDProperties.Ki[BPS_INNER_PID][BPS_Y_AXIS] << std::endl;
 
-            // std::cout << "Kd Outer x: " << data->content.PIDProperties.Kd[BPS_OUTER_PID][BPS_X_AXIS] << " -- ";
-            // std::cout << "Kd Outer y: " << data->content.PIDProperties.Kd[BPS_OUTER_PID][BPS_Y_AXIS] << std::endl;
+            std::cout << "Kd Outer x: " << data->content.PIDProperties.Kd[BPS_OUTER_PID][BPS_X_AXIS] << " -- ";
+            std::cout << "Kd Outer y: " << data->content.PIDProperties.Kd[BPS_OUTER_PID][BPS_Y_AXIS] << std::endl;
 
-            // std::cout << "Kd Inner x: " << data->content.PIDProperties.Kd[BPS_INNER_PID][BPS_X_AXIS] << " -- ";
-            // std::cout << "Kd Inner y: " << data->content.PIDProperties.Kd[BPS_INNER_PID][BPS_Y_AXIS] << std::endl;
+            std::cout << "Kd Inner x: " << data->content.PIDProperties.Kd[BPS_INNER_PID][BPS_X_AXIS] << " -- ";
+            std::cout << "Kd Inner y: " << data->content.PIDProperties.Kd[BPS_INNER_PID][BPS_Y_AXIS] << std::endl;
 
             break;
         default:

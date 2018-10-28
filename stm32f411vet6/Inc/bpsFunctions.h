@@ -13,7 +13,6 @@ extern 	TIM_HandleTypeDef 			htim2;
 extern 	TIM_HandleTypeDef 			htim3;
 extern 	TIM_HandleTypeDef			htim4;
 extern	UART_HandleTypeDef 			huart2;
-extern	UART_HandleTypeDef 			huart6;
 extern	DMA_HandleTypeDef			hdma_usart2_rx;
 
 #define ENCODER_X_REG 				TIM3
@@ -22,7 +21,7 @@ extern	DMA_HandleTypeDef			hdma_usart2_rx;
 #define ENCODER_X_HANDLE			htim3
 #define ENCODER_Y_HANDLE			htim4
 #define	SEND_DATA_HANDLE			huart2
-#define	RECEIVE_DATA_HANDLE			huart6
+#define	RECEIVE_DATA_HANDLE			huart2
 #define	DMA_HANDLE					hdma_usart2_rx
 #define MIN_PWM_DUTY				0
 #define	MAX_PWM_DUTY				9599

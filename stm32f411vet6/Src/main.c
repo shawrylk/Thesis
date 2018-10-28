@@ -60,8 +60,7 @@ TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim4;
 
 UART_HandleTypeDef huart2;
-UART_HandleTypeDef huart6;
-DMA_HandleTypeDef hdma_usart6_rx;
+DMA_HandleTypeDef hdma_usart2_rx;
 
 osThreadId defaultTaskHandle;
 
@@ -77,7 +76,6 @@ static void MX_DMA_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_TIM4_Init(void);
 static void MX_TIM3_Init(void);
-static void MX_USART6_UART_Init(void);
 static void MX_TIM2_Init(void);
 void StartDefaultTask(void const * argument);                                    
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
@@ -125,7 +123,6 @@ int main(void)
   MX_USART2_UART_Init();
   MX_TIM4_Init();
   MX_TIM3_Init();
-  MX_USART6_UART_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
 
@@ -242,7 +239,7 @@ static void MX_TIM2_Init(void)
   TIM_OC_InitTypeDef sConfigOC;
 
   htim2.Instance = TIM2;
-  htim2.Init.Prescaler = 96000;
+  htim2.Init.Prescaler = 0;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim2.Init.Period = 9599;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -386,37 +383,18 @@ static void MX_USART2_UART_Init(void)
 
 }
 
-/* USART6 init function */
-static void MX_USART6_UART_Init(void)
-{
-
-  huart6.Instance = USART6;
-  huart6.Init.BaudRate = 1000000;
-  huart6.Init.WordLength = UART_WORDLENGTH_8B;
-  huart6.Init.StopBits = UART_STOPBITS_1;
-  huart6.Init.Parity = UART_PARITY_NONE;
-  huart6.Init.Mode = UART_MODE_TX_RX;
-  huart6.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  huart6.Init.OverSampling = UART_OVERSAMPLING_16;
-  if (HAL_UART_Init(&huart6) != HAL_OK)
-  {
-    _Error_Handler(__FILE__, __LINE__);
-  }
-
-}
-
 /** 
   * Enable DMA controller clock
   */
 static void MX_DMA_Init(void) 
 {
   /* DMA controller clock enable */
-  __HAL_RCC_DMA2_CLK_ENABLE();
+  __HAL_RCC_DMA1_CLK_ENABLE();
 
   /* DMA interrupt init */
-  /* DMA2_Stream1_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA2_Stream1_IRQn, 5, 0);
-  HAL_NVIC_EnableIRQ(DMA2_Stream1_IRQn);
+  /* DMA1_Stream5_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Stream5_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream5_IRQn);
 
 }
 
@@ -438,7 +416,6 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOE_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
   __HAL_RCC_GPIOD_CLK_ENABLE();
-  __HAL_RCC_GPIOC_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOE, GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15, GPIO_PIN_SET);
