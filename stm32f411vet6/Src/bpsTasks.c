@@ -187,12 +187,12 @@ void bpsTaskUARTSendData(void* pointer)
 	sendData.command = BPS_MODE_SETPOINT;
 	bpsUARTSendData(&sendData);
 	vTaskDelay(pdMS_TO_TICKS(16));
-
+	int n =10;
 	while(1)
 	{
 		vTaskDelay(pdMS_TO_TICKS(16));
-		sendData.ballCoordinate[BPS_X_AXIS] = 10;
-		sendData.ballCoordinate[BPS_Y_AXIS] = 10;
+		sendData.ballCoordinate[BPS_X_AXIS] = n++;
+		sendData.ballCoordinate[BPS_Y_AXIS] = n++;
 		sendData.command = BPS_MODE_DEFAULT;
 		bpsUARTSendData(&sendData);
 	}

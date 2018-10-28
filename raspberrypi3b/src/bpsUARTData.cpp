@@ -85,7 +85,10 @@ int serialOpen (const char *device, const int baud)
 
 
 
-
+void serialFlush (const int fd)
+{
+  tcflush (fd, TCIOFLUSH) ;
+}
 
 
 
@@ -121,6 +124,7 @@ bpsStatusTypeDef bpsUARTInit(void)
 int bpsUARTSendData(bpsUARTSendDataTypeDef* sendData, int len)
 {
     int n;
+    usleep(100);
     n = write(fdes, sendData, len);
     while(n != len);
     return n;
@@ -130,6 +134,7 @@ int bpsUARTReceiveData	(bpsUARTSendDataTypeDef* recvData, int len)
 {
     int i = 0;
     char* buff = new char[len];
+    serialFlush(fdes);
     while(i != len) 
     {
       read(fdes, &buff[i], 1);
