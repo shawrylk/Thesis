@@ -109,7 +109,7 @@ int serialDataAvail (const int fd)
 
 bpsStatusTypeDef bpsUARTInit(void)
 {
-    fdes = serialOpen ("/dev/serial0", 4000000);
+    fdes = serialOpen ("/dev/serial1", 4000000);
 	if (fdes < 0 )
     {
         return BPS_ERROR;
@@ -128,7 +128,7 @@ int bpsUARTSendData(bpsUARTSendDataTypeDef* sendData, int len)
 int bpsUARTReceiveData	(bpsUARTSendDataTypeDef* recvData, int len)
 {
     len = 52;
-    int i = 0, n =0;
+    int i = 0;
     char* buff = new char[len];
     while(i != len) 
     {
