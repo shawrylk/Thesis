@@ -37,7 +37,7 @@ int send(int fdes) {
 	ball[7] = 0x08;
 	ball[8] = 0x09;
 	ball[9] = 0x0A;
-	memcpy(buff,(char*)&ball, sizeof(int16_t) * 10);
+	sprintf(buff,ball);
 	printf("Raspberry's sending : \n");
 	printf("buff number \n");
 	for (int j =0; j < 20; j++)
