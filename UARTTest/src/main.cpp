@@ -30,7 +30,17 @@ int send(int fdes) {
 	ball[1] = 0xFF;
 	memcpy(buff,(char*)&ball, sizeof(int16_t) * 2);
 	buff[4] = '\0';
-	printf("%s\n",buff);
+	printf("string: %s\n",buff);
+	printf("char: %c\n",buff[0]);
+	printf("char: %c\n",buff[1]);
+	printf("char: %c\n",buff[2]);
+	printf("char: %c\n",buff[3]);
+	printf("char: %c\n",buff[4]);
+	printf("hexa: %x\n",buff[0]);
+	printf("hexa: %x\n",buff[1]);
+	printf("hexa: %x\n",buff[2]);
+	printf("hexa: %x\n",buff[3]);
+	printf("hexa: %x\n",buff[4]);
 	printf("Raspberry's sending : \n");
  
 	while(1) {
