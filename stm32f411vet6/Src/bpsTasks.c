@@ -202,7 +202,7 @@ void bpsTaskUARTSendData(void* pointer)
 	sendData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] = 0x55;
 	sendData.command = BPS_MODE_SETPOINT;
 	bpsUARTSendData(&sendData);
-	vTaskDelay(pdMS_TO_TICKS(1000));
+	vTaskDelay(pdMS_TO_TICKS(100));
 	}
 }
 
