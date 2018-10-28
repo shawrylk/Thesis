@@ -63,7 +63,7 @@ int fdes;
 
 bpsStatusTypeDef bpsUARTInit(void)
 {
-    fdes = open("/dev/serial0", O_RDWR | O_NOCTTY | O_SYNC);
+    fdes = open("/dev/serial0", O_RDWR | O_NONBLOCK);//| O_NOCTTY | O_SYNC);
 	if (fdes < 0 )
     {
         return BPS_ERROR;
