@@ -180,19 +180,18 @@ void bpsTaskUARTSendData(void* pointer)
 	bpsUARTSendData(&sendData);
 	vTaskDelay(pdMS_TO_TICKS(16));
 
-	sendData.ballCoordinate[BPS_X_AXIS] = 5;
-	sendData.ballCoordinate[BPS_Y_AXIS] = 5;
-	sendData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 384;
-	sendData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] = 384;
+	sendData.ballCoordinate[BPS_X_AXIS] = 0x22;
+	sendData.ballCoordinate[BPS_Y_AXIS] = 0x22;
+	sendData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 0x55;
+	sendData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] = 0x55;
 	sendData.command = BPS_MODE_SETPOINT;
 	bpsUARTSendData(&sendData);
 	vTaskDelay(pdMS_TO_TICKS(16));
-	int n =10;
 	while(1)
 	{
 		vTaskDelay(pdMS_TO_TICKS(16));
-		sendData.ballCoordinate[BPS_X_AXIS] = n++;
-		sendData.ballCoordinate[BPS_Y_AXIS] = n++;
+		sendData.ballCoordinate[BPS_X_AXIS] = 0xFF;
+		sendData.ballCoordinate[BPS_Y_AXIS] = 0xFF;
 		sendData.command = BPS_MODE_DEFAULT;
 		bpsUARTSendData(&sendData);
 	}

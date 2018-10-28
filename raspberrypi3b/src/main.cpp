@@ -60,6 +60,7 @@ int main()
     std::thread thread3(server);
     std::thread thread4(testUART);
     //std::thread thread5(showImage);
+    std::cout << "sizeof: " << sizeof(bpsUARTSendDataTypeDef) << std::endl;
     thread1.join();
     thread2.join();
     thread3.join();
