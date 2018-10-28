@@ -39,10 +39,14 @@ int send(int fdes) {
 	ball[9] = 0x0A;
 	memcpy(buff,(char*)&ball, sizeof(int16_t) * 10);
 	printf("Raspberry's sending : \n");
+	printf("buff number \n");
 	for (int j =0; j < 20; j++)
 		printf("%x ",buff[j]);
+	printf("\n");
+	printf("ball number \n");
 	for (int j =0; j < 10; j++)
 		printf("%x ",ball[j]);
+	printf("\n");
 	fflush(stdout);
 	while(1) {
 		i = 0;
