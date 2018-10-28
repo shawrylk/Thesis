@@ -30,7 +30,7 @@ int send(int fdes) {
 	printf("Raspberry's sending : \n");
  
 	while(1) {
-		serialPuts(fdes,(char*)&ball);
+		serialPuts(fdes,(char*)&ball[0]);
 		serialFlush(fdes);
 		//printf("%s\n", "hello");
 		fflush(stdout);
