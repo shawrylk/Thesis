@@ -57,7 +57,7 @@ int mrecv(int fdes) {
 			
 			read(fdes, buff, 5);
 			printf("%c\n", buff[0]);
-			//std::cout << buff[0] << buff[1] << buff[2] << buff[3] << buff[4] << std::endl;
+			fflush(stdout);
 		}
 	
 	return 0;
