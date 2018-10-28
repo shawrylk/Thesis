@@ -6,6 +6,7 @@ bpsUARTSendDataTypeDef 	sendData;
 bpsSharedDataTypeDef 	sharedData;
 TaskHandle_t   			taskNumber[NUMBER_OF_TASK];
 int16_t encoderValue;
+int16_t sizeofUARTData;
 // void bpsTaskPWMGenerator(void* pointer)
 // {
 // 	bpsStartPWM();
@@ -40,6 +41,7 @@ void bpsTaskUpdateUARTData(void* pointer)
 	bpsSharedDataTypeDef* sd = (bpsSharedDataTypeDef*)pointer;
 	bpsUARTReceiveDataTypeDef receiveData;
 	bpsUARTReceiveData(&receiveData);	
+	sizeofUARTData = sizeof(bpsUARTSendDataTypeDef);
 	while(1)
 	{
 		//notify take from task control motor
@@ -157,43 +159,50 @@ void bpsTaskUARTSendData(void* pointer)
 	//bpsUARTSendDataTypeDef 	sendData;
 	//bpsPIDTypeDef			PID = {{{10,0},{30,0}},{{0,0},{0,0}},{{0,0},{0,0}}};
 	//uint8_t cnt = 0;
-	bpsPIDTypeDef			PID = {	.Kp[BPS_OUTER_PID][BPS_X_AXIS] = 0.05,
-									.Ki[BPS_OUTER_PID][BPS_X_AXIS] = 0,
-									.Kd[BPS_OUTER_PID][BPS_X_AXIS] = 0.03,
+//	bpsPIDTypeDef			PID = {	.Kp[BPS_OUTER_PID][BPS_X_AXIS] = 0.05,
+//									.Ki[BPS_OUTER_PID][BPS_X_AXIS] = 0,
+//									.Kd[BPS_OUTER_PID][BPS_X_AXIS] = 0.03,
 
-									.Kp[BPS_OUTER_PID][BPS_Y_AXIS] = 20,
-									.Ki[BPS_OUTER_PID][BPS_Y_AXIS] = 0,
-									.Kd[BPS_OUTER_PID][BPS_Y_AXIS] = 0,
+//									.Kp[BPS_OUTER_PID][BPS_Y_AXIS] = 20,
+//									.Ki[BPS_OUTER_PID][BPS_Y_AXIS] = 0,
+//									.Kd[BPS_OUTER_PID][BPS_Y_AXIS] = 0,
 
-									.Kp[BPS_INNER_PID][BPS_X_AXIS] = 1,
-									.Ki[BPS_INNER_PID][BPS_X_AXIS] = 230,
-									.Kd[BPS_INNER_PID][BPS_X_AXIS] = 0.56,
+//									.Kp[BPS_INNER_PID][BPS_X_AXIS] = 1,
+//									.Ki[BPS_INNER_PID][BPS_X_AXIS] = 230,
+//									.Kd[BPS_INNER_PID][BPS_X_AXIS] = 0.56,
 
-									.Kp[BPS_INNER_PID][BPS_Y_AXIS] = 25,
-									.Ki[BPS_INNER_PID][BPS_Y_AXIS] = 0,
-									.Kd[BPS_INNER_PID][BPS_Y_AXIS] = 0};
+//									.Kp[BPS_INNER_PID][BPS_Y_AXIS] = 25,
+//									.Ki[BPS_INNER_PID][BPS_Y_AXIS] = 0,
+//									.Kd[BPS_INNER_PID][BPS_Y_AXIS] = 0};
 
-	sendData.ballCoordinate[BPS_X_AXIS] = 0;
-	sendData.ballCoordinate[BPS_Y_AXIS] = 0;
-	memcpy(&sendData.content, &PID, sizeof(bpsPIDTypeDef)); 
-	sendData.command = BPS_UPDATE_PID;
-	bpsUARTSendData(&sendData);
-	vTaskDelay(pdMS_TO_TICKS(16));
+//	sendData.ballCoordinate[BPS_X_AXIS] = 0;
+//	sendData.ballCoordinate[BPS_Y_AXIS] = 0;
+//	memcpy(&sendData.content, &PID, sizeof(bpsPIDTypeDef)); 
+//	sendData.command = BPS_UPDATE_PID;
+//	bpsUARTSendData(&sendData);
+	vTaskDelay(pdMS_TO_TICKS(1000));
 
-	sendData.ballCoordinate[BPS_X_AXIS] = 0x22;
+//	sendData.ballCoordinate[BPS_X_AXIS] = 0x22;
+//	sendData.ballCoordinate[BPS_Y_AXIS] = 0x22;
+//	sendData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 0x55;
+//	sendData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] = 0x55;
+//	sendData.command = BPS_MODE_SETPOINT;
+//	bpsUARTSendData(&sendData);
+//	vTaskDelay(pdMS_TO_TICKS(16));
+	while(1)
+	{
+//		vTaskDelay(pdMS_TO_TICKS(16));
+//		sendData.ballCoordinate[BPS_X_AXIS] = 0xFF;
+//		sendData.ballCoordinate[BPS_Y_AXIS] = 0xFF;
+//		sendData.command = BPS_MODE_DEFAULT;
+//		bpsUARTSendData(&sendData);
+		sendData.ballCoordinate[BPS_X_AXIS] = 0x22;
 	sendData.ballCoordinate[BPS_Y_AXIS] = 0x22;
 	sendData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 0x55;
 	sendData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] = 0x55;
 	sendData.command = BPS_MODE_SETPOINT;
 	bpsUARTSendData(&sendData);
-	vTaskDelay(pdMS_TO_TICKS(16));
-	while(1)
-	{
-		vTaskDelay(pdMS_TO_TICKS(16));
-		sendData.ballCoordinate[BPS_X_AXIS] = 0xFF;
-		sendData.ballCoordinate[BPS_Y_AXIS] = 0xFF;
-		sendData.command = BPS_MODE_DEFAULT;
-		bpsUARTSendData(&sendData);
+	vTaskDelay(pdMS_TO_TICKS(1000));
 	}
 }
 

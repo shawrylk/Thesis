@@ -144,4 +144,7 @@ int bpsUARTReceiveData	(bpsUARTSendDataTypeDef* recvData, int len)
     return len;
 }
 
-
+void bpsUARTFlush()
+{
+    serialFlush(fdes);
+}

@@ -346,6 +346,7 @@ void testUART()
                 break;
             default:
                 std::cout << "mode: error\n";
+                bpsUARTFlush();
                 break;
         }        
     }

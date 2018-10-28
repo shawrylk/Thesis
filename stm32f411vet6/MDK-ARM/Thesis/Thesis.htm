@@ -3,7 +3,7 @@
 <title>Static Call Graph - [Thesis\Thesis.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image Thesis\Thesis.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060528: Last Updated: Sun Oct 28 21:37:13 2018
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060528: Last Updated: Sun Oct 28 22:07:39 2018
 <BR><P>
 <H3>Maximum Stack Usage =        280 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -333,11 +333,10 @@ Global Symbols
 
 <P><STRONG><a name="[ff]"></a>__aeabi_memcpy</STRONG> (Thumb, 36 bytes, Stack size 0 bytes, memcpya.o(.text), UNUSED)
 
-<P><STRONG><a name="[d2]"></a>__aeabi_memcpy4</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, memcpya.o(.text))
+<P><STRONG><a name="[d4]"></a>__aeabi_memcpy4</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, memcpya.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[44]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 <LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsTaskUpdateUARTData
 <LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsTaskUpdateSetpoint
-<LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsTaskUARTSendData
 </UL>
 
 <P><STRONG><a name="[100]"></a>__aeabi_memcpy8</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, memcpya.o(.text), UNUSED)
@@ -558,7 +557,7 @@ Global Symbols
 <LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_GPIO_Init
 </UL>
 
-<P><STRONG><a name="[d4]"></a>HAL_GPIO_TogglePin</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, stm32f4xx_hal_gpio.o(i.HAL_GPIO_TogglePin))
+<P><STRONG><a name="[d3]"></a>HAL_GPIO_TogglePin</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, stm32f4xx_hal_gpio.o(i.HAL_GPIO_TogglePin))
 <BR><BR>[Called By]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsTaskUpdateSetpoint
 </UL>
 
@@ -902,7 +901,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[d7]"></a>HAL_UART_Transmit_IT</STRONG> (Thumb, 62 bytes, Stack size 0 bytes, stm32f4xx_hal_uart.o(i.HAL_UART_Transmit_IT))
-<BR><BR>[Called By]<UL><LI><a href="#[d3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsUARTSendData
+<BR><BR>[Called By]<UL><LI><a href="#[d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsUARTSendData
 </UL>
 
 <P><STRONG><a name="[a2]"></a>HAL_UART_TxCpltCallback</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32f4xx_hal_uart.o(i.HAL_UART_TxCpltCallback))
@@ -1210,34 +1209,33 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> bpstasks.o(i.bpsBallAndPlateSystemStart)
 </UL>
-<P><STRONG><a name="[4f]"></a>bpsTaskUARTSendData</STRONG> (Thumb, 98 bytes, Stack size 48 bytes, bpstasks.o(i.bpsTaskUARTSendData))
-<BR><BR>[Stack]<UL><LI>Max Depth = 112<LI>Call Chain = bpsTaskUARTSendData &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
+<P><STRONG><a name="[4f]"></a>bpsTaskUARTSendData</STRONG> (Thumb, 44 bytes, Stack size 0 bytes, bpstasks.o(i.bpsTaskUARTSendData))
+<BR><BR>[Stack]<UL><LI>Max Depth = 64<LI>Call Chain = bpsTaskUARTSendData &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[d1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelay
-<LI><a href="#[d3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsUARTSendData
-<LI><a href="#[d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
+<LI><a href="#[d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsUARTSendData
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> bpstasks.o(i.bpsBallAndPlateSystemStart)
 </UL>
 <P><STRONG><a name="[4c]"></a>bpsTaskUpdateSetpoint</STRONG> (Thumb, 228 bytes, Stack size 8 bytes, bpstasks.o(i.bpsTaskUpdateSetpoint))
 <BR><BR>[Stack]<UL><LI>Max Depth = 280<LI>Call Chain = bpsTaskUpdateSetpoint &rArr; bpsCalSetpoint4CircleMode &rArr; __hardfp_cos &rArr; __ieee754_rem_pio2 &rArr; __aeabi_dmul &rArr; _double_epilogue &rArr; _double_round
 </UL>
-<BR>[Calls]<UL><LI><a href="#[d4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_TogglePin
+<BR>[Calls]<UL><LI><a href="#[d3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_TogglePin
 <LI><a href="#[cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
 <LI><a href="#[c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsCalSetpoint4CircleMode
 <LI><a href="#[ce]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ulTaskNotifyTake
 <LI><a href="#[d5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
-<LI><a href="#[d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
+<LI><a href="#[d4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> bpstasks.o(i.bpsBallAndPlateSystemStart)
 </UL>
-<P><STRONG><a name="[4b]"></a>bpsTaskUpdateUARTData</STRONG> (Thumb, 48 bytes, Stack size 56 bytes, bpstasks.o(i.bpsTaskUpdateUARTData))
+<P><STRONG><a name="[4b]"></a>bpsTaskUpdateUARTData</STRONG> (Thumb, 54 bytes, Stack size 56 bytes, bpstasks.o(i.bpsTaskUpdateUARTData))
 <BR><BR>[Stack]<UL><LI>Max Depth = 116<LI>Call Chain = bpsTaskUpdateUARTData &rArr; bpsUARTReceiveData &rArr; HAL_UART_Receive_DMA &rArr; HAL_DMA_Start_IT &rArr; DMA_SetConfig
 </UL>
 <BR>[Calls]<UL><LI><a href="#[cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
 <LI><a href="#[d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsUARTReceiveData
 <LI><a href="#[ce]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ulTaskNotifyTake
-<LI><a href="#[d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
+<LI><a href="#[d4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> bpstasks.o(i.bpsBallAndPlateSystemStart)
 </UL>
@@ -1249,7 +1247,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsTaskUpdateUARTData
 </UL>
 
-<P><STRONG><a name="[d3]"></a>bpsUARTSendData</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, bpsfunctions.o(i.bpsUARTSendData))
+<P><STRONG><a name="[d2]"></a>bpsUARTSendData</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, bpsfunctions.o(i.bpsUARTSendData))
 <BR><BR>[Calls]<UL><LI><a href="#[d7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_Transmit_IT
 </UL>
 <BR>[Called By]<UL><LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsTaskUARTSendData
@@ -1276,7 +1274,7 @@ Global Symbols
 <LI><a href="#[ae]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_TIM3_Init
 <LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_TIM2_Init
 <LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_GPIO_Init
-<LI><a href="#[d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
+<LI><a href="#[d4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> entry9a.o(.ARM.Collect$$$$0000000B)
 </UL>

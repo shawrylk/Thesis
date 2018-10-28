@@ -132,4 +132,5 @@ bpsStatusTypeDef;
 int						bpsUARTSendData				(bpsUARTSendDataTypeDef* sendData, int len);
 bpsStatusTypeDef 		bpsUARTInit					(void);
 int						bpsUARTReceiveData			(bpsUARTSendDataTypeDef* recvData, int len);
+void bpsUARTFlush();
 #endif
