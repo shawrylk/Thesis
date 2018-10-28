@@ -133,7 +133,7 @@ int fdes;
 
 int main()
 {
-	fdes = serialOpen("/dev/serial0",1000000);
+	fdes = serialOpen("/dev/serial0",4000000);
 	if (fdes < 0 )
     {
         return -1;
