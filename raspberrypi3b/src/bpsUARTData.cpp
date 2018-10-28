@@ -37,7 +37,7 @@ int bpsUARTReceiveData	(bpsUARTSendDataTypeDef* recvData, int len)
 			if (i == len)
                 break;
 		}
-    memccpy(recvData, buff, len);
+    memcpy(recvData, buff, len);
     return len;
 }
 
