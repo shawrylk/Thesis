@@ -24,11 +24,13 @@ int main()
 
 int send(int fdes) {
  
- 
+	int16_t ball[2];
+	ball[0] = 0xFF;
+	ball[1] = 0xFF;
 	printf("Raspberry's sending : \n");
  
 	while(1) {
-		serialPuts(fdes, "hello");
+		serialPuts(fdes,(char*)&ball);
 		serialFlush(fdes);
 		//printf("%s\n", "hello");
 		fflush(stdout);
@@ -45,7 +47,7 @@ int recv(int fdes) {
 	while(1) {
 			do{
 				c = serialGetchar(fdes);
-				printf("%c",c);
+				printf("%x",c);
 				fflush (stdout);
 			}while(serialDataAvail(fdes));
 		}
