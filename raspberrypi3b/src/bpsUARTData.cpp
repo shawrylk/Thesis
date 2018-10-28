@@ -134,9 +134,11 @@ int bpsUARTReceiveData	(bpsUARTSendDataTypeDef* recvData, int len)
     {
         do
         {
-            read(fdes, &buff[i++], 1);
+            read(fdes, &buff[i], 1);
             if (i == len)
                 break;
+            else
+              i = i + 1;
         }
         while (serialDataAvail(fdes));
         if (i == len)
