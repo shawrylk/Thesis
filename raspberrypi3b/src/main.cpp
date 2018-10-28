@@ -54,6 +54,7 @@ int main()
     sem_init(&semSendDataCplt, 0, 0);
     sem_init(&semContourFrameCplt, 0, 0);
     sem_init(&semTrackingObjectCplt, 0, 0);
+    
     std::thread thread1(captureFrame);
     std::thread thread2(processFrame);
     std::thread thread3(server);
@@ -202,6 +203,7 @@ void server(void)
     // recvFuncv runs async, so it will be ignored when there no command from client, 
     // then server runs sendFunc
     // both functions run in loop
+    bpsUARTInit();
     std::cout << server.Start(sendFunc, recvFunc) << "\n";
 }
 
@@ -282,7 +284,7 @@ int recvFunc (char *recvData, int recvLen)
 
 void testUART()
 {
-    bpsUARTInit();
+    
     bpsUARTSendDataTypeDef recvData;
     while(1)
     {
