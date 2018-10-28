@@ -45,9 +45,10 @@ int send(int fdes) {
 		while (i < 20)
 		{
 			serialPuts(fdes,buff+i);
+			serialFlush(fdes);
 			i++;
 		}
-		serialFlush(fdes);
+		
 		//printf("%s\n", "hello");
 		fflush(stdout);
 		delay(1000);
@@ -63,19 +64,24 @@ int recv(int fdes) {
 	char *buff = new char[20];
 	int16_t ball[10];
 	while(1) {
-			i = 0;
-			memset(buff,0,20);
+			
+			
 			do{
 				buff[i++] = serialGetchar(fdes);
 				
-			}while(serialDataAvail(fdes) || i < 20);
-			memcpy(ball, buff, 20);
-			printf("number: %d\n", i);
-			
-			for (int j =0; j < 10; j++)
-				printf("%d ",ball[j]);
-			printf("\n");
-			fflush(stdout);
+			}while(serialDataAvail(fdes));
+			if (i == 20)
+			{
+				i = 0;
+				memcpy(ball, buff, 20);
+				printf("number: %d\n", i);
+				
+				for (int j =0; j < 10; j++)
+					printf("%d ",ball[j]);
+				printf("\n");
+				fflush(stdout);
+				memset(buff,0,20);
+			}
 		}
 	
 	return 0;
