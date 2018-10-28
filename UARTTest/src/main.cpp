@@ -38,7 +38,7 @@ int send(int fdes) {
 	ball[8] = 0x09;
 	ball[9] = 0x0A;
 	for (int j = 0; j< 10; j++)
-		snprintf(buff[j*sizeof(int16_t)],sizeof(int16_t),"%d",ball[j]);
+		snprintf(&buff[j*sizeof(int16_t)],sizeof(int16_t),"%d",ball[j]);
 	printf("Raspberry's sending : \n");
 	printf("buff number \n");
 	for (int j =0; j < 20; j++)
