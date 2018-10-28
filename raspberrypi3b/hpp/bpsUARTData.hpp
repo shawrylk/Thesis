@@ -8,7 +8,6 @@
 #include <errno.h>
 #include <unistd.h>
 #include <iostream>
-#include <wiringPi.h>
 #include <wiringSerial.h>
 
 #define MIN_PWM_DUTY				0
