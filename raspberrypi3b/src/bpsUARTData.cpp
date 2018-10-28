@@ -109,7 +109,7 @@ int serialDataAvail (const int fd)
 
 bpsStatusTypeDef bpsUARTInit(void)
 {
-    fdes = serialOpen ("/dev/serial0",115200);
+    fdes = serialOpen ("/dev/serial0",4000000);
 	if (fdes < 0 )
     {
         return BPS_ERROR;
@@ -122,6 +122,7 @@ int bpsUARTSendData(bpsUARTSendDataTypeDef* sendData, int len)
 {
     int n;
     n = write(fdes,"hello con cac ajinomoto wtf troi oi la troi chay asd", 52);
+    usleep(10000);
     return n;
 }
 
