@@ -1,65 +1,53 @@
+#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <termios.h>
+#include <errno.h>
+#include <wiringPi.h>
+#include <wiringSerial.h>
 #include <thread>
-#include <iostream>
-#include <termios.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-int msend(int);
-int mrecv(int);
+int send(int);
+int recv(int);
 int fdes;
-
 int main()
 {
-	fdes = open("/dev/serial0", O_RDWR);
-	if (fdes < 0 )
+	if((fdes= serialOpen ("/dev/serial0", 9600)) < 0 )
     {
         return -1;
 	}
-	std::thread thread1(msend,fdes);
-	std::thread thread2(mrecv,fdes);
-	thread1.join();
-	thread2.join();
+  std::thread thread1(send,fdes);
+  std::thread thread2(recv,fdes);
+  thread1.join();
+  thread2.join();
       return 0;
 
 }
 
-int msend(int fdes) {
+int send(int fdes) {
  
  
 	printf("Raspberry's sending : \n");
-	int n;
+ 
 	while(1) {
-		n = write(fdes, "hello", 5);
-		if (n < 0)
-  			fputs("write() of 5 bytes failed!\n", stdout);
-		else
-			printf("send %d bytes\n", n);
-	fflush(stdout);
-	sleep(1);
+		serialPuts(fdes, "hello");
+		serialFlush(fdes);
+		//printf("%s\n", "hello");
+		fflush(stdout);
+		delay(1000);
 	}
 	return 0;
 }
 
-int mrecv(int fdes) {
+int recv(int fdes) {
  
-	char* buff = new char[10];
-	memset(buff,0,10);
+	char c;
 	printf("Raspberry's receiving : \n");
-	int n;
+ 
 	while(1) {
-			
-			n = read(fdes, buff, 5);
-			if (n < 0)
-  				fputs("read() of 5 bytes failed!\n", stdout);
-			else
-				printf("read %d bytes\n", n);
-			printf("%c\n", buff[0]);
-			fflush(stdout);
+			do{
+				c = serialGetchar(fdes);
+				printf("%c",c);
+				fflush (stdout);
+			}while(serialDataAvail(fdes));
 		}
 	
 	return 0;
