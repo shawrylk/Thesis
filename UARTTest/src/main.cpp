@@ -51,7 +51,6 @@ int mrecv(int fdes) {
 	memset(buff,0,10);
 	printf("Raspberry's receiving : \n");
 	int n;
-	sleep(1);
 	while(1) {
 			
 			n = read(fdes, buff, 5);
