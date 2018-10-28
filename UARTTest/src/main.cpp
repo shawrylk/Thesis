@@ -39,7 +39,11 @@ int send(int fdes) {
 	ball[9] = 0x0A;
 	memcpy(buff,(char*)&ball, sizeof(int16_t) * 10);
 	printf("Raspberry's sending : \n");
- 
+	for (int j =0; j < 20; j++)
+		printf("%x ",buff[j]);
+	for (int j =0; j < 10; j++)
+		printf("%x ",ball[j]);
+	fflush(stdout);
 	while(1) {
 		i = 0;
 		while (i < 20)
@@ -72,7 +76,7 @@ int recv(int fdes) {
 			}while(serialDataAvail(fdes));
 			if (i == 20)
 			{
-				i = 0;
+				
 				memcpy(ball, buff, 20);
 				printf("number: %d\n", i);
 				for (int j =0; j < 20; j++)
@@ -82,6 +86,7 @@ int recv(int fdes) {
 				printf("\n");
 				fflush(stdout);
 				memset(buff,0,20);
+				i = 0;
 			}
 		}
 	
