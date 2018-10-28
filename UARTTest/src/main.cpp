@@ -101,10 +101,7 @@ int serialOpen (const char *device, const int baud)
 
 
 
-void serialFlush (const int fd)
-{
-  tcflush (fd, TCIOFLUSH) ;
-}
+
 
 
 void serialClose (const int fd)
@@ -152,7 +149,7 @@ int msend(int fdes) {
 	printf("Raspberry's sending : \n");
  
 	while(1) {
-		int n = write(fdes, "hello con cac ajinomoto wtf troi oi la troi chay asd iasd xcxzc ", 64);
+		int n = write(fdes, "hello con cac ajinomoto wtf troi oi la troi chay asd", 52);
 	}
 	return 0;
 }
@@ -166,11 +163,11 @@ int mrecv(int fdes) {
 			do
 			{
 				read(fdes, &buff[i++], 1);
-				if (i == 64)
+				if (i == 52)
 				break;
 			}
 			while (serialDataAvail(fdes));
-			if (i == 64)
+			if (i == 52)
 			{
 				std::cout << buff << std::endl;
 				i= 0;
