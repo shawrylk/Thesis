@@ -18,7 +18,7 @@ int bpsUARTSendData(bpsUARTSendDataTypeDef* sendData, int len)
 {
     int n;
     n = write(fdes, sendData, len);
-    while (n != len);
+    usleep(1000);
     return n;
 }
 
