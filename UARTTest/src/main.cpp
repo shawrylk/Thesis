@@ -153,8 +153,6 @@ int msend(int fdes) {
  
 	while(1) {
 		int n = write(fdes, "hello con cac ajinomoto wtf troi oi la troi chay asd iasd xcxzc ", 64);
-		while (n != 64);
-    serialFlush(fdes);
 	}
 	return 0;
 }
