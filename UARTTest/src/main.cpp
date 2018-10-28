@@ -52,7 +52,7 @@ int mrecv(int fdes) {
 	printf("Raspberry's receiving : \n");
  
 	while(1) {
-			fcntl(fd, F_SETFL, 0);
+			fcntl(fdes, F_SETFL, 0);
 			read(fdes, buff, 5);
 			printf("%c", buff[0]);
 			//std::cout << buff[0] << buff[1] << buff[2] << buff[3] << buff[4] << std::endl;
