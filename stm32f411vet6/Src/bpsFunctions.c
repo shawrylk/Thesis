@@ -135,13 +135,14 @@ HAL_StatusTypeDef bpsControlMotor(bpsAxisTypeDef axis ,float PID)
 }
 
 HAL_StatusTypeDef bpsCalSetpoint4CircleMode (int16_t centerOrdinate, uint16_t radius, uint16_t* currentAngle, uint16_t speed, 
-											int16_t* setpoint)
+											int16_t* setpoint, bpsAxisTypeDef axis)
 {
 	if (radius == 0 || speed == 0)
 		return HAL_ERROR;
 	if (currentAngle == NULL || setpoint == NULL)
 		return HAL_ERROR;
-	*setpoint = (int16_t)(centerOrdinate + radius * cos(*currentAngle));
-	if (*currentAngle == 360) *currentAngle = 0; else *currentAngle++;
+
+	*setpoint = (int16_t)(centerOrdinate + radius * (axis ? cos(*currentAngle * speed) : sin(*currentAngle * speed)));
+	if (*currentAngle == 360 * (uint16_t)(1 / speed)) *currentAngle = 0; else *currentAngle++;
 	return HAL_OK;
 }

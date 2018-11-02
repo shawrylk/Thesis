@@ -26,8 +26,8 @@ extern	DMA_HandleTypeDef			hdma_usart2_rx;
 #define MIN_PWM_DUTY				0
 #define	MAX_PWM_DUTY				9599
 #define NUMBER_OF_SAMPLE			2
-#define	DT_OUTER_LOOP				0.016f  // 16 ms
-#define	DT_INNER_LOOP				0.001f	//  1 ms
+#define	DT_OUTER_LOOP				0.0112f  // 11.2 ms
+#define	DT_INNER_LOOP				0.0010f	//  1 ms
 #define	PWM_PIN_1_X					TIM_CHANNEL_1
 #define	PWM_PIN_2_X					TIM_CHANNEL_2
 #define	PWM_PIN_1_Y					TIM_CHANNEL_3
@@ -144,5 +144,5 @@ HAL_StatusTypeDef 		bpsAppendErrorSamples		(int16_t* errorSamples, int16_t newSa
 HAL_StatusTypeDef		bpsAppendPIDSamples			(float* PIDSamples, float newSample);
 HAL_StatusTypeDef		bpsControlMotor				(bpsAxisTypeDef axis, float PID);
 HAL_StatusTypeDef		bpsCalSetpoint4CircleMode 	(int16_t centerOrdinate, uint16_t radius, uint16_t* currentAngle, uint16_t speed, 
-													int16_t* setpoint);
+													int16_t* setpoint, bpsAxisTypeDef axis);
 #endif

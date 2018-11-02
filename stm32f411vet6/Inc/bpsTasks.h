@@ -16,12 +16,12 @@
 typedef struct
 {
     bpsUARTReceiveDataTypeDef				UARTData;
-    bpsCommandTypeDef                       previousCommand;
+    bpsCommandTypeDef                       latchedCommand;
     int16_t                                 ballCoordinate[BPS_NUMBER_OF_AXIS];
     int16_t              				 	setpoint[BPS_NUMBER_OF_AXIS];
     int16_t                                 refEncoderValue[BPS_NUMBER_OF_AXIS];
     bpsDataTypeDef                          content;
-    bpsPIDTypeDef                           PIDs;
+    bpsPIDTypeDef                           PIDParams;
     int16_t                                 errorSamples[BPS_NUMBER_OF_PID_LOOP][BPS_NUMBER_OF_AXIS][NUMBER_OF_SAMPLE];
     float                                   PIDSamples[BPS_NUMBER_OF_PID_LOOP][BPS_NUMBER_OF_AXIS][NUMBER_OF_SAMPLE];
 }
@@ -39,6 +39,7 @@ void bpsTaskUpdateSetpoint                  (void* pointer);
 void bpsTaskCalRefEncoderValue              (void *pointer);
 void bpsTaskControlMotor                    (void* pointer);
 void bpsTaskUARTSendData                    (void* pointer);
+void bpsTaskSetup                           (void *pointer);
 void bpsBallAndPlateSystemStart             (void);
 
 #endif 
