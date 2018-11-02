@@ -11,7 +11,7 @@
 #define TASK_UPDATE_SETPOINT            1
 #define TASK_CAL_REF_ENCODER_VALUE      2
 #define TASK_CONTROL_MOTOR              3
-
+#define TASK_SEND_UART_DATA             4
 
 typedef struct
 {

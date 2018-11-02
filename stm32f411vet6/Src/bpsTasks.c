@@ -42,6 +42,8 @@ void bpsTaskUpdateUARTData(void* pointer)
 	bpsUARTReceiveDataTypeDef receiveData;
 	bpsUARTReceiveData(&receiveData);	
 	sizeofUARTData = sizeof(bpsUARTSendDataTypeDef);
+	ulTaskNotifyTake(pdFALSE, portMAX_DELAY);
+	xTaskNotifyGive(taskNumber[TASK_SEND_UART_DATA]);
 	while(1)
 	{
 		//notify take from task control motor
@@ -153,51 +155,51 @@ void bpsTaskUARTSendData(void* pointer)
 	//bpsUARTSendDataTypeDef 	sendData;
 	//bpsPIDTypeDef			PID = {{{10,0},{30,0}},{{0,0},{0,0}},{{0,0},{0,0}}};
 	//uint8_t cnt = 0;
-//	bpsPIDTypeDef			PID = {	.Kp[BPS_OUTER_PID][BPS_X_AXIS] = 0.05,
-//									.Ki[BPS_OUTER_PID][BPS_X_AXIS] = 0,
-//									.Kd[BPS_OUTER_PID][BPS_X_AXIS] = 0.03,
+	//	bpsPIDTypeDef			PID = {	.Kp[BPS_OUTER_PID][BPS_X_AXIS] = 0.05,
+	//									.Ki[BPS_OUTER_PID][BPS_X_AXIS] = 0,
+	//									.Kd[BPS_OUTER_PID][BPS_X_AXIS] = 0.03,
 
-//									.Kp[BPS_OUTER_PID][BPS_Y_AXIS] = 20,
-//									.Ki[BPS_OUTER_PID][BPS_Y_AXIS] = 0,
-//									.Kd[BPS_OUTER_PID][BPS_Y_AXIS] = 0,
+	//									.Kp[BPS_OUTER_PID][BPS_Y_AXIS] = 20,
+	//									.Ki[BPS_OUTER_PID][BPS_Y_AXIS] = 0,
+	//									.Kd[BPS_OUTER_PID][BPS_Y_AXIS] = 0,
 
-//									.Kp[BPS_INNER_PID][BPS_X_AXIS] = 1,
-//									.Ki[BPS_INNER_PID][BPS_X_AXIS] = 230,
-//									.Kd[BPS_INNER_PID][BPS_X_AXIS] = 0.56,
+	//									.Kp[BPS_INNER_PID][BPS_X_AXIS] = 1,
+	//									.Ki[BPS_INNER_PID][BPS_X_AXIS] = 230,
+	//									.Kd[BPS_INNER_PID][BPS_X_AXIS] = 0.56,
 
-//									.Kp[BPS_INNER_PID][BPS_Y_AXIS] = 25,
-//									.Ki[BPS_INNER_PID][BPS_Y_AXIS] = 0,
-//									.Kd[BPS_INNER_PID][BPS_Y_AXIS] = 0};
+	//									.Kp[BPS_INNER_PID][BPS_Y_AXIS] = 25,
+	//									.Ki[BPS_INNER_PID][BPS_Y_AXIS] = 0,
+	//									.Kd[BPS_INNER_PID][BPS_Y_AXIS] = 0};
 
-//	sendData.ballCoordinate[BPS_X_AXIS] = 0;
-//	sendData.ballCoordinate[BPS_Y_AXIS] = 0;
-//	memcpy(&sendData.content, &PID, sizeof(bpsPIDTypeDef)); 
-//	sendData.command = BPS_UPDATE_PID;
-//	bpsUARTSendData(&sendData);
-	vTaskDelay(pdMS_TO_TICKS(1000));
+	//	sendData.ballCoordinate[BPS_X_AXIS] = 0;
+	//	sendData.ballCoordinate[BPS_Y_AXIS] = 0;
+	//	memcpy(&sendData.content, &PID, sizeof(bpsPIDTypeDef)); 
+	//	sendData.command = BPS_UPDATE_PID;
+	//	bpsUARTSendData(&sendData);
 
-//	sendData.ballCoordinate[BPS_X_AXIS] = 0x22;
-//	sendData.ballCoordinate[BPS_Y_AXIS] = 0x22;
-//	sendData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 0x55;
-//	sendData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] = 0x55;
-//	sendData.command = BPS_MODE_SETPOINT;
-//	bpsUARTSendData(&sendData);
-//	vTaskDelay(pdMS_TO_TICKS(16));
+	//	sendData.ballCoordinate[BPS_X_AXIS] = 0x22;
+	//	sendData.ballCoordinate[BPS_Y_AXIS] = 0x22;
+	//	sendData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 0x55;
+	//	sendData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] = 0x55;
+	//	sendData.command = BPS_MODE_SETPOINT;
+	//	bpsUARTSendData(&sendData);
+	//	vTaskDelay(pdMS_TO_TICKS(16));
+	ulTaskNotifyTake(pdFALSE, portMAX_DELAY);
 	memset((void*)&sendData, 0 , sizeof(bpsUARTSendDataTypeDef));
 	while(1)
 	{
-		//vTaskDelay(pdMS_TO_TICKS(16));
-//		sendData.ballCoordinate[BPS_X_AXIS] = 0xFF;
-//		sendData.ballCoordinate[BPS_Y_AXIS] = 0xFF;
-//		sendData.command = BPS_MODE_DEFAULT;
-//		bpsUARTSendData(&sendData);
-	sendData.ballCoordinate[BPS_X_AXIS] = 0x11;
-	sendData.ballCoordinate[BPS_Y_AXIS] = 0x22;
-	sendData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 0x33;
-	sendData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] = 0x44;
-	sendData.command = BPS_MODE_SETPOINT;
-	bpsUARTSendData(&sendData);
-	vTaskDelay(pdMS_TO_TICKS(100));
+			//vTaskDelay(pdMS_TO_TICKS(16));
+	//		sendData.ballCoordinate[BPS_X_AXIS] = 0xFF;
+	//		sendData.ballCoordinate[BPS_Y_AXIS] = 0xFF;
+	//		sendData.command = BPS_MODE_DEFAULT;
+	//		bpsUARTSendData(&sendData);
+		sendData.ballCoordinate[BPS_X_AXIS] = 0x11;
+		sendData.ballCoordinate[BPS_Y_AXIS] = 0x22;
+		sendData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 0x33;
+		sendData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] = 0x44;
+		sendData.command = BPS_MODE_SETPOINT;
+		bpsUARTSendData(&sendData);
+		vTaskDelay(pdMS_TO_TICKS(100));
 	}
 }
 
@@ -251,7 +253,7 @@ void bpsBallAndPlateSystemStart()
     xTaskCreate(bpsTaskControlMotor, "Control Motor", 500, (void*)&sharedData, 2, &taskNumber[TASK_CONTROL_MOTOR]);
   	//xTaskCreate(bpsTaskPWMGenerator, "PWM Generator", 300, (void*)&sharedData, 1, NULL);
 	  //xTaskCreate(bpsTaskReadEncoder, "Read Encoder", 300, (void*)&sharedData, 1, NULL);
-    //xTaskCreate(bpsTaskUARTSendData, "Example send data",500,NULL,1,NULL);
+    xTaskCreate(bpsTaskUARTSendData, "Example send data", 500, NULL,1, &taskNumber[TASK_SEND_UART_DATA]);
 	xTaskCreate(bpsTaskSetup, "Setup Task", 100, NULL, 0, NULL);
 
 }
