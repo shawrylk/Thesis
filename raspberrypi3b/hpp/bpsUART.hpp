@@ -15,6 +15,6 @@ class bpsUART
 		int 	dataAvailable	();
 		void 	flush			();
 		void 	close			();
-}
+};
 
 

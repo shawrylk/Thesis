@@ -5,8 +5,8 @@ project(bpsRaspberryPi3B)
 
 
 find_package(Threads)
-include_directories(include)
-#include_directories(/usr/local/include/)
+include_directories(hpp)
+#include_directories(/usr/local/hpp/)
 #link_directories(/usr/local/lib/)
 file(GLOB SOURCES "src/*.cpp")
 set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin)

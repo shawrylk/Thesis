@@ -9,7 +9,7 @@ using pfunc = std::function<int (char *data, int len)>;
 class bpsServer
 {
   private:
-    char *loginString;
+    const char *loginString;
     const int port;
     int clientFd;   
     pfunc recvFunc = NULL;

@@ -110,12 +110,12 @@ int bpsUART::dataAvailable()
   return result ;
 }
 
-void bpsUART:flush()
+void bpsUART::flush()
 {
   tcflush (fdes, TCIOFLUSH) ;
 }
 
 void bpsUART::close()
 {
-  close(fdes);
+  ::close(fdes);
 }

@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <chrono>
-#include "bpsUARTD.hpp"
+#include "bpsUART.hpp"
 #include "bpsServer.hpp"
 #include "bpsKalmanFilter.hpp"
 using namespace cv;
@@ -40,16 +40,17 @@ bpsUARTSendDataTypeDef STMData;
 void captureFrame(void);
 void processFrame(void);
 void showImage(void);
-void server(void);
+//void server(void);
 void testUART(void);
 int sendFunc (char *sendData, int sendLen);
 int recvFunc (char *recvData, int recvLen);
 ::KalmanFilter KF(240, 0.01, 1);
-bpsServer server = new bpsServer();
-bpsUART UART = new bpsUART();
+bpsServer server(22396);
+bpsUART UART("/dev/serial0",1000000);
 int main()
 {
     //cv::ocl::setUseOpenCL(false);
+    
     sem_init(&semCaptureFrameCplt, 0, 0);
     sem_init(&semProcessFrameCplt, 0, 0);
     sem_init(&semSendDataCplt, 0, 0);
@@ -57,14 +58,15 @@ int main()
     sem_init(&semTrackingObjectCplt, 0, 0);
     std::thread thread1(captureFrame);
     std::thread thread2(processFrame);
-    std::thread thread3(server);
-    std::thread thread4(testUART);
+    //std::thread thread3(server);
+    //std::thread thread4(testUART);
     //std::thread thread5(showImage);
-    std::cout << "sizeof: " << sizeof(bpsUARTSendDataTypeDef) << std::endl;
+    server.attach(recvFunc);
+    server.poll();
     thread1.join();
     thread2.join();
-    thread3.join();
-    thread4.join();
+    //thread3.join();
+    //thread4.join();
     //thread5.join();
     return 0;
 }
@@ -178,7 +180,7 @@ void showImage(void)
     sleep(1);
     while(1)
     {
-        sem_wait(&semSendDataCplt);
+        sem_wait(&semProcessFrameCplt);
         if (count == 0)
             start = std::chrono::high_resolution_clock::now();
         count++;
@@ -198,27 +200,27 @@ void showImage(void)
     }
 }
 
-void server(void)
-{
-    bpsServer server(22396);
-    server.attach(recvFunc);
-    server.poll();
-    // recvFuncv runs async, so it will be ignored when there no command from client, 
-    // then server runs sendFunc
-    // both functions run in loop
+// void server(void)
+// {
+//     bpsServer server(22396);
+//     server.attach(recvFunc);
+//     server.poll();
+//     // recvFuncv runs async, so it will be ignored when there no command from client, 
+//     // then server runs sendFunc
+//     // both functions run in loop
     
-}
+// }
 
-int sendFunc (char *sendData, int sendLen)
-{
-    sem_wait(&semProcessFrameCplt);
-    // wrong implementation here, lack of encoder value
-    bpsSocketSendDataTypeDef *data = (bpsSocketSendDataTypeDef*)sendData;
-    data->ballCoordinate[BPS_X_AXIS] = (int)KF.predict(STMData.ballCoordinate[BPS_X_AXIS]);
-    data->ballCoordinate[BPS_Y_AXIS] = (int)KF.predict(STMData.ballCoordinate[BPS_Y_AXIS]);
-    bpsUARTSendData(&STMData, sizeof(bpsUARTSendDataTypeDef));
-    sem_post(&semSendDataCplt);
-}
+// int sendFunc (char *sendData, int sendLen)
+// {
+//     sem_wait(&semProcessFrameCplt);
+//     // wrong implementation here, lack of encoder value
+//     bpsSocketSendDataTypeDef *data = (bpsSocketSendDataTypeDef*)sendData;
+//     data->ballCoordinate[BPS_X_AXIS] = (int)KF.predict(STMData.ballCoordinate[BPS_X_AXIS]);
+//     data->ballCoordinate[BPS_Y_AXIS] = (int)KF.predict(STMData.ballCoordinate[BPS_Y_AXIS]);
+//     //bpsUARTSendData(&STMData, sizeof(bpsUARTSendDataTypeDef));
+//     sem_post(&semSendDataCplt);
+// }
 
 int recvFunc (char *recvData, int recvLen)
 {
@@ -279,76 +281,77 @@ int recvFunc (char *recvData, int recvLen)
 
             break;
         default:
+            std::cout << "error data\n";
             break;
     }
     return 0;
 }
 
-void testUART()
-{
-    sleep(3);
-    bpsUARTSendDataTypeDef recvData;
-    while(1)
-    {
-        bpsUARTReceiveData(&recvData, sizeof(bpsUARTSendDataTypeDef));
-        std::cout << "ball x: " << recvData.ballCoordinate[BPS_X_AXIS] << " -- ";
-        std::cout << "ball y: " << recvData.ballCoordinate[BPS_Y_AXIS] << std::endl;
-        switch (recvData.command)
-        {
-            case BPS_MODE_CIRCLE:
-                std::cout << "circle mode \n";
-                std::cout << "x: " << recvData.content.circleProperties.centerCoordinate[BPS_X_AXIS] << " -- ";
-                std::cout << "y: " << recvData.content.circleProperties.centerCoordinate[BPS_Y_AXIS] << std::endl;
-                std::cout << "r: " << recvData.content.circleProperties.radius << std::endl;
-                std::cout << "s: " << recvData.content.circleProperties.speed << std::endl;
-                break;
-            case BPS_MODE_RECTANGLE:
-                std::cout << "rectangle mode \n";
-                std::cout << "TL x: " << recvData.content.rectangleProperties.vertexCoordinate[BPS_TOP_LEFT][BPS_X_AXIS] << " -- ";
-                std::cout << "TL y: " << recvData.content.rectangleProperties.vertexCoordinate[BPS_TOP_LEFT][BPS_Y_AXIS] << std::endl;
+// void testUART()
+// {
+//     sleep(3);
+//     bpsUARTSendDataTypeDef recvData;
+//     while(1)
+//     {
+//         //bpsUARTReceiveData(&recvData, sizeof(bpsUARTSendDataTypeDef));
+//         std::cout << "ball x: " << recvData.ballCoordinate[BPS_X_AXIS] << " -- ";
+//         std::cout << "ball y: " << recvData.ballCoordinate[BPS_Y_AXIS] << std::endl;
+//         switch (recvData.command)
+//         {
+//             case BPS_MODE_CIRCLE:
+//                 std::cout << "circle mode \n";
+//                 std::cout << "x: " << recvData.content.circleProperties.centerCoordinate[BPS_X_AXIS] << " -- ";
+//                 std::cout << "y: " << recvData.content.circleProperties.centerCoordinate[BPS_Y_AXIS] << std::endl;
+//                 std::cout << "r: " << recvData.content.circleProperties.radius << std::endl;
+//                 std::cout << "s: " << recvData.content.circleProperties.speed << std::endl;
+//                 break;
+//             case BPS_MODE_RECTANGLE:
+//                 std::cout << "rectangle mode \n";
+//                 std::cout << "TL x: " << recvData.content.rectangleProperties.vertexCoordinate[BPS_TOP_LEFT][BPS_X_AXIS] << " -- ";
+//                 std::cout << "TL y: " << recvData.content.rectangleProperties.vertexCoordinate[BPS_TOP_LEFT][BPS_Y_AXIS] << std::endl;
 
-                std::cout << "TR x: " << recvData.content.rectangleProperties.vertexCoordinate[BPS_TOP_RIGHT][BPS_X_AXIS] << " -- ";
-                std::cout << "TR y: " << recvData.content.rectangleProperties.vertexCoordinate[BPS_TOP_RIGHT][BPS_Y_AXIS] << std::endl;
+//                 std::cout << "TR x: " << recvData.content.rectangleProperties.vertexCoordinate[BPS_TOP_RIGHT][BPS_X_AXIS] << " -- ";
+//                 std::cout << "TR y: " << recvData.content.rectangleProperties.vertexCoordinate[BPS_TOP_RIGHT][BPS_Y_AXIS] << std::endl;
 
-                std::cout << "BL x: " << recvData.content.rectangleProperties.vertexCoordinate[BPS_BOT_LEFT][BPS_X_AXIS] << " -- ";
-                std::cout << "BL y: " << recvData.content.rectangleProperties.vertexCoordinate[BPS_BOT_LEFT][BPS_Y_AXIS] << std::endl;
+//                 std::cout << "BL x: " << recvData.content.rectangleProperties.vertexCoordinate[BPS_BOT_LEFT][BPS_X_AXIS] << " -- ";
+//                 std::cout << "BL y: " << recvData.content.rectangleProperties.vertexCoordinate[BPS_BOT_LEFT][BPS_Y_AXIS] << std::endl;
 
-                std::cout << "BR x: " << recvData.content.rectangleProperties.vertexCoordinate[BPS_BOT_RIGHT][BPS_X_AXIS] << " -- ";
-                std::cout << "BR y: " << recvData.content.rectangleProperties.vertexCoordinate[BPS_BOT_RIGHT][BPS_Y_AXIS] << std::endl;
-                break;
-            case BPS_MODE_SETPOINT:
-                std::cout << "setpoint mode \n";
-                std::cout << "x: " << recvData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] << " -- ";
-                std::cout << "y: " << recvData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] << std::endl;
-                break;
-            case BPS_MODE_DEFAULT:
-                std::cout << "default\n";
-                break;
-            case BPS_UPDATE_PID:
-                std::cout << "update PID \n";
+//                 std::cout << "BR x: " << recvData.content.rectangleProperties.vertexCoordinate[BPS_BOT_RIGHT][BPS_X_AXIS] << " -- ";
+//                 std::cout << "BR y: " << recvData.content.rectangleProperties.vertexCoordinate[BPS_BOT_RIGHT][BPS_Y_AXIS] << std::endl;
+//                 break;
+//             case BPS_MODE_SETPOINT:
+//                 std::cout << "setpoint mode \n";
+//                 std::cout << "x: " << recvData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] << " -- ";
+//                 std::cout << "y: " << recvData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] << std::endl;
+//                 break;
+//             case BPS_MODE_DEFAULT:
+//                 std::cout << "default\n";
+//                 break;
+//             case BPS_UPDATE_PID:
+//                 std::cout << "update PID \n";
 
-                std::cout << "Kp Outer x: " << recvData.content.PIDProperties.Kp[BPS_OUTER_PID][BPS_X_AXIS] << " -- ";
-                std::cout << "Kp Outer y: " << recvData.content.PIDProperties.Kp[BPS_OUTER_PID][BPS_Y_AXIS] << std::endl;
+//                 std::cout << "Kp Outer x: " << recvData.content.PIDProperties.Kp[BPS_OUTER_PID][BPS_X_AXIS] << " -- ";
+//                 std::cout << "Kp Outer y: " << recvData.content.PIDProperties.Kp[BPS_OUTER_PID][BPS_Y_AXIS] << std::endl;
 
-                std::cout << "Kp Inner x: " << recvData.content.PIDProperties.Kp[BPS_INNER_PID][BPS_X_AXIS] << " -- ";
-                std::cout << "Kp Inner y: " << recvData.content.PIDProperties.Kp[BPS_INNER_PID][BPS_Y_AXIS] << std::endl;
+//                 std::cout << "Kp Inner x: " << recvData.content.PIDProperties.Kp[BPS_INNER_PID][BPS_X_AXIS] << " -- ";
+//                 std::cout << "Kp Inner y: " << recvData.content.PIDProperties.Kp[BPS_INNER_PID][BPS_Y_AXIS] << std::endl;
 
-                std::cout << "Ki Outer x: " << recvData.content.PIDProperties.Ki[BPS_OUTER_PID][BPS_X_AXIS] << " -- ";
-                std::cout << "Ki Outer y: " << recvData.content.PIDProperties.Ki[BPS_OUTER_PID][BPS_Y_AXIS] << std::endl;
+//                 std::cout << "Ki Outer x: " << recvData.content.PIDProperties.Ki[BPS_OUTER_PID][BPS_X_AXIS] << " -- ";
+//                 std::cout << "Ki Outer y: " << recvData.content.PIDProperties.Ki[BPS_OUTER_PID][BPS_Y_AXIS] << std::endl;
 
-                std::cout << "Ki Inner x: " << recvData.content.PIDProperties.Ki[BPS_INNER_PID][BPS_X_AXIS] << " -- ";
-                std::cout << "Ki Inner y: " << recvData.content.PIDProperties.Ki[BPS_INNER_PID][BPS_Y_AXIS] << std::endl;
+//                 std::cout << "Ki Inner x: " << recvData.content.PIDProperties.Ki[BPS_INNER_PID][BPS_X_AXIS] << " -- ";
+//                 std::cout << "Ki Inner y: " << recvData.content.PIDProperties.Ki[BPS_INNER_PID][BPS_Y_AXIS] << std::endl;
 
-                std::cout << "Kd Outer x: " << recvData.content.PIDProperties.Kd[BPS_OUTER_PID][BPS_X_AXIS] << " -- ";
-                std::cout << "Kd Outer y: " << recvData.content.PIDProperties.Kd[BPS_OUTER_PID][BPS_Y_AXIS] << std::endl;
+//                 std::cout << "Kd Outer x: " << recvData.content.PIDProperties.Kd[BPS_OUTER_PID][BPS_X_AXIS] << " -- ";
+//                 std::cout << "Kd Outer y: " << recvData.content.PIDProperties.Kd[BPS_OUTER_PID][BPS_Y_AXIS] << std::endl;
 
-                std::cout << "Kd Inner x: " << recvData.content.PIDProperties.Kd[BPS_INNER_PID][BPS_X_AXIS] << " -- ";
-                std::cout << "Kd Inner y: " << recvData.content.PIDProperties.Kd[BPS_INNER_PID][BPS_Y_AXIS] << std::endl;
-                break;
-            default:
-                std::cout << "mode: error\n";
-                bpsUARTFlush();
-                break;
-        }        
-    }
-}
+//                 std::cout << "Kd Inner x: " << recvData.content.PIDProperties.Kd[BPS_INNER_PID][BPS_X_AXIS] << " -- ";
+//                 std::cout << "Kd Inner y: " << recvData.content.PIDProperties.Kd[BPS_INNER_PID][BPS_Y_AXIS] << std::endl;
+//                 break;
+//             default:
+//                 std::cout << "mode: error\n";
+//                 //bpsUARTFlush();
+//                 break;
+//         }        
+//     }
+// }

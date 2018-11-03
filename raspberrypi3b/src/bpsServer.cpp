@@ -51,7 +51,7 @@ void bpsServer::poll()
     {
         std::cout << "waiting on poll()...\n";
 
-        if (poll(fds, nfds, -1) < 0)
+        if (::poll(fds, nfds, -1) < 0)
         {
             std:: cout << "poll failed\n";
             break;
@@ -71,34 +71,32 @@ void bpsServer::poll()
             {
                 std::cout << " Incoming connection \n";
                 int new_sd = -1;
-                do
+                new_sd = accept4(listen_sd, NULL, NULL, 0);
+                if (new_sd < 0)
                 {
-                    new_sd = accept4(listen_sd, NULL, NULL, SOCK_NONBLOCK);
-                    if (new_sd < 0)
+                    if (errno != EWOULDBLOCK)
                     {
-                        if (errno != EWOULDBLOCK)
-                        {
-                            end_server = true;
-                            break;
-                        }
+                        end_server = true;
+                        break;
                     }
-                    if (login(new_sd) == BPS_OK)
-                    {
-                        fds[nfds].fd = new_sd;
-                        fds[nfds].events = POLLIN;
-                        nfds++;
-                    }
-                    new_sd = -1;
-                } while (new_sd != -1);
+                }
+                if (login(new_sd) == BPS_OK)
+                {
+                    fds[nfds].fd = new_sd;
+                    fds[nfds].events = POLLIN;
+                    nfds++;
+                    std::cout << "login ok\n";
+                }
             }
             else
             {
                 std::cout <<"  Descriptor " << fds[i].fd << " is readable\n";               
                 if (processClient(fds[i].fd) != BPS_OK)
                 {
-                    close(fds[i].fd);
-                    fds[i].fd = -1;
-                    compress_array = true;
+                    // close(fds[i].fd);
+                    // fds[i].fd = -1;
+                    // compress_array = true;
+                    std::cout << "BPS_ERROR\n";
                 }
             }  /* End of existing connection is readable             */
         } /* End of loop through pollable descriptors              */
@@ -123,37 +121,42 @@ void bpsServer::poll()
     if(fds[i].fd >= 0)
         close(fds[i].fd);
     }
-    return -5;
 }
 
 
 bpsStatusTypeDef bpsServer::login(int fd)
 {
     char buff[strlen(loginString)];
-    if (recv(fd, buff, sizeof(buff)) <= 0)
+    if (::recv(fd, buff, sizeof(buff),0) <= 0)
         return BPS_ERROR;
     if (strncmp(loginString , (char*)buff, strlen(loginString)) == 0)
     {
         strncpy(buff,"SUCCEED:",8);
+        if(::send(fd, buff, 8, 0) <= 0)
+            return BPS_ERROR;
     }
     else
     {
         strncpy(buff,"LOGFAIL:",8);
+        ::send(fd, buff, 8, 0);
         return BPS_ERROR;
     }
-    if(send(new_sd, buff, 8) <= 0)
-        return BPS_ERROR;
-    clientFd = new_sd;
+    
+    clientFd = fd;
     return BPS_OK;
 }
 
 bpsStatusTypeDef bpsServer::processClient(int fd)
 {
-    if (recv(fd, recvData, recvLen) != recvLen)
+    bpsSocketReceiveDataTypeDef *recvData;
+    if (::recv(fd, (char *)recvData, 52, 0) <= 0)
+    {
+        std::cout << "errno " << errno << std::endl;
         return BPS_ERROR;
+    }
     else
         if (recvFunc != NULL)
-            recvFunc(recvData, recvLen);
+            recvFunc((char *)recvData, sizeof(bpsSocketReceiveDataTypeDef));
         else
             std::cout << "recvFunc is NULL\n";
     return BPS_OK;
@@ -166,5 +169,5 @@ void bpsServer::attach(pfunc recv)
 
 void bpsServer::send(char *data, int len)
 {
-    ::send(clientFd, data, len);
+    ::send(clientFd, data, len, 0);
 }
