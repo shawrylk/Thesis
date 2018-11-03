@@ -36,7 +36,10 @@ vector< vector<Point> > contours;
 vector<Vec4i> hierarchy;
 
 bpsUARTSendDataTypeDef STMData;
-
+bpsUARTReceiveDataTypeDef RaspiEncoderCnt;
+bpsSocketSendDataTypeDef RaspiData;
+std::mutex STMMutex;
+std::mutex RaspiMutex;
 void captureFrame(void);
 void processFrame(void);
 void showImage(void);
@@ -107,6 +110,7 @@ void processFrame(void)
 {
     int count = 0;
     int x,y;
+    int xKF, yKF;
     auto start = std::chrono::high_resolution_clock::now();
     float fps;
     sleep(1);
@@ -156,9 +160,19 @@ void processFrame(void)
                     thresh_min = THRESH_MAX;
             }
         }
-        STMData.ballCoordinate[BPS_X_AXIS] = x;
-        STMData.ballCoordinate[BPS_Y_AXIS] = y;
-        STMData.command = BPS_MODE_DEFAULT;
+        xKF = KF.predict(x);
+        yKF = KF.predict(y);
+        STMMutex.lock();
+        STMData.ballCoordinate[BPS_X_AXIS] = xKF;
+        STMData.ballCoordinate[BPS_Y_AXIS] = yKF;
+        STMMutex.unlock();
+        UART.send(&STMData, sizeof(bpsUARTSendDataTypeDef));
+        //STMMutex.unlock();
+        RaspiMutex.lock();
+        RaspiData.ballCoordinate[BPS_X_AXIS] = xKF;
+        RaspiData.ballCoordinate[BPS_Y_AXIS] = yKF;
+        server.send((char *)&RaspiData, sizeof(bpsSocketSendDataTypeDef));
+        RaspiMutex.unlock();
         sem_post(&semProcessFrameCplt);
         if (count == 1000)
         {
@@ -225,6 +239,16 @@ void showImage(void)
 int recvFunc (char *recvData, int recvLen)
 {
     bpsSocketReceiveDataTypeDef *data = (bpsSocketReceiveDataTypeDef*)recvData ;
+    STMMutex.lock();
+    memcpy(&STMData.command, data, sizeof(bpsSocketReceiveDataTypeDef));
+    STMMutex.unlock();
+    if (UART.dataAvailable())
+    {
+        UART.recv(&RaspiEncoderCnt,sizeof(bpsUARTReceiveDataTypeDef));
+        RaspiMutex.lock();
+        memcpy(&RaspiData.encoderCnt, &RaspiEncoderCnt, sizeof(bpsUARTReceiveDataTypeDef));
+        RaspiMutex.unlock();
+    }
     switch (data->command)
     {
         case  BPS_MODE_CIRCLE:

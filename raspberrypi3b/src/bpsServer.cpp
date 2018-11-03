@@ -91,7 +91,7 @@ void bpsServer::poll()
             else
             {
                 std::cout <<"  Descriptor " << fds[i].fd << " is readable\n";               
-                if (processClient(fds[i].fd) != BPS_OK)
+                if (processClient() != BPS_OK)
                 {
                     close(fds[i].fd);
                     fds[i].fd = -1;
@@ -145,11 +145,11 @@ bpsStatusTypeDef bpsServer::login(int fd)
     return BPS_OK;
 }
 
-bpsStatusTypeDef bpsServer::processClient(int fd)
+bpsStatusTypeDef bpsServer::processClient()
 {
     //bpsSocketReceiveDataTypeDef *recvData;
     char *buff = new char[52];
-    if (::recv(fd, buff, 52, 0) <= 0)
+    if (::recv(clientFd, buff, 52, 0) <= 0)
     {
         std::cout << "errno " << errno << std::endl;
         return BPS_ERROR;

@@ -86,7 +86,7 @@ int bpsUART::send(bpsUARTSendDataTypeDef* sendData, int len)
     return n;
 }
 
-int bpsUART::recv(bpsUARTSendDataTypeDef* recvData, int len)
+int bpsUART::recv(bpsUARTReceiveDataTypeDef* recvData, int len)
 {
     int i = 0;
     char* buff = new char[len];

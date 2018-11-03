@@ -14,7 +14,7 @@ class bpsServer
     int clientFd;   
     pfunc recvFunc = NULL;
     bpsStatusTypeDef login(int fd);
-    bpsStatusTypeDef processClient(int fd);
+    bpsStatusTypeDef processClient();
   public:
     bpsServer(const int port);
     void poll();
