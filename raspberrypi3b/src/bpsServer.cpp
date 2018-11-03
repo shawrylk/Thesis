@@ -93,10 +93,9 @@ void bpsServer::poll()
                 std::cout <<"  Descriptor " << fds[i].fd << " is readable\n";               
                 if (processClient(fds[i].fd) != BPS_OK)
                 {
-                    // close(fds[i].fd);
-                    // fds[i].fd = -1;
-                    // compress_array = true;
-                    std::cout << "BPS_ERROR\n";
+                    close(fds[i].fd);
+                    fds[i].fd = -1;
+                    compress_array = true;
                 }
             }  /* End of existing connection is readable             */
         } /* End of loop through pollable descriptors              */
@@ -148,15 +147,19 @@ bpsStatusTypeDef bpsServer::login(int fd)
 
 bpsStatusTypeDef bpsServer::processClient(int fd)
 {
-    bpsSocketReceiveDataTypeDef *recvData;
-    if (::recv(fd, (char *)recvData, 52, 0) <= 0)
+    //bpsSocketReceiveDataTypeDef *recvData;
+    char *buff = new char[52];
+    if (::recv(fd, buff, 52, 0) <= 0)
     {
         std::cout << "errno " << errno << std::endl;
         return BPS_ERROR;
     }
     else
         if (recvFunc != NULL)
-            recvFunc((char *)recvData, sizeof(bpsSocketReceiveDataTypeDef));
+        {
+            //memcpy(recvData, buff, 52);
+            recvFunc(buff, sizeof(bpsSocketReceiveDataTypeDef));
+        }
         else
             std::cout << "recvFunc is NULL\n";
     return BPS_OK;
