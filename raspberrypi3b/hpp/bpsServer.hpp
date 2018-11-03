@@ -1,36 +1,23 @@
 
 #pragma once
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/ioctl.h>
-#include <sys/poll.h>
-#include <sys/socket.h>
-#include <sys/time.h>
-#include <netinet/in.h>
-#include <errno.h>
-#include <unistd.h>
-#include <string.h>
-#include <iostream>
-#include <string>
-#include <string.h>
-#include <functional>
+#include "bpsDefine.hpp"
 
-#define SERVER_PORT  22396
-
+#define LOGIN_STRING "LOGIN:pi:raspberry:"
 using pfunc = std::function<int (char *data, int len)>;
 
-class Server
+class bpsServer
 {
   private:
-    int16_t recvLen;
-    int16_t sendLen;
     char *loginString;
-    char *sendData, *recvData;
-    int sendSync(int fd, char* buff, int len);
-    int recvSync(int fd, char* buff, int len);
-    int recvAsync(int fd, char* buff, int len);
+    const int port;
+    int clientFd;   
+    pfunc recvFunc = NULL;
+    bpsStatusTypeDef login(int fd);
+    bpsStatusTypeDef processClient(int fd);
   public:
-    Server(char *user, char *pass, int16_t sendLen, int16_t recvLen);
-    int Start(pfunc sendFunc, pfunc recvFunc);
+    bpsServer(const int port);
+    void poll();
+    void attach(pfunc recv);
+    void send(char *data, int len);
 };

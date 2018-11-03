@@ -6,7 +6,7 @@ bpsUARTSendDataTypeDef 	sendData;
 bpsSharedDataTypeDef 	sharedData;
 TaskHandle_t   			taskNumber[NUMBER_OF_TASK];
 int16_t encoderValue;
-int16_t sizeofUARTData;
+//int16_t sizeofUARTData;
 // void bpsTaskPWMGenerator(void* pointer)
 // {
 // 	bpsStartPWM();
@@ -41,7 +41,7 @@ void bpsTaskUpdateUARTData(void* pointer)
 	bpsSharedDataTypeDef* sd = (bpsSharedDataTypeDef*)pointer;
 	bpsUARTReceiveDataTypeDef receiveData;
 	bpsUARTReceiveData(&receiveData);	
-	sizeofUARTData = sizeof(bpsUARTSendDataTypeDef);
+	//sizeofUARTData = sizeof(bpsUARTSendDataTypeDef);
 	ulTaskNotifyTake(pdFALSE, portMAX_DELAY);
 	xTaskNotifyGive(taskNumber[TASK_SEND_UART_DATA]);
 	while(1)
@@ -193,11 +193,13 @@ void bpsTaskUARTSendData(void* pointer)
 	//		sendData.ballCoordinate[BPS_Y_AXIS] = 0xFF;
 	//		sendData.command = BPS_MODE_DEFAULT;
 	//		bpsUARTSendData(&sendData);
-		sendData.ballCoordinate[BPS_X_AXIS] = 0x11;
-		sendData.ballCoordinate[BPS_Y_AXIS] = 0x22;
-		sendData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 0x33;
-		sendData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] = 0x44;
-		sendData.command = BPS_MODE_SETPOINT;
+//		sendData.ballCoordinate[BPS_X_AXIS] = 0x11;
+//		sendData.ballCoordinate[BPS_Y_AXIS] = 0x22;
+//		sendData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 0x33;
+//		sendData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] = 0x44;
+//		sendData.command = BPS_MODE_SETPOINT;
+		sendData.encoderCnt[BPS_X_AXIS] = 0x12;
+		sendData.encoderCnt[BPS_Y_AXIS] = 0x34;
 		bpsUARTSendData(&sendData);
 		vTaskDelay(pdMS_TO_TICKS(100));
 	}

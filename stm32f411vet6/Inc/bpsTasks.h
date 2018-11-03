@@ -29,11 +29,10 @@ bpsSharedDataTypeDef; //212
 
 extern bpsSharedDataTypeDef sharedData;
 extern TaskHandle_t        taskNumber[NUMBER_OF_TASK];
-extern bpsUARTSendDataTypeDef 	sendData;
-extern int16_t encoderValue;
+extern bpsUARTSendDataTypeDef 	sendData; //DEBUG ONLY
+extern int16_t encoderValue; // DEBUG ONLY
 
-//void bpsTaskPWMGenerator	                (void* pointer);
-//void bpsTaskReadEncoder		            (void* pointer);
+
 void bpsTaskUpdateUARTData	                (void* pointer);
 void bpsTaskUpdateSetpoint                  (void* pointer);
 void bpsTaskCalRefEncoderValue              (void *pointer);

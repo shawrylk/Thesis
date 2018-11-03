@@ -5,9 +5,9 @@
 #include <unistd.h>
 #include <iostream>
 #include <chrono>
-#include "../hpp/bpsUARTData.hpp"
-#include "../hpp/bpsServer.hpp"
-#include "../hpp/bpsKalmanFilter.hpp"
+#include "bpsUARTD.hpp"
+#include "bpsServer.hpp"
+#include "bpsKalmanFilter.hpp"
 using namespace cv;
 using namespace std;
  
@@ -45,16 +45,16 @@ void testUART(void);
 int sendFunc (char *sendData, int sendLen);
 int recvFunc (char *recvData, int recvLen);
 ::KalmanFilter KF(240, 0.01, 1);
-
+bpsServer server = new bpsServer();
+bpsUART UART = new bpsUART();
 int main()
 {
-    cv::ocl::setUseOpenCL(false);
+    //cv::ocl::setUseOpenCL(false);
     sem_init(&semCaptureFrameCplt, 0, 0);
     sem_init(&semProcessFrameCplt, 0, 0);
     sem_init(&semSendDataCplt, 0, 0);
     sem_init(&semContourFrameCplt, 0, 0);
     sem_init(&semTrackingObjectCplt, 0, 0);
-    bpsUARTInit();
     std::thread thread1(captureFrame);
     std::thread thread2(processFrame);
     std::thread thread3(server);
@@ -200,12 +200,13 @@ void showImage(void)
 
 void server(void)
 {
-    Server server((char *)"pi",(char *)"raspberry", sizeof(bpsSocketSendDataTypeDef), sizeof(bpsSocketReceiveDataTypeDef));
+    bpsServer server(22396);
+    server.attach(recvFunc);
+    server.poll();
     // recvFuncv runs async, so it will be ignored when there no command from client, 
     // then server runs sendFunc
     // both functions run in loop
     
-    std::cout << server.Start(sendFunc, recvFunc) << "\n";
 }
 
 int sendFunc (char *sendData, int sendLen)

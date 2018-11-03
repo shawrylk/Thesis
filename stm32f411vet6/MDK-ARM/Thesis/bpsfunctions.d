@@ -1,5 +1,6 @@
 thesis\bpsfunctions.o: ..\Src\bpsFunctions.c
 thesis\bpsfunctions.o: ../Inc/bpsFunctions.h
+thesis\bpsfunctions.o: ../Inc/bpsDefine.h
 thesis\bpsfunctions.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h
 thesis\bpsfunctions.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
 thesis\bpsfunctions.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h

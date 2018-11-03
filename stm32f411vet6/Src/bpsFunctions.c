@@ -9,12 +9,12 @@ HAL_StatusTypeDef bpsStartEncoder()
 	return ret;
 }
 
-HAL_StatusTypeDef bpsReadEncoderCnt(bpsAxisTypeDef axis, int16_t* ret)
+HAL_StatusTypeDef bpsReadEncoderCnt(bpsAxisTypeDef axis, int16_t* encoderCnt_out)
 {
 	if (axis == BPS_X_AXIS)
-		*ret = ENCODER_X_REG->CNT;
+		*encoderCnt_out = ENCODER_X_REG->CNT;
 	else if (axis == BPS_Y_AXIS)
-		*ret = ENCODER_Y_REG->CNT;
+		*encoderCnt_out = ENCODER_Y_REG->CNT;
 	else return HAL_ERROR;
 	return HAL_OK;
 }
@@ -80,29 +80,29 @@ HAL_StatusTypeDef bpsUARTSendData(bpsUARTSendDataTypeDef* sendData)
 }
 
 HAL_StatusTypeDef bpsCalculatePID(int16_t setpoint, int16_t currentPoint, float Kp, 
-									float Ki, float Kd, int16_t* errorSamples, float* PIDSamples, float time)
+									float Ki, float Kd, int16_t* errorSamples_out, float* PIDSamples_out, float time)
 {
 	HAL_StatusTypeDef ret;
-	if (PIDSamples == NULL || errorSamples == NULL)
+	if (PIDSamples_out == NULL || errorSamples_out == NULL)
 		return HAL_ERROR;
 	int16_t e = setpoint - currentPoint;
 	float PID = (Kp + Ki * time / 2 + Kd / time) * e
-			+	(-Kp + Ki * time / 2 - Kd / time * 2) * *errorSamples
-			+	(Kd / time) * *(errorSamples + 1)
-			+	*PIDSamples;
-	ret = bpsAppendErrorSamples(errorSamples, e);
-	ret |= bpsAppendPIDSamples(PIDSamples, PID);
+			+	(-Kp + Ki * time / 2 - Kd / time * 2) * *errorSamples_out
+			+	(Kd / time) * *(errorSamples_out + 1)
+			+	*PIDSamples_out;
+	ret = bpsAppendErrorSamples(errorSamples_out, e);
+	ret |= bpsAppendPIDSamples(PIDSamples_out, PID);
 	return ret;
 }
 
-HAL_StatusTypeDef bpsAppendErrorSamples(int16_t* eSamples, int16_t newSample)
+HAL_StatusTypeDef bpsAppendErrorSamples(int16_t* errorSamples, int16_t newSample)
 {
 
-	if (eSamples == NULL)
+	if (errorSamples == NULL)
 		return HAL_ERROR;
 	for (int i = NUMBER_OF_SAMPLE - 1; i > 0; i--)
-		*(eSamples + i) = *(eSamples + i - 1);
-	*eSamples= newSample;
+		*(errorSamples + i) = *(errorSamples + i - 1);
+	*errorSamples= newSample;
 	return HAL_OK;
 	
 }

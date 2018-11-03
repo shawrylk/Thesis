@@ -47,6 +47,7 @@ thesis\bpstasks.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h
 thesis\bpstasks.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h
 thesis\bpstasks.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
 thesis\bpstasks.o: ../Inc/bpsFunctions.h
+thesis\bpstasks.o: ../Inc/bpsDefine.h
 thesis\bpstasks.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h
 thesis\bpstasks.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 thesis\bpstasks.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h

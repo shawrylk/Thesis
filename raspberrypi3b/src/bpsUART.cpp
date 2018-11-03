@@ -1,13 +1,13 @@
-#include "../hpp/bpsUARTData.hpp"
 
-int fdes;
+#include "bpsUART.hpp"
 
-int serialOpen (const char *device, const int baud)
+
+
+bpsUART::bpsUART(const char *device, const int baud)
 {
   struct termios options ;
-  speed_t myBaud ;
-  int     status, fd ;
-
+  speed_t myBaud;
+  int     status;
   switch (baud)
   {
     case      50:	myBaud =      B50 ; break ;
@@ -42,86 +42,42 @@ int serialOpen (const char *device, const int baud)
     case 4000000:	myBaud = B4000000 ; break ;
 
     default:
-      return -2 ;
+      std::cout << "baud rate " << baud << " is not supported" << std::endl;
   }
 
-  if ((fd = open (device, O_RDWR | O_NOCTTY | O_NDELAY)) == -1)
-    return -1 ;
+  if ((fdes = open (device, O_RDWR | O_NOCTTY | O_NDELAY)) == -1)
+    std::cout << "cant open device " << device << std::endl;
 
-  fcntl (fd, F_SETFL, O_RDWR) ;
+  fcntl (fdes, F_SETFL, O_RDWR) ;
+  tcgetattr (fdes, &options) ;
 
-// Get and modify current options:
+  cfmakeraw   (&options) ;
+  cfsetispeed (&options, myBaud) ;
+  cfsetospeed (&options, myBaud) ;
 
-  tcgetattr (fd, &options) ;
+  options.c_cflag |= (CLOCAL | CREAD) ;
+  options.c_cflag &= ~PARENB ;
+  options.c_cflag &= ~CSTOPB ;
+  options.c_cflag &= ~CSIZE ;
+  options.c_cflag |= CS8 ;
+  options.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG) ;
+  options.c_oflag &= ~OPOST ;
 
-    cfmakeraw   (&options) ;
-    cfsetispeed (&options, myBaud) ;
-    cfsetospeed (&options, myBaud) ;
+  options.c_cc [VMIN]  =   0 ;
+  options.c_cc [VTIME] = 100 ;	// Ten seconds (100 deciseconds)
 
-    options.c_cflag |= (CLOCAL | CREAD) ;
-    options.c_cflag &= ~PARENB ;
-    options.c_cflag &= ~CSTOPB ;
-    options.c_cflag &= ~CSIZE ;
-    options.c_cflag |= CS8 ;
-    options.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG) ;
-    options.c_oflag &= ~OPOST ;
+  tcsetattr (fdes, TCSANOW, &options) ;
 
-    options.c_cc [VMIN]  =   0 ;
-    options.c_cc [VTIME] = 100 ;	// Ten seconds (100 deciseconds)
-
-  tcsetattr (fd, TCSANOW, &options) ;
-
-  ioctl (fd, TIOCMGET, &status);
+  ioctl (fdes, TIOCMGET, &status);
 
   status |= TIOCM_DTR ;
   status |= TIOCM_RTS ;
 
-  ioctl (fd, TIOCMSET, &status);
-
+  ioctl (fdes, TIOCMSET, &status);
   usleep (10000) ;	// 10mS
-
-  return fd ;
 }
 
-
-
-void serialFlush (const int fd)
-{
-  tcflush (fd, TCIOFLUSH) ;
-}
-
-
-
-void serialClose (const int fd)
-{
-  close (fd) ;
-}
-
-
-
-
-int serialDataAvail (const int fd)
-{
-  int result ;
-
-  if (ioctl (fd, FIONREAD, &result) == -1)
-    return -1 ;
-
-  return result ;
-}
-
-bpsStatusTypeDef bpsUARTInit(void)
-{
-    fdes = serialOpen ("/dev/serial0", 1000000);
-	if (fdes < 0 )
-    {
-        return BPS_ERROR;
-	}
-    
-    return BPS_OK;
-}
-
-int bpsUARTSendData(bpsUARTSendDataTypeDef* sendData, int len)
+int bpsUART::send(bpsUARTSendDataTypeDef* sendData, int len)
 {
     int n;
     usleep(100);
@@ -130,23 +86,36 @@ int bpsUARTSendData(bpsUARTSendDataTypeDef* sendData, int len)
     return n;
 }
 
-int bpsUARTReceiveData	(bpsUARTSendDataTypeDef* recvData, int len)
+int bpsUART::recv(bpsUARTSendDataTypeDef* recvData, int len)
 {
     int i = 0;
     char* buff = new char[len];
-    serialFlush(fdes);
+    //tcflush (fdes, TCIOFLUSH);
     while(i != len) 
     {
       read(fdes, &buff[i], 1);
       i = i + 1;
 	  }
-    // for (int j = 0; j< len; j+=4)
-    //   printf("%x -- %x -- %x -- %x\n",buff[j],buff[j+1],buff[j+2],buff[j+3]);
     memcpy(recvData, buff, len);
     return len;
 }
 
-void bpsUARTFlush()
+int bpsUART::dataAvailable()
 {
-    serialFlush(fdes);
+  int result ;
+
+  if (ioctl (fdes, FIONREAD, &result) == -1)
+    return -1 ;
+
+  return result ;
+}
+
+void bpsUART:flush()
+{
+  tcflush (fdes, TCIOFLUSH) ;
+}
+
+void bpsUART::close()
+{
+  close(fdes);
 }

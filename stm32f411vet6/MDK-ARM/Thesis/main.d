@@ -48,6 +48,7 @@ thesis\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h
 thesis\main.o: ../Inc/bpsTasks.h
 thesis\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h
 thesis\main.o: ../Inc/bpsFunctions.h
+thesis\main.o: ../Inc/bpsDefine.h
 thesis\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h
 thesis\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 thesis\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h

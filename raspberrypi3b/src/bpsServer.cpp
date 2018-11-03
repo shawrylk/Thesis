@@ -1,60 +1,55 @@
 
-#include "../hpp/bpsServer.hpp"
+#include "bpsServer.hpp"
 
-Server::Server(char *user, char *pass, int16_t sendLen, int16_t recvLen)
-    : sendLen(sendLen), recvLen(recvLen)
+bpsServer::bpsServer(const int port)
+    :port(port), loginString(LOGIN_STRING)
 {
-    loginString = new char[40];
-    memcpy(loginString,"LOGIN:",40);
-    strcat(loginString,user);
-    strcat(loginString,":");
-    strcat(loginString,pass);
-    strcat(loginString,":");
-    std::cout << "send: " << sendLen << " -- recv: " << recvLen << std::endl;
-};
+}
 
-int Server::Start(pfunc sendFunc, pfunc recvFunc)
+void bpsServer::poll()
 {
-    char* recvData = new char[recvLen];
-    char* sendData = new char[sendLen];
-    int on = 1, nfds = 1, listen_sd = -1, new_sd = -1;
-    struct sockaddr_in6   addr;
-    struct pollfd fds[3];
-    char   buff[40];
+    char* recvData = new char[sizeof(bpsSocketReceiveDataTypeDef)];
+    char* sendData = new char[sizeof(bpsSocketSendDataTypeDef)];
+    int listen_sd = -1;
     bool    close_conn, end_server = false, compress_array = false;
 
     listen_sd = socket(AF_INET6, SOCK_STREAM, 0);
     if (listen_sd < 0)
-        return -1;
+        std::cout << "can't open socket\n";
 
+    int on = 1;
     if (setsockopt(listen_sd, SOL_SOCKET,  SO_REUSEADDR, (char *)&on, sizeof(on)) < 0)
     {
         close(listen_sd);
-        return -2;
+        std::cout << "can't set socket option\n";
     }
+
+    struct sockaddr_in6   addr;
     memset(&addr, 0, sizeof(addr));
     addr.sin6_family      = AF_INET6;
     memcpy(&addr.sin6_addr, &in6addr_any, sizeof(in6addr_any));
-    addr.sin6_port        = htons(SERVER_PORT);
-
+    addr.sin6_port        = htons(port);
     if (bind(listen_sd, (struct sockaddr *)&addr, sizeof(addr)) < 0)
     {
         close(listen_sd);
-        return -3;
+        std::cout << "can't bind socket\n";
     }
 
-    if (listen(listen_sd, 32) < 0)
+    if (listen(listen_sd, 3) < 0)
     {
         close(listen_sd);
-        return -4;
+        std::cout << "can't listen on this socket\n";
     }
+
+    struct pollfd fds[3];
     memset(fds, 0 , sizeof(fds));
     fds[0].fd = listen_sd;
     fds[0].events = POLLIN;
-    int current_size;
+
+    int current_size, nfds = 1;
     do 
     {
-        std::cout << "Waiting on poll()...\n";
+        std::cout << "waiting on poll()...\n";
 
         if (poll(fds, nfds, -1) < 0)
         {
@@ -75,6 +70,7 @@ int Server::Start(pfunc sendFunc, pfunc recvFunc)
             if (fds[i].fd == listen_sd)
             {
                 std::cout << " Incoming connection \n";
+                int new_sd = -1;
                 do
                 {
                     new_sd = accept4(listen_sd, NULL, NULL, SOCK_NONBLOCK);
@@ -86,53 +82,19 @@ int Server::Start(pfunc sendFunc, pfunc recvFunc)
                             break;
                         }
                     }
-                    if (recvSync(new_sd, buff, sizeof(buff)) <= 0)
-                        close_conn = true;
-                    if (strncmp(loginString , (char*)buff, strlen(loginString)) == 0)
+                    if (login(new_sd) == BPS_OK)
                     {
-                        strncpy(buff,"SUCCEED:",8);
                         fds[nfds].fd = new_sd;
                         fds[nfds].events = POLLIN;
                         nfds++;
                     }
-                    else
-                    {
-                        strncpy(buff,"LOGFAIL:",8);
-                        close_conn = true;
-                    }
-                    if(sendSync(new_sd, buff, 8) <= 0)
-                        close_conn = true;
                     new_sd = -1;
                 } while (new_sd != -1);
             }
             else
             {
-                std::cout <<"  Descriptor " << fds[i].fd << " is readable\n";
-                close_conn = false;
-                do
-                {
-                    int rc = recvAsync(fds[i].fd, recvData, recvLen);
-                    if (rc <= -1)
-                    {
-                        close_conn = true;
-                        break;
-                    }
-                    else if (rc > 0)
-                        {
-                            if (recvFunc != NULL)
-                                recvFunc(recvData, recvLen);
-                        }
-                    if (sendFunc != NULL)
-                            sendFunc(sendData, sendLen);
-                    if (sendSync(fds[i].fd, sendData, sendLen) <= 0)
-                    {
-                        close_conn = true;
-                        break;
-                    }
-                    usleep(16000);
-                } while(true);
-
-                if (close_conn)
+                std::cout <<"  Descriptor " << fds[i].fd << " is readable\n";               
+                if (processClient(fds[i].fd) != BPS_OK)
                 {
                     close(fds[i].fd);
                     fds[i].fd = -1;
@@ -163,52 +125,46 @@ int Server::Start(pfunc sendFunc, pfunc recvFunc)
     }
     return -5;
 }
-int Server::sendSync(int fd, char* buff, int len)
+
+
+bpsStatusTypeDef bpsServer::login(int fd)
 {
-    int rc = -1;
-    do 
+    char buff[strlen(loginString)];
+    if (recv(fd, buff, sizeof(buff)) <= 0)
+        return BPS_ERROR;
+    if (strncmp(loginString , (char*)buff, strlen(loginString)) == 0)
     {
-        rc = send(fd, buff, len, 0);
-        if (rc < 0)
-        if (errno != EWOULDBLOCK)
-            break;
-        if (rc == 0)
-        break;
-    } 
-    while (rc <= 0);
-    if (rc < 0) return -1;
-    if (rc == 0) return 0;
-    return rc;
+        strncpy(buff,"SUCCEED:",8);
+    }
+    else
+    {
+        strncpy(buff,"LOGFAIL:",8);
+        return BPS_ERROR;
+    }
+    if(send(new_sd, buff, 8) <= 0)
+        return BPS_ERROR;
+    clientFd = new_sd;
+    return BPS_OK;
 }
 
-int Server::recvSync(int fd, char* buff, int len)
+bpsStatusTypeDef bpsServer::processClient(int fd)
 {
-    int rc = -1;
-    do
-    {
-        rc = recv(fd, buff, len, 0);
-        if (rc < 0)
-        if (errno != EWOULDBLOCK)
-            break;
-        if (rc == 0)
-        break;
-    } 
-    while (rc <= 0);
-    if (rc < 0) return -1;
-    if (rc == 0) return 0;
-    return rc;
-}
-  
-int Server::recvAsync(int fd, char* buff, int len)
-{
-    int rc = -1;
-    rc = recv(fd, buff, len, 0);
-    if (rc < 0)
-        if (errno != EWOULDBLOCK)
-        return -1;
+    if (recv(fd, recvData, recvLen) != recvLen)
+        return BPS_ERROR;
+    else
+        if (recvFunc != NULL)
+            recvFunc(recvData, recvLen);
         else
-        return 0;
-    if (rc == 0)
-        return -2;
-    return rc;
+            std::cout << "recvFunc is NULL\n";
+    return BPS_OK;
+}
+
+void bpsServer::attach(pfunc recv)
+{
+    recvFunc = recv;
+}
+
+void bpsServer::send(char *data, int len)
+{
+    ::send(clientFd, data, len);
 }

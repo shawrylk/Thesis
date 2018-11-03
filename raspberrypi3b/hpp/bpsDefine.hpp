@@ -1,6 +1,4 @@
-
-#ifndef USER_FUNCTION
-#define USER_FUNCTION
+#pragma once
 
 #include <stdio.h>
 #include <string.h>
@@ -12,15 +10,13 @@
 #include <sys/ioctl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/poll.h>
+#include <sys/socket.h>
+#include <sys/time.h>
+#include <netinet/in.h>
 #include <termios.h>
-#include <wiringSerial.h>
+#include <functional>
 
-#define MIN_PWM_DUTY				0
-#define	MAX_PWM_DUTY				9599
-#define NUMBER_OF_SAMPLE			2
-#define	DT_OUTER_LOOP				0.016f  // 16 ms
-#define	DT_INNER_LOOP				0.001f	//  1 ms
-#define PULSE_PER_REVOLUTION        3072
 typedef enum
 {
     BPS_OUTER_PID,
@@ -36,13 +32,6 @@ typedef enum
 	BPS_NUMBER_OF_AXIS
 } 
 bpsAxisTypeDef;
-
-typedef enum
-{
-	BPS_FORWARD,
-	BPS_BACKWORD
-}
-bpsDirectionTypeDef;
 
 typedef enum 
 {
@@ -111,6 +100,7 @@ bpsSocketReceiveDataTypeDef; //52
 typedef struct
 {
 	int16_t						ballCoordinate[BPS_NUMBER_OF_AXIS];
+    int16_t                     encoderCnt[BPS_NUMBER_OF_AXIS];
 }
 bpsSocketSendDataTypeDef;
 
@@ -122,15 +112,15 @@ typedef	struct
 }	
 bpsUARTSendDataTypeDef; //56
 
+typedef struct
+{
+    int16_t                     encoderCnt[BPS_NUMBER_OF_AXIS];
+}
+bpsUARTReceiveDataTypeDef;
+
 typedef enum
 {
 	BPS_ERROR,
 	BPS_OK
 }
 bpsStatusTypeDef;
-
-int						bpsUARTSendData				(bpsUARTSendDataTypeDef* sendData, int len);
-bpsStatusTypeDef 		bpsUARTInit					(void);
-int						bpsUARTReceiveData			(bpsUARTSendDataTypeDef* recvData, int len);
-void bpsUARTFlush();
-#endif
