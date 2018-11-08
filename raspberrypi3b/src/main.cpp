@@ -37,9 +37,9 @@ vector<Vec4i> hierarchy;
 
 bpsUARTSendDataTypeDef STMData;
 bpsUARTReceiveDataTypeDef RaspiEncoderCnt;
-bpsSocketSendDataTypeDef RaspiData;
+bpsSocketSendDataTypeDef AppData;
 std::mutex STMMutex;
-std::mutex RaspiMutex;
+std::mutex AppMutex;
 void captureFrame(void);
 void processFrame(void);
 void showImage(void);
@@ -168,11 +168,11 @@ void processFrame(void)
         STMMutex.unlock();
         UART.send(&STMData, sizeof(bpsUARTSendDataTypeDef));
         //STMMutex.unlock();
-        RaspiMutex.lock();
-        RaspiData.ballCoordinate[BPS_X_AXIS] = xKF;
-        RaspiData.ballCoordinate[BPS_Y_AXIS] = yKF;
-        server.send((char *)&RaspiData, sizeof(bpsSocketSendDataTypeDef));
-        RaspiMutex.unlock();
+        AppMutex.lock();
+        AppData.ballCoordinate[BPS_X_AXIS] = xKF;
+        AppData.ballCoordinate[BPS_Y_AXIS] = yKF;
+        server.send((char *)&AppData, sizeof(bpsSocketSendDataTypeDef));
+        AppMutex.unlock();
         sem_post(&semProcessFrameCplt);
         if (count == 1000)
         {
@@ -245,9 +245,9 @@ int recvFunc (char *recvData, int recvLen)
     if (UART.dataAvailable())
     {
         UART.recv(&RaspiEncoderCnt,sizeof(bpsUARTReceiveDataTypeDef));
-        RaspiMutex.lock();
-        memcpy(&RaspiData.encoderCnt, &RaspiEncoderCnt, sizeof(bpsUARTReceiveDataTypeDef));
-        RaspiMutex.unlock();
+        AppMutex.lock();
+        memcpy(&AppData.encoderCnt, &RaspiEncoderCnt, sizeof(bpsUARTReceiveDataTypeDef));
+        AppMutex.unlock();
     }
     switch (data->command)
     {
