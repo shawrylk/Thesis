@@ -3,7 +3,7 @@
 <title>Static Call Graph - [Thesis\Thesis.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image Thesis\Thesis.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060528: Last Updated: Sat Nov 03 09:44:12 2018
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060528: Last Updated: Fri Nov 09 12:35:43 2018
 <BR><P>
 <H3>Maximum Stack Usage =        288 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -1140,7 +1140,7 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[c8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsCalculatePID
 </UL>
 
-<P><STRONG><a name="[c5]"></a>bpsBallAndPlateSystemStart</STRONG> (Thumb, 142 bytes, Stack size 16 bytes, bpstasks.o(i.bpsBallAndPlateSystemStart))
+<P><STRONG><a name="[c5]"></a>bpsBallAndPlateSystemStart</STRONG> (Thumb, 146 bytes, Stack size 16 bytes, bpstasks.o(i.bpsBallAndPlateSystemStart))
 <BR><BR>[Stack]<UL><LI>Max Depth = 152<LI>Call Chain = bpsBallAndPlateSystemStart &rArr; xTaskCreate &rArr; pvPortMalloc &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[c6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskCreate
@@ -1207,7 +1207,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[4e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsTaskControlMotor
 </UL>
 
-<P><STRONG><a name="[4d]"></a>bpsTaskCalRefEncoderValue</STRONG> (Thumb, 150 bytes, Stack size 8 bytes, bpstasks.o(i.bpsTaskCalRefEncoderValue))
+<P><STRONG><a name="[4d]"></a>bpsTaskCalRefEncoderValue</STRONG> (Thumb, 146 bytes, Stack size 8 bytes, bpstasks.o(i.bpsTaskCalRefEncoderValue))
 <BR><BR>[Stack]<UL><LI>Max Depth = 60<LI>Call Chain = bpsTaskCalRefEncoderValue &rArr; ulTaskNotifyTake &rArr; prvAddCurrentTaskToDelayedList &rArr; vListInsert
 </UL>
 <BR>[Calls]<UL><LI><a href="#[d1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
@@ -1229,24 +1229,23 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> bpstasks.o(i.bpsBallAndPlateSystemStart)
 </UL>
-<P><STRONG><a name="[50]"></a>bpsTaskSetup</STRONG> (Thumb, 112 bytes, Stack size 16 bytes, bpstasks.o(i.bpsTaskSetup))
-<BR><BR>[Stack]<UL><LI>Max Depth = 80<LI>Call Chain = bpsTaskSetup &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
+<P><STRONG><a name="[50]"></a>bpsTaskSetup</STRONG> (Thumb, 108 bytes, Stack size 0 bytes, bpstasks.o(i.bpsTaskSetup))
+<BR><BR>[Stack]<UL><LI>Max Depth = 64<LI>Call Chain = bpsTaskSetup &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[d1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
 <LI><a href="#[d3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelay
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> bpstasks.o(i.bpsBallAndPlateSystemStart)
 </UL>
-<P><STRONG><a name="[4f]"></a>bpsTaskUARTSendData</STRONG> (Thumb, 38 bytes, Stack size 0 bytes, bpstasks.o(i.bpsTaskUARTSendData))
-<BR><BR>[Stack]<UL><LI>Max Depth = 64<LI>Call Chain = bpsTaskUARTSendData &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
+<P><STRONG><a name="[4f]"></a>bpsTaskUARTSendData</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, bpstasks.o(i.bpsTaskUARTSendData))
+<BR><BR>[Stack]<UL><LI>Max Depth = 52<LI>Call Chain = bpsTaskUARTSendData &rArr; ulTaskNotifyTake &rArr; prvAddCurrentTaskToDelayedList &rArr; vListInsert
 </UL>
-<BR>[Calls]<UL><LI><a href="#[d3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelay
-<LI><a href="#[d4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsUARTSendData
+<BR>[Calls]<UL><LI><a href="#[d4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsUARTSendData
 <LI><a href="#[d0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ulTaskNotifyTake
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> bpstasks.o(i.bpsBallAndPlateSystemStart)
 </UL>
-<P><STRONG><a name="[4c]"></a>bpsTaskUpdateSetpoint</STRONG> (Thumb, 234 bytes, Stack size 16 bytes, bpstasks.o(i.bpsTaskUpdateSetpoint))
+<P><STRONG><a name="[4c]"></a>bpsTaskUpdateSetpoint</STRONG> (Thumb, 170 bytes, Stack size 16 bytes, bpstasks.o(i.bpsTaskUpdateSetpoint))
 <BR><BR>[Stack]<UL><LI>Max Depth = 288<LI>Call Chain = bpsTaskUpdateSetpoint &rArr; bpsCalSetpoint4CircleMode &rArr; __hardfp_sin &rArr; __ieee754_rem_pio2 &rArr; __aeabi_dmul &rArr; _double_epilogue &rArr; _double_round
 </UL>
 <BR>[Calls]<UL><LI><a href="#[d5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_TogglePin
@@ -1451,7 +1450,6 @@ Global Symbols
 <LI><a href="#[e0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvAddCurrentTaskToDelayedList
 </UL>
 <BR>[Called By]<UL><LI><a href="#[b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
-<LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsTaskUARTSendData
 <LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsTaskSetup
 </UL>
 

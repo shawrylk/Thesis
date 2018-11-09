@@ -163,14 +163,14 @@ void processFrame(void)
         xKF = KF.predict(x);
         yKF = KF.predict(y);
         STMMutex.lock();
-        STMData.ballCoordinate[BPS_X_AXIS] = xKF;
-        STMData.ballCoordinate[BPS_Y_AXIS] = yKF;
+        STMData.ballCoordinate[BPS_X_AXIS] = x;
+        STMData.ballCoordinate[BPS_Y_AXIS] = y;
         STMMutex.unlock();
         UART.send(&STMData, sizeof(bpsUARTSendDataTypeDef));
         //STMMutex.unlock();
         AppMutex.lock();
-        AppData.ballCoordinate[BPS_X_AXIS] = xKF;
-        AppData.ballCoordinate[BPS_Y_AXIS] = yKF;
+        AppData.ballCoordinate[BPS_X_AXIS] = x;
+        AppData.ballCoordinate[BPS_Y_AXIS] = y;
         server.send((char *)&AppData, sizeof(bpsSocketSendDataTypeDef));
         AppMutex.unlock();
         sem_post(&semProcessFrameCplt);

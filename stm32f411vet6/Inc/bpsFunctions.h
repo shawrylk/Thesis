@@ -15,6 +15,6 @@ HAL_StatusTypeDef 		bpsCalculatePID				(int16_t setpoint, int16_t currentPoint, 
 HAL_StatusTypeDef 		bpsAppendErrorSamples		(int16_t* errorSamples, int16_t newSample);
 HAL_StatusTypeDef		bpsAppendPIDSamples			(float* PIDSamples, float newSample);
 HAL_StatusTypeDef		bpsControlMotor				(bpsAxisTypeDef axis, float PID);
-HAL_StatusTypeDef		bpsCalSetpoint4CircleMode 	(int16_t centerOrdinate, uint16_t radius, uint16_t* currentAngle, uint16_t speed, 
-													int16_t* setpoint, bpsAxisTypeDef axis);
+HAL_StatusTypeDef		bpsCalSetpoint4CircleMode 	(int16_t centerOrdinate, uint16_t radius, uint16_t* currentAngle_out, uint16_t speed, 
+													int16_t* setpoint_out, bpsAxisTypeDef axis);
 #endif

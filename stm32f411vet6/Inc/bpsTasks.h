@@ -16,8 +16,6 @@
 typedef struct
 {
     bpsUARTReceiveDataTypeDef				UARTData;
-    bpsCommandTypeDef                       latchedCommand;
-    int16_t                                 ballCoordinate[BPS_NUMBER_OF_AXIS];
     int16_t              				 	setpoint[BPS_NUMBER_OF_AXIS];
     int16_t                                 refEncoderValue[BPS_NUMBER_OF_AXIS];
     bpsDataTypeDef                          content;
