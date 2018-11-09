@@ -63,14 +63,14 @@ int main()
     std::thread thread2(processFrame);
     //std::thread thread3(server);
     //std::thread thread4(testUART);
-    //std::thread thread5(showImage);
+    std::thread thread5(showImage);
     server.attach(recvFunc);
     server.poll();
     thread1.join();
     thread2.join();
     //thread3.join();
     //thread4.join();
-    //thread5.join();
+    thread5.join();
     return 0;
 }
 void captureFrame(void)
