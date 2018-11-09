@@ -247,6 +247,8 @@ int recvFunc (char *recvData, int recvLen)
         UART.recv(&RaspiEncoderCnt,sizeof(bpsUARTReceiveDataTypeDef));
         AppMutex.lock();
         memcpy(&AppData.encoderCnt, &RaspiEncoderCnt, sizeof(bpsUARTReceiveDataTypeDef));
+        std::cout << "encoderCnt x:= " << AppData.encoderCnt[0] << std::endl;
+        std::cout << "encoderCnt y:= " << AppData.encoderCnt[1] << std::endl;
         AppMutex.unlock();
     }
     switch (data->command)

@@ -15,13 +15,13 @@ void bpsTaskUpdateUARTData(void* pointer)
 	bpsUARTReceiveData(&receiveData);	
 	//sizeofUARTData = sizeof(bpsUARTSendDataTypeDef);
 	ulTaskNotifyTake(pdFALSE, portMAX_DELAY);
-	xTaskNotifyGive(taskNumber[TASK_SEND_UART_DATA]);
 	while(1)
 	{
 		//notify take from task control motor
 		ulTaskNotifyTake(pdFALSE, portMAX_DELAY);
 		memcpy(&sd->UARTData, &receiveData, sizeof(bpsUARTReceiveDataTypeDef));		
 		xTaskNotifyGive(taskNumber[TASK_UPDATE_SETPOINT]);
+		xTaskNotifyGive(taskNumber[TASK_SEND_UART_DATA]);
 	}
 }
 
