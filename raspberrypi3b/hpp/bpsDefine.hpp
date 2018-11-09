@@ -100,7 +100,7 @@ bpsSocketReceiveDataTypeDef; //52
 typedef struct
 {
 	int16_t						ballCoordinate[BPS_NUMBER_OF_AXIS];
-    int16_t                     encoderCnt[BPS_NUMBER_OF_AXIS];
+    //int16_t                     encoderCnt[BPS_NUMBER_OF_AXIS];
 }
 bpsSocketSendDataTypeDef;
 

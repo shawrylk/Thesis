@@ -121,7 +121,7 @@ void processFrame(void)
         count++;
         sem_wait(&semCaptureFrameCplt);     
         cvtColor(frame,gray,COLOR_BGR2GRAY);
-        threshold(gray,thresh,10,255,0);
+        threshold(gray,thresh,30,255,0);
         findContours(thresh,contours,hierarchy,RETR_TREE,CHAIN_APPROX_SIMPLE );
         double refArea = 0;
 	    bool objectFound = false;

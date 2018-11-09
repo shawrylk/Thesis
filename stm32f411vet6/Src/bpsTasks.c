@@ -7,6 +7,7 @@ bpsSharedDataTypeDef 	sharedData;
 TaskHandle_t   			taskNumber[NUMBER_OF_TASK];
 int16_t encoderValue;
 
+
 void bpsTaskUpdateUARTData(void* pointer)
 {
 	bpsSharedDataTypeDef* sd = (bpsSharedDataTypeDef*)pointer;
