@@ -27,12 +27,14 @@ extern	DMA_HandleTypeDef			hdma_usart2_rx;
 #define NUMBER_OF_SAMPLE			2
 #define	DT_OUTER_LOOP				0.0112f  // 11.2 ms
 #define	DT_INNER_LOOP				0.0010f	//  1 ms
-#define	PWM_PIN_1_X					TIM_CHANNEL_1
-#define	PWM_PIN_2_X					TIM_CHANNEL_2
-#define	PWM_PIN_1_Y					TIM_CHANNEL_3
-#define	PWM_PIN_2_Y					TIM_CHANNEL_4
+#define	PWM_PIN_2_X					TIM_CHANNEL_1
+#define	PWM_PIN_1_X					TIM_CHANNEL_2
+#define	PWM_PIN_2_Y					TIM_CHANNEL_3
+#define	PWM_PIN_1_Y					TIM_CHANNEL_4
 #define PULSE_PER_REVOLUTION        3072
-
+#define BOOL						int8_t
+#define true						1
+#define false						0
 typedef enum
 {
     BPS_OUTER_PID,
@@ -40,7 +42,13 @@ typedef enum
     BPS_NUMBER_OF_PID_LOOP
 }
 bpsPIDPositionTypeDef;
-
+typedef enum
+{
+	BPS_MIN,
+	BPS_MAX,
+	BPS_BOUNDARY
+}
+bpsBoundaryTypeDef;
 typedef enum 
 {
 	BPS_X_AXIS,

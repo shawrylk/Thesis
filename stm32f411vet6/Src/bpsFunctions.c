@@ -121,16 +121,17 @@ HAL_StatusTypeDef bpsAppendPIDSamples(float* PIDSamples, float newSample)
 
 HAL_StatusTypeDef bpsControlMotor(bpsAxisTypeDef axis ,float PID)
 {
-	uint16_t absPID = PID >= 0 ? (uint16_t)PID : -(uint16_t)PID;
-	if (absPID > MAX_PWM_DUTY)
-		absPID = MAX_PWM_DUTY;
+	if (PID > MAX_PWM_DUTY)
+		PID = MAX_PWM_DUTY;
+	if (PID < -MAX_PWM_DUTY)
+		PID = -MAX_PWM_DUTY;
 	if (PID >= 0)
 	{
-		return bpsSetPWMDuty(axis, absPID, BPS_FORWARD);
+		return bpsSetPWMDuty(axis, PID, BPS_FORWARD);
 	}
 	else
 	{
-		return bpsSetPWMDuty(axis, absPID, BPS_BACKWORD);
+		return bpsSetPWMDuty(axis, -1 * PID, BPS_BACKWORD);
 	}
 }
 
@@ -145,4 +146,26 @@ HAL_StatusTypeDef bpsCalSetpoint4CircleMode (int16_t centerOrdinate, uint16_t ra
 	*setpoint_out = (int16_t)(centerOrdinate + radius * (axis ? cos(*currentAngle_out * speed) : sin(*currentAngle_out * speed)));
 	if (*currentAngle_out == 360 * (uint16_t)(1 / speed)) *currentAngle_out = 0; else *currentAngle_out++;
 	return HAL_OK;
+}
+
+HAL_StatusTypeDef bpsFindThresholds(bpsAxisTypeDef axis, int16_t *min, int16_t *max)
+{
+	int16_t temp;
+	HAL_StatusTypeDef ret;
+	ret = bpsControlMotor(axis, -1 * MAX_PWM_DUTY / 3);
+	ret |= bpsReadEncoderCnt(axis, &temp);
+	do {
+		*min = temp;
+		HAL_Delay(50);
+		ret |= bpsReadEncoderCnt(axis, &temp);
+	} while (*min != temp);
+
+	ret |= bpsControlMotor(axis, MAX_PWM_DUTY / 3);
+	ret |= bpsReadEncoderCnt(axis, &temp);
+	do {
+		*max = temp;
+		HAL_Delay(50);
+		ret |= bpsReadEncoderCnt(axis, &temp);
+	} while (*max != temp);
+	return ret;
 }

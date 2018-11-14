@@ -28,9 +28,12 @@ Project File Date:  10/28/2018
 *** Using Compiler 'V5.06 update 5 (build 528)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'Thesis'
 compiling bpsTasks.c...
+..\Src\bpsTasks.c(190): warning:  #111-D: statement is unreachable
+  	bpsControlMotor(BPS_X_AXIS, 0);
+..\Src\bpsTasks.c: 1 warning, 0 errors
 linking...
-Program Size: Code=17408 RO-data=796 RW-data=128 ZI-data=17272  
-"Thesis\Thesis.axf" - 0 Error(s), 0 Warning(s).
+Program Size: Code=17904 RO-data=796 RW-data=140 ZI-data=17228  
+"Thesis\Thesis.axf" - 0 Error(s), 1 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -53,7 +56,7 @@ Package Vendor: Keil
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:5.0.1
-Build Time Elapsed:  00:00:04
+Build Time Elapsed:  00:00:02
 </pre>
 </body>
 </html>
