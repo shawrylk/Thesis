@@ -3,7 +3,7 @@
 <title>Static Call Graph - [Thesis\Thesis.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image Thesis\Thesis.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060528: Last Updated: Thu Nov 15 00:10:48 2018
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060528: Last Updated: Thu Nov 15 00:31:32 2018
 <BR><P>
 <H3>Maximum Stack Usage =        288 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -556,7 +556,6 @@ Global Symbols
 </UL>
 <BR>[Called By]<UL><LI><a href="#[ce]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsFindThresholds
 <LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsTaskSetup
-<LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsTaskControlMotor
 </UL>
 
 <P><STRONG><a name="[89]"></a>HAL_GPIO_Init</STRONG> (Thumb, 358 bytes, Stack size 40 bytes, stm32f4xx_hal_gpio.o(i.HAL_GPIO_Init))
@@ -1206,6 +1205,7 @@ Global Symbols
 
 <P><STRONG><a name="[cf]"></a>bpsReadEncoderCnt</STRONG> (Thumb, 24 bytes, Stack size 0 bytes, bpsfunctions.o(i.bpsReadEncoderCnt))
 <BR><BR>[Called By]<UL><LI><a href="#[ce]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsFindThresholds
+<LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsTaskUARTSendData
 <LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsTaskSetup
 <LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsTaskControlMotor
 </UL>
@@ -1233,7 +1233,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsTaskControlMotor
 </UL>
 
-<P><STRONG><a name="[4e]"></a>bpsTaskCalRefEncoderValue</STRONG> (Thumb, 146 bytes, Stack size 8 bytes, bpstasks.o(i.bpsTaskCalRefEncoderValue))
+<P><STRONG><a name="[4e]"></a>bpsTaskCalRefEncoderValue</STRONG> (Thumb, 180 bytes, Stack size 8 bytes, bpstasks.o(i.bpsTaskCalRefEncoderValue))
 <BR><BR>[Stack]<UL><LI>Max Depth = 60<LI>Call Chain = bpsTaskCalRefEncoderValue &rArr; ulTaskNotifyTake &rArr; prvAddCurrentTaskToDelayedList &rArr; vListInsert
 </UL>
 <BR>[Calls]<UL><LI><a href="#[d4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
@@ -1243,10 +1243,10 @@ Global Symbols
 <BR>[Address Reference Count : 1]<UL><LI> bpstasks.o(i.bpsBallAndPlateSystemStart)
 </UL>
 <P><STRONG><a name="[4f]"></a>bpsTaskControlMotor</STRONG> (Thumb, 180 bytes, Stack size 8 bytes, bpstasks.o(i.bpsTaskControlMotor))
-<BR><BR>[Stack]<UL><LI>Max Depth = 60<LI>Call Chain = bpsTaskControlMotor &rArr; ulTaskNotifyTake &rArr; prvAddCurrentTaskToDelayedList &rArr; vListInsert
+<BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = bpsTaskControlMotor &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
-<BR>[Calls]<UL><LI><a href="#[70]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_Delay
-<LI><a href="#[d4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
+<BR>[Calls]<UL><LI><a href="#[d4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
+<LI><a href="#[d5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelay
 <LI><a href="#[d1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsStartPWM
 <LI><a href="#[d0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsStartEncoder
 <LI><a href="#[cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsReadEncoderCnt
@@ -1269,10 +1269,11 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> bpstasks.o(i.bpsBallAndPlateSystemStart)
 </UL>
-<P><STRONG><a name="[50]"></a>bpsTaskUARTSendData</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, bpstasks.o(i.bpsTaskUARTSendData))
-<BR><BR>[Stack]<UL><LI>Max Depth = 52<LI>Call Chain = bpsTaskUARTSendData &rArr; ulTaskNotifyTake &rArr; prvAddCurrentTaskToDelayedList &rArr; vListInsert
+<P><STRONG><a name="[50]"></a>bpsTaskUARTSendData</STRONG> (Thumb, 54 bytes, Stack size 8 bytes, bpstasks.o(i.bpsTaskUARTSendData))
+<BR><BR>[Stack]<UL><LI>Max Depth = 60<LI>Call Chain = bpsTaskUARTSendData &rArr; ulTaskNotifyTake &rArr; prvAddCurrentTaskToDelayedList &rArr; vListInsert
 </UL>
 <BR>[Calls]<UL><LI><a href="#[d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsUARTSendData
+<LI><a href="#[cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsReadEncoderCnt
 <LI><a href="#[d3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ulTaskNotifyTake
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> bpstasks.o(i.bpsBallAndPlateSystemStart)
@@ -1483,6 +1484,7 @@ Global Symbols
 </UL>
 <BR>[Called By]<UL><LI><a href="#[b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
 <LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsTaskSetup
+<LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsTaskControlMotor
 </UL>
 
 <P><STRONG><a name="[ab]"></a>vTaskNotifyGiveFromISR</STRONG> (Thumb, 174 bytes, Stack size 24 bytes, tasks.o(i.vTaskNotifyGiveFromISR))
