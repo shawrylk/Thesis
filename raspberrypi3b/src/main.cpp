@@ -30,7 +30,7 @@ using namespace std;
 #define THRESH_MAX      40
 sem_t semCaptureFrameCplt, semProcessFrameCplt, semPreProcessFrameCplt, semContourFrameCplt, semTrackingObjectCplt;
 bool bFoundObject = false;
-Mat frame, gray, thresh, contour;
+Mat frame, gray, mblur, thresh, contour;
 int8_t thresh_min = 6;
 vector< vector<Point> > contours;
 vector<Vec4i> hierarchy;
@@ -122,15 +122,16 @@ void preProcessFrame(void)
         count++;
         sem_wait(&semCaptureFrameCplt);   
         cvtColor(frame,gray,COLOR_BGR2GRAY);
+        blur(gray,mblur,Size(5,5));
         threshold(gray,thresh,38,255,0);
         //create structuring element that will be used to "dilate" and "erode" image.
         //the element chosen here is a 3px by 3px rectangle
 
-        Mat erodeElement = getStructuringElement( MORPH_ELLIPSE,Size(0,0));
+        //Mat erodeElement = getStructuringElement( MORPH_ELLIPSE,Size(1,1));
         //dilate with larger element so make sure object is nicely visible
         //Mat dilateElement = getStructuringElement( MORPH_ELLIPSE,Size(5,5));
 
-        erode(thresh,thresh,erodeElement);
+        //erode(thresh,thresh,erodeElement);
         //dilate(thresh,thresh,dilateElement);
         sem_post(&semPreProcessFrameCplt);
         if (count == 1000)
