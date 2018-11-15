@@ -122,9 +122,8 @@ void preProcessFrame(void)
         count++;
         sem_wait(&semCaptureFrameCplt);   
         cvtColor(frame,gray,COLOR_BGR2GRAY);
-        bilateralFilter(gray,mblur,1,10,10);
         threshold(gray,thresh,25,255,0);
-        
+        medianBlur(gray,mblur,137);
         //create structuring element that will be used to "dilate" and "erode" image.
         //the element chosen here is a 3px by 3px rectangle
 
