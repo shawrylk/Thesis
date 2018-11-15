@@ -163,19 +163,22 @@ void processFrame(void)
                     thresh_min = THRESH_MAX;
             }
         }
-        xKF = KF.predict(x);
-        yKF = KF.predict(y);
-        STMMutex.lock();
-        STMData.ballCoordinate[BPS_X_AXIS] = xKF;
-        STMData.ballCoordinate[BPS_Y_AXIS] = yKF;
-        STMMutex.unlock();
-        UART.send(&STMData, sizeof(bpsUARTSendDataTypeDef));
-        //STMMutex.unlock();
-        AppMutex.lock();
-        AppData.ballCoordinate[BPS_X_AXIS] = xKF;
-        AppData.ballCoordinate[BPS_Y_AXIS] = yKF;
-        server.send((char *)&AppData, sizeof(bpsSocketSendDataTypeDef));
-        AppMutex.unlock();
+        if (bFoundObject)
+        {
+            xKF = KF.predict(x);
+            yKF = KF.predict(y);
+            STMMutex.lock();
+            STMData.ballCoordinate[BPS_X_AXIS] = xKF;
+            STMData.ballCoordinate[BPS_Y_AXIS] = yKF;
+            STMMutex.unlock();
+            UART.send(&STMData, sizeof(bpsUARTSendDataTypeDef));
+            //STMMutex.unlock();
+            AppMutex.lock();
+            AppData.ballCoordinate[BPS_X_AXIS] = xKF;
+            AppData.ballCoordinate[BPS_Y_AXIS] = yKF;
+            server.send((char *)&AppData, sizeof(bpsSocketSendDataTypeDef));
+            AppMutex.unlock();
+        }
         sem_post(&semProcessFrameCplt);
         if (count == 1000)
         {
