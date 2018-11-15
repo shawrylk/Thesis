@@ -28,7 +28,7 @@ using namespace std;
 #define MAX_OBJECT_AREA FRAME_HEIGHT*FRAME_WIDTH/1.5
 #define RECT_SIZE       130
 #define THRESH_MAX      40
-sem_t semCaptureFrameCplt, semProcessFrameCplt, semSendDataCplt, semContourFrameCplt, semTrackingObjectCplt;
+sem_t semCaptureFrameCplt, semProcessFrameCplt, semPreProcessFrameCplt, semContourFrameCplt, semTrackingObjectCplt;
 bool bFoundObject = false;
 Mat frame, gray, thresh, contour;
 int8_t thresh_min = 6;
@@ -41,6 +41,7 @@ bpsSocketSendDataTypeDef AppData;
 std::mutex STMMutex;
 std::mutex AppMutex;
 void captureFrame(void);
+void preProcessFrame(void);
 void processFrame(void);
 void showImage(void);
 //void server(void);
@@ -56,7 +57,7 @@ int main()
     
     sem_init(&semCaptureFrameCplt, 0, 0);
     sem_init(&semProcessFrameCplt, 0, 0);
-    sem_init(&semSendDataCplt, 0, 0);
+    sem_init(&semPreProcessFrameCplt, 0, 0);
     sem_init(&semContourFrameCplt, 0, 0);
     sem_init(&semTrackingObjectCplt, 0, 0);
     STMData.command = BPS_MODE_SETPOINT;
@@ -64,7 +65,7 @@ int main()
     STMData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] = 240;
     std::thread thread1(captureFrame);
     std::thread thread2(processFrame);
-    //std::thread thread3(server);
+    std::thread thread3(preProcessFrame);
     //std::thread thread4(testUART);
     std::thread thread5(showImage);
     server.attach(recvFunc);
@@ -108,6 +109,45 @@ void captureFrame(void)
         }
     }
 }
+void preProcessFrame(void)
+{
+    int count = 0;
+    auto start = std::chrono::high_resolution_clock::now();
+    float fps;
+    sleep(1);
+    while (1)
+    {
+        if (count == 0)
+            start = std::chrono::high_resolution_clock::now();
+        count++;
+        sem_wait(&semCaptureFrameCplt);   
+        cvtColor(frame,gray,COLOR_BGR2GRAY);
+        threshold(gray,thresh,38,255,0);
+        //create structuring element that will be used to "dilate" and "erode" image.
+        //the element chosen here is a 3px by 3px rectangle
+
+        Mat erodeElement = getStructuringElement( MORPH_ELLIPSE,Size(1,1));
+        //dilate with larger element so make sure object is nicely visible
+        Mat dilateElement = getStructuringElement( MORPH_ELLIPSE,Size(50,50));
+
+        erode(thresh,thresh,erodeElement);
+        erode(thresh,thresh,erodeElement);
+        erode(thresh,thresh,erodeElement);
+        erode(thresh,thresh,erodeElement);
+
+        // dilate(thresh,thresh,dilateElement);
+        // dilate(thresh,thresh,dilateElement);
+        sem_post(&semPreProcessFrameCplt);
+        if (count == 1000)
+        {
+            auto end = std::chrono::high_resolution_clock::now();
+            auto diff = std::chrono::duration_cast<chrono::seconds>(end - start);
+            fps = 1000 / static_cast<double>(diff.count());
+            std::cout << "thread 1 " << fps << "\n";
+            count = 0;
+        }
+    }
+}
 
 void processFrame(void)
 {
@@ -122,9 +162,7 @@ void processFrame(void)
         if (count == 0)
             start = std::chrono::high_resolution_clock::now();
         count++;
-        sem_wait(&semCaptureFrameCplt);     
-        cvtColor(frame,gray,COLOR_BGR2GRAY);
-        threshold(gray,thresh,30,255,0);
+        sem_wait(&semPreProcessFrameCplt);            
         findContours(thresh,contours,hierarchy,RETR_TREE,CHAIN_APPROX_SIMPLE );
         double refArea = 0;
 	    bool objectFound = false;
@@ -207,7 +245,7 @@ void showImage(void)
         Rect2d bbox(STMData.ballCoordinate[BPS_X_AXIS] - RECT_SIZE/2, 
             STMData.ballCoordinate[BPS_Y_AXIS] - RECT_SIZE/2, RECT_SIZE, RECT_SIZE); 
         rectangle(frame, bbox, Scalar( 255, 0, 0 ), 2, 1 ); 
-        imshow("frame", frame);
+        imshow("frame", thresh);
         waitKey(1);
         if (count == 1000)
         {
@@ -220,27 +258,6 @@ void showImage(void)
     }
 }
 
-// void server(void)
-// {
-//     bpsServer server(22396);
-//     server.attach(recvFunc);
-//     server.poll();
-//     // recvFuncv runs async, so it will be ignored when there no command from client, 
-//     // then server runs sendFunc
-//     // both functions run in loop
-    
-// }
-
-// int sendFunc (char *sendData, int sendLen)
-// {
-//     sem_wait(&semProcessFrameCplt);
-//     // wrong implementation here, lack of encoder value
-//     bpsSocketSendDataTypeDef *data = (bpsSocketSendDataTypeDef*)sendData;
-//     data->ballCoordinate[BPS_X_AXIS] = (int)KF.predict(STMData.ballCoordinate[BPS_X_AXIS]);
-//     data->ballCoordinate[BPS_Y_AXIS] = (int)KF.predict(STMData.ballCoordinate[BPS_Y_AXIS]);
-//     //bpsUARTSendData(&STMData, sizeof(bpsUARTSendDataTypeDef));
-//     sem_post(&semSendDataCplt);
-// }
 
 int recvFunc (char *recvData, int recvLen)
 {
@@ -319,71 +336,3 @@ int recvFunc (char *recvData, int recvLen)
     return 0;
 }
 
-// void testUART()
-// {
-//     sleep(3);
-//     bpsUARTSendDataTypeDef recvData;
-//     while(1)
-//     {
-//         //bpsUARTReceiveData(&recvData, sizeof(bpsUARTSendDataTypeDef));
-//         std::cout << "ball x: " << recvData.ballCoordinate[BPS_X_AXIS] << " -- ";
-//         std::cout << "ball y: " << recvData.ballCoordinate[BPS_Y_AXIS] << std::endl;
-//         switch (recvData.command)
-//         {
-//             case BPS_MODE_CIRCLE:
-//                 std::cout << "circle mode \n";
-//                 std::cout << "x: " << recvData.content.circleProperties.centerCoordinate[BPS_X_AXIS] << " -- ";
-//                 std::cout << "y: " << recvData.content.circleProperties.centerCoordinate[BPS_Y_AXIS] << std::endl;
-//                 std::cout << "r: " << recvData.content.circleProperties.radius << std::endl;
-//                 std::cout << "s: " << recvData.content.circleProperties.speed << std::endl;
-//                 break;
-//             case BPS_MODE_RECTANGLE:
-//                 std::cout << "rectangle mode \n";
-//                 std::cout << "TL x: " << recvData.content.rectangleProperties.vertexCoordinate[BPS_TOP_LEFT][BPS_X_AXIS] << " -- ";
-//                 std::cout << "TL y: " << recvData.content.rectangleProperties.vertexCoordinate[BPS_TOP_LEFT][BPS_Y_AXIS] << std::endl;
-
-//                 std::cout << "TR x: " << recvData.content.rectangleProperties.vertexCoordinate[BPS_TOP_RIGHT][BPS_X_AXIS] << " -- ";
-//                 std::cout << "TR y: " << recvData.content.rectangleProperties.vertexCoordinate[BPS_TOP_RIGHT][BPS_Y_AXIS] << std::endl;
-
-//                 std::cout << "BL x: " << recvData.content.rectangleProperties.vertexCoordinate[BPS_BOT_LEFT][BPS_X_AXIS] << " -- ";
-//                 std::cout << "BL y: " << recvData.content.rectangleProperties.vertexCoordinate[BPS_BOT_LEFT][BPS_Y_AXIS] << std::endl;
-
-//                 std::cout << "BR x: " << recvData.content.rectangleProperties.vertexCoordinate[BPS_BOT_RIGHT][BPS_X_AXIS] << " -- ";
-//                 std::cout << "BR y: " << recvData.content.rectangleProperties.vertexCoordinate[BPS_BOT_RIGHT][BPS_Y_AXIS] << std::endl;
-//                 break;
-//             case BPS_MODE_SETPOINT:
-//                 std::cout << "setpoint mode \n";
-//                 std::cout << "x: " << recvData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] << " -- ";
-//                 std::cout << "y: " << recvData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] << std::endl;
-//                 break;
-//             case BPS_MODE_DEFAULT:
-//                 std::cout << "default\n";
-//                 break;
-//             case BPS_UPDATE_PID:
-//                 std::cout << "update PID \n";
-
-//                 std::cout << "Kp Outer x: " << recvData.content.PIDProperties.Kp[BPS_OUTER_PID][BPS_X_AXIS] << " -- ";
-//                 std::cout << "Kp Outer y: " << recvData.content.PIDProperties.Kp[BPS_OUTER_PID][BPS_Y_AXIS] << std::endl;
-
-//                 std::cout << "Kp Inner x: " << recvData.content.PIDProperties.Kp[BPS_INNER_PID][BPS_X_AXIS] << " -- ";
-//                 std::cout << "Kp Inner y: " << recvData.content.PIDProperties.Kp[BPS_INNER_PID][BPS_Y_AXIS] << std::endl;
-
-//                 std::cout << "Ki Outer x: " << recvData.content.PIDProperties.Ki[BPS_OUTER_PID][BPS_X_AXIS] << " -- ";
-//                 std::cout << "Ki Outer y: " << recvData.content.PIDProperties.Ki[BPS_OUTER_PID][BPS_Y_AXIS] << std::endl;
-
-//                 std::cout << "Ki Inner x: " << recvData.content.PIDProperties.Ki[BPS_INNER_PID][BPS_X_AXIS] << " -- ";
-//                 std::cout << "Ki Inner y: " << recvData.content.PIDProperties.Ki[BPS_INNER_PID][BPS_Y_AXIS] << std::endl;
-
-//                 std::cout << "Kd Outer x: " << recvData.content.PIDProperties.Kd[BPS_OUTER_PID][BPS_X_AXIS] << " -- ";
-//                 std::cout << "Kd Outer y: " << recvData.content.PIDProperties.Kd[BPS_OUTER_PID][BPS_Y_AXIS] << std::endl;
-
-//                 std::cout << "Kd Inner x: " << recvData.content.PIDProperties.Kd[BPS_INNER_PID][BPS_X_AXIS] << " -- ";
-//                 std::cout << "Kd Inner y: " << recvData.content.PIDProperties.Kd[BPS_INNER_PID][BPS_Y_AXIS] << std::endl;
-//                 break;
-//             default:
-//                 std::cout << "mode: error\n";
-//                 //bpsUARTFlush();
-//                 break;
-//         }        
-//     }
-// }

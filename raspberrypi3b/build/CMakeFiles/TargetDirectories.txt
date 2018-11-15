@@ -1,3 +1,0 @@
-/home/shawry/Thesis/raspberrypi3b/build/CMakeFiles/rebuild_cache.dir
-/home/shawry/Thesis/raspberrypi3b/build/CMakeFiles/bpsRaspberryPi3B.dir
-/home/shawry/Thesis/raspberrypi3b/build/CMakeFiles/edit_cache.dir
