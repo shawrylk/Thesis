@@ -36,7 +36,7 @@ void bpsTaskUpdateSetpoint(void* pointer)
 		{
 			case BPS_UPDATE_PID:
 				// led for debug
-				HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+				//HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
 				memcpy(&sd->PIDParams, &sd->UARTData.content, sizeof(bpsPIDTypeDef));
 
 				// clear errorSamples
@@ -189,11 +189,11 @@ void bpsTaskSetup(void *pointer)
 		bpsControlMotor(BPS_Y_AXIS, sd->PIDSamples[BPS_INNER_PID][BPS_Y_AXIS][0]);	
 		HAL_Delay(1);
 	//} while( sd->errorSamples[BPS_INNER_PID][BPS_Y_AXIS][0] != 0);
-	} while (1);
+	} while (sd->errorSamples[BPS_INNER_PID][BPS_X_AXIS][0] != 0 && sd->errorSamples[BPS_INNER_PID][BPS_Y_AXIS][0] != 0);
 	bpsControlMotor(BPS_X_AXIS, 0);
 	bpsControlMotor(BPS_Y_AXIS, 0);
-	vTaskPrioritySet(taskNumber[TASK_SETUP],0);
-	//vTaskDelay(portMAX_DELAY);
+	//vTaskPrioritySet(taskNumber[TASK_SETUP],0);
+	vTaskDelay(portMAX_DELAY);
 	while(1);
 }
 

@@ -254,7 +254,7 @@ int recvFunc (char *recvData, int recvLen)
     switch (data->command)
     {
         case  BPS_MODE_CIRCLE:
-            memcpy(&(STMData.command), data, sizeof(bpsSocketReceiveDataTypeDef));
+            //memcpy(&(STMData.command), data, sizeof(bpsSocketReceiveDataTypeDef));
             std::cout << "circle mode \n";
             std::cout << "x: " << data->content.circleProperties.centerCoordinate[BPS_X_AXIS] << " -- ";
             std::cout << "y: " << data->content.circleProperties.centerCoordinate[BPS_Y_AXIS] << std::endl;
@@ -262,13 +262,13 @@ int recvFunc (char *recvData, int recvLen)
             std::cout << "s: " << data->content.circleProperties.speed << std::endl;
             break;
         case BPS_MODE_SETPOINT:
-            memcpy(&(STMData.command), data, sizeof(bpsSocketReceiveDataTypeDef));
+            //memcpy(&(STMData.command), data, sizeof(bpsSocketReceiveDataTypeDef));
             std::cout << "setpoint mode \n";
             std::cout << "x: " << data->content.pointProperties.setpointCoordinate[BPS_X_AXIS] << " -- ";
             std::cout << "y: " << data->content.pointProperties.setpointCoordinate[BPS_Y_AXIS] << std::endl;
             break;
         case BPS_MODE_RECTANGLE:
-            memcpy(&(STMData.command), data, sizeof(bpsSocketReceiveDataTypeDef));
+            //memcpy(&(STMData.command), data, sizeof(bpsSocketReceiveDataTypeDef));
             std::cout << "rectangle mode \n";
             std::cout << "TL x: " << data->content.rectangleProperties.vertexCoordinate[BPS_TOP_LEFT][BPS_X_AXIS] << " -- ";
             std::cout << "TL y: " << data->content.rectangleProperties.vertexCoordinate[BPS_TOP_LEFT][BPS_Y_AXIS] << std::endl;
@@ -284,7 +284,7 @@ int recvFunc (char *recvData, int recvLen)
 
             break;
         case BPS_UPDATE_PID:
-            memcpy(&(STMData.command), data, sizeof(bpsSocketReceiveDataTypeDef));
+            //memcpy(&(STMData.command), data, sizeof(bpsSocketReceiveDataTypeDef));
             std::cout << "update PID \n";
 
             std::cout << "Kp Outer x: " << data->content.PIDProperties.Kp[BPS_OUTER_PID][BPS_X_AXIS] << " -- ";
