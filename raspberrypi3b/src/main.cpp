@@ -135,15 +135,15 @@ void preProcessFrame(void)
         erode(thresh,thresh,erodeElement);
         erode(thresh,thresh,erodeElement);
 
-        // dilate(thresh,thresh,dilateElement);
-        // dilate(thresh,thresh,dilateElement);
+        dilate(thresh,thresh,dilateElement);
+        dilate(thresh,thresh,dilateElement);
         sem_post(&semPreProcessFrameCplt);
         if (count == 1000)
         {
             auto end = std::chrono::high_resolution_clock::now();
             auto diff = std::chrono::duration_cast<chrono::seconds>(end - start);
             fps = 1000 / static_cast<double>(diff.count());
-            std::cout << "thread 1 " << fps << "\n";
+            std::cout << "thread 2 " << fps << "\n";
             count = 0;
         }
     }
@@ -223,7 +223,7 @@ void processFrame(void)
             auto end = std::chrono::high_resolution_clock::now();
             auto diff = std::chrono::duration_cast<chrono::seconds>(end - start);
             fps = 1000 / static_cast<double>(diff.count());
-            std::cout << "thread 2 " << fps << "\n";
+            std::cout << "thread 3 " << fps << "\n";
             count = 0;
         }
     }
