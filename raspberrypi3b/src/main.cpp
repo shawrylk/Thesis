@@ -128,14 +128,9 @@ void preProcessFrame(void)
 
         Mat erodeElement = getStructuringElement( MORPH_ELLIPSE,Size(1,1));
         //dilate with larger element so make sure object is nicely visible
-        Mat dilateElement = getStructuringElement( MORPH_ELLIPSE,Size(50,50));
+        Mat dilateElement = getStructuringElement( MORPH_ELLIPSE,Size(5,5));
 
         erode(thresh,thresh,erodeElement);
-        erode(thresh,thresh,erodeElement);
-        erode(thresh,thresh,erodeElement);
-        erode(thresh,thresh,erodeElement);
-
-        dilate(thresh,thresh,dilateElement);
         dilate(thresh,thresh,dilateElement);
         sem_post(&semPreProcessFrameCplt);
         if (count == 1000)
