@@ -126,12 +126,12 @@ void preProcessFrame(void)
         //create structuring element that will be used to "dilate" and "erode" image.
         //the element chosen here is a 3px by 3px rectangle
 
-        Mat erodeElement = getStructuringElement( MORPH_ELLIPSE,Size(1,1));
+        Mat erodeElement = getStructuringElement( MORPH_ELLIPSE,Size(0,0));
         //dilate with larger element so make sure object is nicely visible
-        Mat dilateElement = getStructuringElement( MORPH_ELLIPSE,Size(5,5));
+        //Mat dilateElement = getStructuringElement( MORPH_ELLIPSE,Size(5,5));
 
         erode(thresh,thresh,erodeElement);
-        dilate(thresh,thresh,dilateElement);
+        //dilate(thresh,thresh,dilateElement);
         sem_post(&semPreProcessFrameCplt);
         if (count == 1000)
         {
