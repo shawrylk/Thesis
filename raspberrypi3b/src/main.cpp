@@ -59,6 +59,9 @@ int main()
     sem_init(&semSendDataCplt, 0, 0);
     sem_init(&semContourFrameCplt, 0, 0);
     sem_init(&semTrackingObjectCplt, 0, 0);
+    STMData.command = BPS_MODE_SETPOINT;
+    STMData.content.pointProperties.centerCoordinate[BPS_X_AXIS] = 240;
+    STMData.content.pointProperties.centerCoordinate[BPS_Y_AXIS] = 240;
     std::thread thread1(captureFrame);
     std::thread thread2(processFrame);
     //std::thread thread3(server);
