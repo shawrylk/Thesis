@@ -122,24 +122,11 @@ void preProcessFrame(void)
         count++;
         sem_wait(&semCaptureFrameCplt);   
         cvtColor(frame,gray,COLOR_BGR2GRAY);
-            medianBlur(gray, gray, 5);
-        vector<Vec3f> circles;
+        //medianBlur(gray, gray, 5);
+        
         threshold(gray,thresh,25,255,0);
-        HoughCircles(gray, circles, HOUGH_GRADIENT, 1,
-                    gray.rows/16,  // change this value to detect circles with different distances to each other
-                    100, 30, 50, 100 // change the last two parameters
-                // (min_radius & max_radius) to detect larger circles
-        );
-        for( size_t i = 0; i < circles.size(); i++ )
-        {
-            Vec3i c = circles[i];
-            Point center = Point(c[0], c[1]);
-            // circle center
-            circle( frame, center, 1, Scalar(0,100,100), 3, LINE_AA);
-            // circle outline
-            int radius = c[2];
-            circle( frame, center, radius, Scalar(255,0,255), 3, LINE_AA);
-        }
+        
+        
         //gray = (gray -10.5 ) / 10.5;
         //threshold(gray,thresh,25,255,0);
         //medianBlur(gray,mblur,137);
@@ -179,43 +166,59 @@ void processFrame(void)
             start = std::chrono::high_resolution_clock::now();
         count++;
         sem_wait(&semPreProcessFrameCplt);            
-        findContours(thresh,contours,hierarchy,RETR_TREE,CHAIN_APPROX_SIMPLE );
-        double refArea = 0;
-	    bool objectFound = false;
-        double area;
-        int index;
-        if (hierarchy.size() > 0) 
+        // findContours(thresh,contours,hierarchy,RETR_TREE,CHAIN_APPROX_SIMPLE );
+        // double refArea = 0;
+	    // bool objectFound = false;
+        // double area;
+        // int index;
+        // if (hierarchy.size() > 0) 
+        // {
+        //     int numObjects = hierarchy.size();
+        //     //if number of objects greater than MAX_NUM_OBJECTS we have a noisy filter
+        //     if(numObjects<MAX_NUM_OBJECTS)
+        //     {
+        //         for (index = 0; index >= 0; index = hierarchy[index][0]) 
+        //         {
+        //             Moments moment = moments((cv::Mat)contours[index]);
+        //             area = moment.m00;
+        //             //if the area is less than 20 px by 20px then it is probably just noise
+        //             //if the area is the same as the 3/2 of the image size, probably just a bad filter
+        //             //we only want the object with the largest area so we safe a reference area each
+        //             //iteration and compare it to the area in the next iteration.
+        //             if(area>MIN_OBJECT_AREA && area<MAX_OBJECT_AREA && area>refArea)
+        //             {
+        //                 x = moment.m10/area;
+        //                 y = moment.m01/area;
+        //                 bFoundObject = true;
+        //                 refArea = area;
+        //             }
+        //             else 
+        //                 bFoundObject = false;
+        //         }
+        //     }
+        //     else 
+        //     {
+        //         putText(frame,"TOO MUCH NOISE!",Point(0,50),1,2,Scalar(0,0,255),2);
+        //         thresh_min++;
+        //         if (thresh_min == THRESH_MAX)
+        //             thresh_min = THRESH_MAX;
+        //     }
+        // }
+        vector<Vec3f> circles;
+        HoughCircles(thresh, circles, HOUGH_GRADIENT, 1,
+                    gray.rows/16,  // change this value to detect circles with different distances to each other
+                    100, 30, 30, 80 // change the last two parameters
+                // (min_radius & max_radius) to detect larger circles
+                );
+        for( size_t i = 0; i < circles.size(); i++ )
         {
-            int numObjects = hierarchy.size();
-            //if number of objects greater than MAX_NUM_OBJECTS we have a noisy filter
-            if(numObjects<MAX_NUM_OBJECTS)
-            {
-                for (index = 0; index >= 0; index = hierarchy[index][0]) 
-                {
-                    Moments moment = moments((cv::Mat)contours[index]);
-                    area = moment.m00;
-                    //if the area is less than 20 px by 20px then it is probably just noise
-                    //if the area is the same as the 3/2 of the image size, probably just a bad filter
-                    //we only want the object with the largest area so we safe a reference area each
-                    //iteration and compare it to the area in the next iteration.
-                    if(area>MIN_OBJECT_AREA && area<MAX_OBJECT_AREA && area>refArea)
-                    {
-                        x = moment.m10/area;
-                        y = moment.m01/area;
-                        bFoundObject = true;
-                        refArea = area;
-                    }
-                    else 
-                        bFoundObject = false;
-                }
-            }
-            else 
-            {
-                putText(frame,"TOO MUCH NOISE!",Point(0,50),1,2,Scalar(0,0,255),2);
-                thresh_min++;
-                if (thresh_min == THRESH_MAX)
-                    thresh_min = THRESH_MAX;
-            }
+            Vec3i c = circles[i];
+            Point center = Point(c[0], c[1]);
+            // circle center
+            circle( frame, center, 1, Scalar(0,100,100), 3, LINE_AA);
+            // circle outline
+            int radius = c[2];
+            circle( frame, center, radius, Scalar(255,0,255), 3, LINE_AA);
         }
         if (bFoundObject)
         {
