@@ -77,7 +77,7 @@ createTrackbar( "Thres",winName, &T, 255,onTrackbar_changed);
 		cvtColor(frame,gray,COLOR_BGR2GRAY);
         //medianBlur(gray, gray, 5);
         
-        threshold(gray,thresh,Thres,255,0);
+        threshold(gray,thresh,35,255,0);
         imshow(winName, frame);
         imshow("gray", gray);
         imshow("thresh", thresh);
