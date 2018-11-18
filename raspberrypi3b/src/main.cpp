@@ -133,7 +133,7 @@ void preProcessFrame(void)
         //create structuring element that will be used to "dilate" and "erode" image.
         //the element chosen here is a 3px by 3px rectangle
 
-        Mat erodeElement = getStructuringElement( MORPH_ELLIPSE,Size(3,3));
+        Mat erodeElement = getStructuringElement( MORPH_ELLIPSE,Size(5,5));
         //dilate with larger element so make sure object is nicely visible
         //Mat dilateElement = getStructuringElement( MORPH_ELLIPSE,Size(5,5));
 
