@@ -29,7 +29,7 @@ void onTrackbar_changed(int, void*)
  Contrast   =float(C)/100;
  Saturation =float(S)/100;
  Gain       =float(G)/100;
-Thres       =float(T)/100;
+Thres       =float(T)/255;
 cap.set(CAP_PROP_BRIGHTNESS,Brightness);
 cap.set(CAP_PROP_CONTRAST, Contrast);
 cap.set(CAP_PROP_SATURATION, Saturation);
