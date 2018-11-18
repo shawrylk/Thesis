@@ -85,6 +85,7 @@ void captureFrame(void)
     video.set(CAP_PROP_FRAME_WIDTH,FRAME_WIDTH);
 	video.set(CAP_PROP_FRAME_HEIGHT,FRAME_HEIGHT);
     video.set(CAP_PROP_FPS, FPS);
+    video.set(CAP_PROP_BRIGHTNESS,80);
     int count = 0;
     auto start = std::chrono::high_resolution_clock::now();
     float fps;
