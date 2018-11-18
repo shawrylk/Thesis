@@ -116,6 +116,7 @@ void preProcessFrame(void)
     float fps;
     sleep(1);
     Mat erodeElement = getStructuringElement( MORPH_ELLIPSE,Size(5,5));
+    Mat dilateElement = getStructuringElement( MORPH_ELLIPSE,Size(50,50));
     while (1)
     {
         if (count == 0)
@@ -125,7 +126,7 @@ void preProcessFrame(void)
         cvtColor(frame,gray,COLOR_BGR2GRAY);
         //medianBlur(gray, gray, 5);
         
-        threshold(gray,thresh,25,255,0);
+        threshold(gray,thresh,35,255,0);
         
         
         //gray = (gray -10.5 ) / 10.5;
@@ -136,11 +137,11 @@ void preProcessFrame(void)
 
         
         //dilate with larger element so make sure object is nicely visible
-        //Mat dilateElement = getStructuringElement( MORPH_ELLIPSE,Size(5,5));
+        
 
         erode(thresh,thresh,erodeElement);
         //erode(thresh,thresh,erodeElement);
-        //dilate(thresh,thresh,dilateElement);
+        dilate(thresh,thresh,dilateElement);
         sem_post(&semPreProcessFrameCplt);
         if (count == 1000)
         {
