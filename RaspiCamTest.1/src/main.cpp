@@ -13,12 +13,12 @@ float Brightness;
 float Contrast ;
 float Saturation;
 float Gain;
-
+float Thres;
 int B;
 int C;
 int S;
 int G;
-
+int T;
 char winName[20]="Live";
 Mat frame, gray, thresh;
 VideoCapture cap(0);
@@ -29,7 +29,7 @@ void onTrackbar_changed(int, void*)
  Contrast   =float(C)/100;
  Saturation =float(S)/100;
  Gain       =float(G)/100;
-
+Thres       =float(T)/100;
 cap.set(CAP_PROP_BRIGHTNESS,Brightness);
 cap.set(CAP_PROP_CONTRAST, Contrast);
 cap.set(CAP_PROP_SATURATION, Saturation);
@@ -77,7 +77,7 @@ createTrackbar( "Gain",winName, &G, 100,onTrackbar_changed);
 		cvtColor(frame,gray,COLOR_BGR2GRAY);
         //medianBlur(gray, gray, 5);
         
-        threshold(gray,thresh,25,255,0);
+        threshold(gray,thresh,Thres,255,0);
         imshow(winName, frame);
         imshow("gray", gray);
         imshow("thresh", thresh);
