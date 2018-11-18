@@ -20,7 +20,7 @@ int S;
 int G;
 
 char winName[20]="Live";
-Mat frame;
+Mat frame, gray, thresh;
 VideoCapture cap(0);
 
 void onTrackbar_changed(int, void*)
@@ -74,7 +74,13 @@ createTrackbar( "Gain",winName, &G, 100,onTrackbar_changed);
     {
 
         cap >> frame; // get a new frame from camera
+		cvtColor(frame,gray,COLOR_BGR2GRAY);
+        //medianBlur(gray, gray, 5);
+        
+        threshold(gray,thresh,25,255,0);
         imshow(winName, frame);
+        imshow("gray", gray);
+        imshow("thresh", thresh);
         char c=waitKey(30);
 
         if(c=='s') {
