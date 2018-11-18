@@ -74,7 +74,7 @@ createTrackbar( "Thres",winName, &T, 255,onTrackbar_changed);
     {
 
         cap >> frame; // get a new frame from camera
-		cvtColor(frame,gray,COLOR_BGR2GRAY);
+		cvtColor(frame,gray,COLOR_BGR2HSV);
         //medianBlur(gray, gray, 5);
         //std::cout << T <<std::endl;
         threshold(gray,thresh,T,255,0);
