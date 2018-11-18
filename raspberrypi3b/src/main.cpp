@@ -141,7 +141,7 @@ void preProcessFrame(void)
 
         erode(thresh,thresh,erodeElement);
         //erode(thresh,thresh,erodeElement);
-        dilate(thresh,thresh,dilateElement);
+        //dilate(thresh,thresh,dilateElement);
         sem_post(&semPreProcessFrameCplt);
         if (count == 1000)
         {
