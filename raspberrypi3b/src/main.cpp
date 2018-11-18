@@ -48,9 +48,26 @@ void showImage(void);
 void testUART(void);
 int sendFunc (char *sendData, int sendLen);
 int recvFunc (char *recvData, int recvLen);
+void onTrackbarChanged(int, void*);
+
 ::KalmanFilter KF(240, 0.01, 1);
 bpsServer server(22396);
 bpsUART UART("/dev/serial0",1000000);
+
+//*******************//
+float Brightness;
+float Contrast ;
+float Saturation;
+float Gain;
+float Thres;
+int B;
+int C;
+int S;
+int G;
+int T;
+VideoCapture video(0);
+//*****************//
+
 int main()
 {
     //cv::ocl::setUseOpenCL(false);
@@ -79,13 +96,12 @@ int main()
 }
 void captureFrame(void)
 {
-    VideoCapture video(0);
+    
     if(!video.isOpened())
         std::cout << "Could not read video file" << endl; 
     video.set(CAP_PROP_FRAME_WIDTH,FRAME_WIDTH);
 	video.set(CAP_PROP_FRAME_HEIGHT,FRAME_HEIGHT);
     video.set(CAP_PROP_FPS, FPS);
-    video.set(CAP_PROP_BRIGHTNESS,80);
     int count = 0;
     auto start = std::chrono::high_resolution_clock::now();
     float fps;
@@ -116,20 +132,17 @@ void preProcessFrame(void)
     auto start = std::chrono::high_resolution_clock::now();
     float fps;
     sleep(1);
-    Mat erodeElement = getStructuringElement( MORPH_ELLIPSE,Size(5,5));
-    Mat dilateElement = getStructuringElement( MORPH_ELLIPSE,Size(50,50));
     while (1)
     {
         if (count == 0)
             start = std::chrono::high_resolution_clock::now();
         count++;
         sem_wait(&semCaptureFrameCplt);   
-        cvtColor(frame,gray,COLOR_BGR2HSV);
+        cvtColor(frame,gray,COLOR_BGR2GRAY);
         //medianBlur(gray, gray, 5);
         
-        //threshold(gray,thresh,25,255,0);
+        threshold(gray,thresh,T,255,0);
         
-        //bilateralFilter(thresh,mblur,15,200,200);
         
         //gray = (gray -10.5 ) / 10.5;
         //threshold(gray,thresh,25,255,0);
@@ -137,14 +150,14 @@ void preProcessFrame(void)
         //create structuring element that will be used to "dilate" and "erode" image.
         //the element chosen here is a 3px by 3px rectangle
 
-        
+        //Mat erodeElement = getStructuringElement( MORPH_ELLIPSE,Size(3,3));
         //dilate with larger element so make sure object is nicely visible
-        
+        //Mat dilateElement = getStructuringElement( MORPH_ELLIPSE,Size(5,5));
 
         //erode(thresh,thresh,erodeElement);
         //erode(thresh,thresh,erodeElement);
         //dilate(thresh,thresh,dilateElement);
-        sem_post(&semProcessFrameCplt);
+        sem_post(&semPreProcessFrameCplt);
         if (count == 1000)
         {
             auto end = std::chrono::high_resolution_clock::now();
@@ -243,6 +256,23 @@ void showImage(void)
     auto start = std::chrono::high_resolution_clock::now();
     float fps;
     Rect2d bbox;
+    char winName[6] = "frame";
+    namedWindow(winName);
+    Brightness = video.get(CAP_PROP_BRIGHTNESS);
+    Contrast   = video.get(CAP_PROP_CONTRAST );
+    Saturation = video.get(CAP_PROP_SATURATION);
+    Gain       = video.get(CAP_PROP_GAIN);
+
+
+    B=int(Brightness*100);
+    C=int(Contrast*100);
+    S=int(Saturation*100);
+    G=int(Gain*100);
+    createTrackbar( "Brightness",winName, &B, 100, onTrackbarChanged );
+    createTrackbar( "Contrast",winName, &C, 100,onTrackbarChanged );
+    createTrackbar( "Saturation",winName, &S, 100,onTrackbarChanged);
+    createTrackbar( "Gain",winName, &G, 100,onTrackbarChanged);
+    createTrackbar( "Thres",winName, &T, 255,onTrackbarChanged);
     sleep(1);
     while(1)
     {
@@ -253,8 +283,8 @@ void showImage(void)
         Rect2d bbox(STMData.ballCoordinate[BPS_X_AXIS] - RECT_SIZE/2, 
             STMData.ballCoordinate[BPS_Y_AXIS] - RECT_SIZE/2, RECT_SIZE, RECT_SIZE); 
         rectangle(frame, bbox, Scalar( 255, 0, 0 ), 2, 1 ); 
-        //imshow("frame", frame);
-        imshow("gray", gray);
+        imshow("frame", frame);
+        imshow("thresh", thresh);
         waitKey(1);
         if (count == 1000)
         {
@@ -345,3 +375,15 @@ int recvFunc (char *recvData, int recvLen)
     return 0;
 }
 
+void onTrackbarChanged(int, void*)
+{
+    Brightness =float(B)/100;
+    Contrast   =float(C)/100;
+    Saturation =float(S)/100;
+    Gain       =float(G)/100;
+    Thres      =float(T)/255;
+    video.set(CAP_PROP_BRIGHTNESS,Brightness);
+    video.set(CAP_PROP_CONTRAST, Contrast);
+    video.set(CAP_PROP_SATURATION, Saturation);
+    video.set(CAP_PROP_GAIN, Gain);
+}
