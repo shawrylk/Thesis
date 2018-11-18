@@ -126,8 +126,8 @@ void preProcessFrame(void)
         cvtColor(frame,gray,COLOR_BGR2GRAY);
         //medianBlur(gray, gray, 5);
         
-        threshold(gray,thresh,35,255,0);
-        
+        threshold(gray,thresh,25,255,0);
+        bilateralFilter(thresh,mblur,15,200,200);
         
         //gray = (gray -10.5 ) / 10.5;
         //threshold(gray,thresh,25,255,0);
@@ -139,7 +139,7 @@ void preProcessFrame(void)
         //dilate with larger element so make sure object is nicely visible
         
 
-        erode(thresh,thresh,erodeElement);
+        //erode(thresh,thresh,erodeElement);
         //erode(thresh,thresh,erodeElement);
         //dilate(thresh,thresh,dilateElement);
         sem_post(&semPreProcessFrameCplt);
@@ -252,7 +252,7 @@ void showImage(void)
             STMData.ballCoordinate[BPS_Y_AXIS] - RECT_SIZE/2, RECT_SIZE, RECT_SIZE); 
         rectangle(frame, bbox, Scalar( 255, 0, 0 ), 2, 1 ); 
         //imshow("frame", frame);
-        imshow("gray", thresh);
+        imshow("gray", mblur);
         waitKey(1);
         if (count == 1000)
         {
