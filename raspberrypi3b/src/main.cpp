@@ -258,21 +258,16 @@ void showImage(void)
     Rect2d bbox;
     char winName[6] = "frame";
     namedWindow(winName);
-    Brightness = video.get(CAP_PROP_BRIGHTNESS);
-    Contrast   = video.get(CAP_PROP_CONTRAST );
-    Saturation = video.get(CAP_PROP_SATURATION);
-    Gain       = video.get(CAP_PROP_GAIN);
 
 
-    B=int(Brightness*100);
-    C=int(Contrast*100);
-    S=int(Saturation*100);
-    G=int(Gain*100);
+
+    B=70;
+    C=70;
+    S=100;
     T=80;
     createTrackbar( "Brightness",winName, &B, 100, onTrackbarChanged );
     createTrackbar( "Contrast",winName, &C, 100,onTrackbarChanged );
     createTrackbar( "Saturation",winName, &S, 100,onTrackbarChanged);
-    createTrackbar( "Gain",winName, &G, 100,onTrackbarChanged);
     createTrackbar( "Thres",winName, &T, 255,onTrackbarChanged);
     sleep(1);
     while(1)
@@ -381,10 +376,7 @@ void onTrackbarChanged(int, void*)
     Brightness =float(B)/100;
     Contrast   =float(C)/100;
     Saturation =float(S)/100;
-    Gain       =float(G)/100;
-    Thres      =float(T)/255;
     video.set(CAP_PROP_BRIGHTNESS,Brightness);
     video.set(CAP_PROP_CONTRAST, Contrast);
     video.set(CAP_PROP_SATURATION, Saturation);
-    video.set(CAP_PROP_GAIN, Gain);
 }
