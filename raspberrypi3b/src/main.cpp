@@ -126,7 +126,8 @@ void preProcessFrame(void)
         cvtColor(frame,gray,COLOR_BGR2HSV);
         //medianBlur(gray, gray, 5);
         
-        threshold(gray,thresh,25,255,0);
+        //threshold(gray,thresh,25,255,0);
+        
         //bilateralFilter(thresh,mblur,15,200,200);
         
         //gray = (gray -10.5 ) / 10.5;
@@ -142,7 +143,7 @@ void preProcessFrame(void)
         //erode(thresh,thresh,erodeElement);
         //erode(thresh,thresh,erodeElement);
         //dilate(thresh,thresh,dilateElement);
-        sem_post(&semPreProcessFrameCplt);
+        sem_post(&semProcessFrameCplt);
         if (count == 1000)
         {
             auto end = std::chrono::high_resolution_clock::now();
