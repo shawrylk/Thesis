@@ -67,7 +67,7 @@ createTrackbar( "Brightness",winName, &B, 100, onTrackbar_changed );
 createTrackbar( "Contrast",winName, &C, 100,onTrackbar_changed );
 createTrackbar( "Saturation",winName, &S, 100,onTrackbar_changed);
 createTrackbar( "Gain",winName, &G, 100,onTrackbar_changed);
-
+createTrackbar( "Thres",winName, &T, 255,onTrackbar_changed);
     int i=0;
     char name[10];
     for(;;)
