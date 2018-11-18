@@ -122,18 +122,38 @@ void preProcessFrame(void)
         count++;
         sem_wait(&semCaptureFrameCplt);   
         cvtColor(frame,gray,COLOR_BGR2GRAY);
+            medianBlur(gray, gray, 5);
+        vector<Vec3f> circles;
         threshold(gray,thresh,25,255,0);
-        medianBlur(gray,mblur,137);
+        HoughCircles(gray, circles, HOUGH_GRADIENT, 1,
+                    gray.rows/16,  // change this value to detect circles with different distances to each other
+                    100, 30, 50, 100 // change the last two parameters
+                // (min_radius & max_radius) to detect larger circles
+        );
+        for( size_t i = 0; i < circles.size(); i++ )
+        {
+            Vec3i c = circles[i];
+            Point center = Point(c[0], c[1]);
+            // circle center
+            circle( frame, center, 1, Scalar(0,100,100), 3, LINE_AA);
+            // circle outline
+            int radius = c[2];
+            circle( frame, center, radius, Scalar(255,0,255), 3, LINE_AA);
+        }
+        //gray = (gray -10.5 ) / 10.5;
+        //threshold(gray,thresh,25,255,0);
+        //medianBlur(gray,mblur,137);
         //create structuring element that will be used to "dilate" and "erode" image.
         //the element chosen here is a 3px by 3px rectangle
 
-        //Mat erodeElement = getStructuringElement( MORPH_ELLIPSE,Size(1,1));
+        //Mat erodeElement = getStructuringElement( MORPH_ELLIPSE,Size(3,3));
         //dilate with larger element so make sure object is nicely visible
         //Mat dilateElement = getStructuringElement( MORPH_ELLIPSE,Size(5,5));
 
         //erode(thresh,thresh,erodeElement);
+        //erode(thresh,thresh,erodeElement);
         //dilate(thresh,thresh,dilateElement);
-        sem_post(&semPreProcessFrameCplt);
+        sem_post(&semProcessFrameCplt);
         if (count == 1000)
         {
             auto end = std::chrono::high_resolution_clock::now();
@@ -241,7 +261,8 @@ void showImage(void)
         Rect2d bbox(STMData.ballCoordinate[BPS_X_AXIS] - RECT_SIZE/2, 
             STMData.ballCoordinate[BPS_Y_AXIS] - RECT_SIZE/2, RECT_SIZE, RECT_SIZE); 
         rectangle(frame, bbox, Scalar( 255, 0, 0 ), 2, 1 ); 
-        imshow("frame", thresh);
+        imshow("frame", frame);
+        imshow("gray", gray);
         waitKey(1);
         if (count == 1000)
         {

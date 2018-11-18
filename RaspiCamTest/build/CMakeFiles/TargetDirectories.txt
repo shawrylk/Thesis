@@ -1,0 +1,3 @@
+/home/shawry/Thesis/RaspiCamTest/build/CMakeFiles/rebuild_cache.dir
+/home/shawry/Thesis/RaspiCamTest/build/CMakeFiles/RaspiCamTest.dir
+/home/shawry/Thesis/RaspiCamTest/build/CMakeFiles/edit_cache.dir
