@@ -62,7 +62,7 @@ int main(int, char**)
   C=int(Contrast*100);
   S=int(Saturation*100);
   G=int(Gain*100);
-
+  T=int(25*255);  
 createTrackbar( "Brightness",winName, &B, 100, onTrackbar_changed );
 createTrackbar( "Contrast",winName, &C, 100,onTrackbar_changed );
 createTrackbar( "Saturation",winName, &S, 100,onTrackbar_changed);
