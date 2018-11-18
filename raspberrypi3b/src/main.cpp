@@ -268,7 +268,7 @@ void showImage(void)
     C=int(Contrast*100);
     S=int(Saturation*100);
     G=int(Gain*100);
-    T=int(80*255);
+    T=80;
     createTrackbar( "Brightness",winName, &B, 100, onTrackbarChanged );
     createTrackbar( "Contrast",winName, &C, 100,onTrackbarChanged );
     createTrackbar( "Saturation",winName, &S, 100,onTrackbarChanged);
