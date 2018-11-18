@@ -140,7 +140,7 @@ void preProcessFrame(void)
         //erode(thresh,thresh,erodeElement);
         //erode(thresh,thresh,erodeElement);
         //dilate(thresh,thresh,dilateElement);
-        sem_post(&semProcessFrameCplt);
+        sem_post(&semPreProcessFrameCplt);
         if (count == 1000)
         {
             auto end = std::chrono::high_resolution_clock::now();
