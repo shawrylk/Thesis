@@ -138,7 +138,7 @@ void preProcessFrame(void)
         //Mat dilateElement = getStructuringElement( MORPH_ELLIPSE,Size(5,5));
 
         erode(thresh,thresh,erodeElement);
-        erode(thresh,thresh,erodeElement);
+        //erode(thresh,thresh,erodeElement);
         //dilate(thresh,thresh,dilateElement);
         sem_post(&semPreProcessFrameCplt);
         if (count == 1000)
@@ -249,8 +249,8 @@ void showImage(void)
         Rect2d bbox(STMData.ballCoordinate[BPS_X_AXIS] - RECT_SIZE/2, 
             STMData.ballCoordinate[BPS_Y_AXIS] - RECT_SIZE/2, RECT_SIZE, RECT_SIZE); 
         rectangle(frame, bbox, Scalar( 255, 0, 0 ), 2, 1 ); 
-        imshow("frame", frame);
-        imshow("gray", gray);
+        //imshow("frame", frame);
+        imshow("gray", thresh);
         waitKey(1);
         if (count == 1000)
         {
