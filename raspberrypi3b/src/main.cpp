@@ -31,7 +31,6 @@ using namespace std;
 sem_t semCaptureFrameCplt, semProcessFrameCplt, semPreProcessFrameCplt, semContourFrameCplt, semTrackingObjectCplt;
 bool bFoundObject = false;
 Mat frame, gray, mblur, thresh, contour;
-int8_t thresh_min = 6;
 vector< vector<Point> > contours;
 vector<Vec4i> hierarchy;
 
@@ -172,7 +171,7 @@ void preProcessFrame(void)
 void processFrame(void)
 {
     int count = 0;
-    int x,y;
+    int x = 240,y =240;
     int xKF, yKF;
     auto start = std::chrono::high_resolution_clock::now();
     float fps;
@@ -216,9 +215,7 @@ void processFrame(void)
             else 
             {
                 putText(frame,"TOO MUCH NOISE!",Point(0,50),1,2,Scalar(0,0,255),2);
-                thresh_min++;
-                if (thresh_min == THRESH_MAX)
-                    thresh_min = THRESH_MAX;
+                bFoundObject = false;
             }
         }
         

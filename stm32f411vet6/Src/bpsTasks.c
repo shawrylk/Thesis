@@ -136,19 +136,19 @@ void bpsTaskSetup(void *pointer)
 	bpsSharedDataTypeDef* sd = (bpsSharedDataTypeDef*)pointer;
 	sd->UARTData.command = BPS_UPDATE_PID;
 	sd->UARTData.content.PIDProperties.Kp[BPS_OUTER_PID][BPS_X_AXIS] = 10;
-	sd->UARTData.content.PIDProperties.Ki[BPS_OUTER_PID][BPS_X_AXIS] = 10;
+	sd->UARTData.content.PIDProperties.Ki[BPS_OUTER_PID][BPS_X_AXIS] = 100;
 	sd->UARTData.content.PIDProperties.Kd[BPS_OUTER_PID][BPS_X_AXIS] = 0.1;
 
 	sd->UARTData.content.PIDProperties.Kp[BPS_OUTER_PID][BPS_Y_AXIS] = 10;
-	sd->UARTData.content.PIDProperties.Ki[BPS_OUTER_PID][BPS_Y_AXIS] = 10;
+	sd->UARTData.content.PIDProperties.Ki[BPS_OUTER_PID][BPS_Y_AXIS] = 100;
 	sd->UARTData.content.PIDProperties.Kd[BPS_OUTER_PID][BPS_Y_AXIS] = 0.1;
 
-	sd->UARTData.content.PIDProperties.Kp[BPS_INNER_PID][BPS_X_AXIS] = 48;
-	sd->UARTData.content.PIDProperties.Ki[BPS_INNER_PID][BPS_X_AXIS] = 312;
-	sd->UARTData.content.PIDProperties.Kd[BPS_INNER_PID][BPS_X_AXIS] = 1;
+	sd->UARTData.content.PIDProperties.Kp[BPS_INNER_PID][BPS_X_AXIS] = 72;
+	sd->UARTData.content.PIDProperties.Ki[BPS_INNER_PID][BPS_X_AXIS] = 468;
+	sd->UARTData.content.PIDProperties.Kd[BPS_INNER_PID][BPS_X_AXIS] = 1.5;
 
-	sd->UARTData.content.PIDProperties.Kp[BPS_INNER_PID][BPS_Y_AXIS] = 48;
-	sd->UARTData.content.PIDProperties.Ki[BPS_INNER_PID][BPS_Y_AXIS] = 312;
+	sd->UARTData.content.PIDProperties.Kp[BPS_INNER_PID][BPS_Y_AXIS] = 72;
+	sd->UARTData.content.PIDProperties.Ki[BPS_INNER_PID][BPS_Y_AXIS] = 468;
 	sd->UARTData.content.PIDProperties.Kd[BPS_INNER_PID][BPS_Y_AXIS] = 1;
 	xTaskNotifyGive(taskNumber[TASK_UPDATE_SETPOINT]);
 	vTaskDelay(pdMS_TO_TICKS(11));
@@ -160,38 +160,38 @@ void bpsTaskSetup(void *pointer)
 	xTaskNotifyGive(taskNumber[TASK_UPDATE_SETPOINT]);
 	vTaskDelay(pdMS_TO_TICKS(11));
 
-	bpsFindThresholds(BPS_X_AXIS, &sd->thresholds[BPS_X_AXIS][BPS_MIN], &sd->thresholds[BPS_X_AXIS][BPS_MAX]);
-	encX = (sd->thresholds[BPS_X_AXIS][BPS_MIN] + sd->thresholds[BPS_X_AXIS][BPS_MAX])/2;
-	HAL_Delay(100);
+	// bpsFindThresholds(BPS_X_AXIS, &sd->thresholds[BPS_X_AXIS][BPS_MIN], &sd->thresholds[BPS_X_AXIS][BPS_MAX]);
+	// encX = (sd->thresholds[BPS_X_AXIS][BPS_MIN] + sd->thresholds[BPS_X_AXIS][BPS_MAX])/2;
+	// HAL_Delay(100);
 
-	bpsFindThresholds(BPS_Y_AXIS, &sd->thresholds[BPS_Y_AXIS][BPS_MIN], &sd->thresholds[BPS_Y_AXIS][BPS_MAX]);
-	encY = (sd->thresholds[BPS_Y_AXIS][BPS_MIN] + sd->thresholds[BPS_Y_AXIS][BPS_MAX])/2;
+	// bpsFindThresholds(BPS_Y_AXIS, &sd->thresholds[BPS_Y_AXIS][BPS_MIN], &sd->thresholds[BPS_Y_AXIS][BPS_MAX]);
+	// encY = (sd->thresholds[BPS_Y_AXIS][BPS_MIN] + sd->thresholds[BPS_Y_AXIS][BPS_MAX])/2;
 	
-	bpsControlMotor(BPS_X_AXIS, 0);
-	bpsControlMotor(BPS_Y_AXIS, 0);
-	do {
-	//do {
-		bpsReadEncoderCnt(BPS_X_AXIS, &encoderValue);
-		bpsCalculatePID(encX, encoderValue, sd->PIDParams.Kp[BPS_INNER_PID][BPS_X_AXIS], 
-						sd->PIDParams.Ki[BPS_INNER_PID][BPS_X_AXIS], sd->PIDParams.Kd[BPS_INNER_PID][BPS_X_AXIS], 
-						&sd->errorSamples[BPS_INNER_PID][BPS_X_AXIS][0], &sd->PIDSamples[BPS_INNER_PID][BPS_X_AXIS][0],
-						DT_INNER_LOOP);
-		bpsControlMotor(BPS_X_AXIS, sd->PIDSamples[BPS_INNER_PID][BPS_X_AXIS][0]);
-	//	HAL_Delay(1);
-	//} while( sd->errorSamples[BPS_INNER_PID][BPS_X_AXIS][0] != 0);
+	// bpsControlMotor(BPS_X_AXIS, 0);
+	// bpsControlMotor(BPS_Y_AXIS, 0);
+	// do {
+	// //do {
+	// 	bpsReadEncoderCnt(BPS_X_AXIS, &encoderValue);
+	// 	bpsCalculatePID(encX, encoderValue, sd->PIDParams.Kp[BPS_INNER_PID][BPS_X_AXIS], 
+	// 					sd->PIDParams.Ki[BPS_INNER_PID][BPS_X_AXIS], sd->PIDParams.Kd[BPS_INNER_PID][BPS_X_AXIS], 
+	// 					&sd->errorSamples[BPS_INNER_PID][BPS_X_AXIS][0], &sd->PIDSamples[BPS_INNER_PID][BPS_X_AXIS][0],
+	// 					DT_INNER_LOOP);
+	// 	bpsControlMotor(BPS_X_AXIS, sd->PIDSamples[BPS_INNER_PID][BPS_X_AXIS][0]);
+	// //	HAL_Delay(1);
+	// //} while( sd->errorSamples[BPS_INNER_PID][BPS_X_AXIS][0] != 0);
 
-	//do {
-		bpsReadEncoderCnt(BPS_Y_AXIS, &encoderValue);
-		bpsCalculatePID(encY, encoderValue, sd->PIDParams.Kp[BPS_INNER_PID][BPS_Y_AXIS], 
-						sd->PIDParams.Ki[BPS_INNER_PID][BPS_Y_AXIS], sd->PIDParams.Kd[BPS_INNER_PID][BPS_Y_AXIS], 
-						&sd->errorSamples[BPS_INNER_PID][BPS_Y_AXIS][0], &sd->PIDSamples[BPS_INNER_PID][BPS_Y_AXIS][0],
-						DT_INNER_LOOP);		
-		bpsControlMotor(BPS_Y_AXIS, sd->PIDSamples[BPS_INNER_PID][BPS_Y_AXIS][0]);	
-		HAL_Delay(1);
-	//} while( sd->errorSamples[BPS_INNER_PID][BPS_Y_AXIS][0] != 0);
-	} while (sd->errorSamples[BPS_INNER_PID][BPS_X_AXIS][0] != 0 && sd->errorSamples[BPS_INNER_PID][BPS_Y_AXIS][0] != 0);
-	bpsControlMotor(BPS_X_AXIS, 0);
-	bpsControlMotor(BPS_Y_AXIS, 0);
+	// //do {
+	// 	bpsReadEncoderCnt(BPS_Y_AXIS, &encoderValue);
+	// 	bpsCalculatePID(encY, encoderValue, sd->PIDParams.Kp[BPS_INNER_PID][BPS_Y_AXIS], 
+	// 					sd->PIDParams.Ki[BPS_INNER_PID][BPS_Y_AXIS], sd->PIDParams.Kd[BPS_INNER_PID][BPS_Y_AXIS], 
+	// 					&sd->errorSamples[BPS_INNER_PID][BPS_Y_AXIS][0], &sd->PIDSamples[BPS_INNER_PID][BPS_Y_AXIS][0],
+	// 					DT_INNER_LOOP);		
+	// 	bpsControlMotor(BPS_Y_AXIS, sd->PIDSamples[BPS_INNER_PID][BPS_Y_AXIS][0]);	
+	// 	HAL_Delay(1);
+	// //} while( sd->errorSamples[BPS_INNER_PID][BPS_Y_AXIS][0] != 0);
+	// } while (sd->errorSamples[BPS_INNER_PID][BPS_X_AXIS][0] != 0 && sd->errorSamples[BPS_INNER_PID][BPS_Y_AXIS][0] != 0);
+	// bpsControlMotor(BPS_X_AXIS, 0);
+	// bpsControlMotor(BPS_Y_AXIS, 0);
 	//vTaskPrioritySet(taskNumber[TASK_SETUP],0);
 	vTaskDelay(portMAX_DELAY);
 	while(1);

@@ -156,7 +156,7 @@ HAL_StatusTypeDef bpsFindThresholds(bpsAxisTypeDef axis, int16_t *min, int16_t *
 	ret |= bpsReadEncoderCnt(axis, &temp);
 	do {
 		*min = temp;
-		HAL_Delay(50);
+		HAL_Delay(100);
 		ret |= bpsReadEncoderCnt(axis, &temp);
 	} while (*min != temp);
 
@@ -164,7 +164,7 @@ HAL_StatusTypeDef bpsFindThresholds(bpsAxisTypeDef axis, int16_t *min, int16_t *
 	ret |= bpsReadEncoderCnt(axis, &temp);
 	do {
 		*max = temp;
-		HAL_Delay(50);
+		HAL_Delay(100);
 		ret |= bpsReadEncoderCnt(axis, &temp);
 	} while (*max != temp);
 	return ret;
