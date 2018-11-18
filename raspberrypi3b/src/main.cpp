@@ -124,7 +124,7 @@ void preProcessFrame(void)
         cvtColor(frame,gray,COLOR_BGR2GRAY);
         //medianBlur(gray, gray, 5);
         
-        threshold(gray,thresh,25,255,0);
+        //threshold(gray,thresh,25,255,0);
         
         
         //gray = (gray -10.5 ) / 10.5;
@@ -205,7 +205,7 @@ void processFrame(void)
         //     }
         // }
         vector<Vec3f> circles;
-        HoughCircles(thresh, circles, HOUGH_GRADIENT, 1,
+        HoughCircles(gray, circles, HOUGH_GRADIENT, 1,
                     gray.rows/16,  // change this value to detect circles with different distances to each other
                     100, 30, 30, 80 // change the last two parameters
                 // (min_radius & max_radius) to detect larger circles
