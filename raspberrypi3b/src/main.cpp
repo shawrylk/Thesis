@@ -167,7 +167,7 @@ void processFrame(void)
             }
             else 
             {
-                putText(frame,"TOO MUCH NOISE!",Point(0,50),1,2,Scalar(0,0,255),2);
+                std::cout << "TOO MUCH NOISE!" << std::endl;
                 bFoundObject = false;
             }
         }
@@ -175,6 +175,7 @@ void processFrame(void)
         //*******************************//
         xKF = KF.predict(x);
         yKF = KF.predict(y);
+        std::cout << "x = " << xKF << " y = " << yKF << std::endl;
         STMMutex.lock();
         if (bFoundObject)
             STMData.detectedBall = 1;
