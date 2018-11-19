@@ -106,6 +106,7 @@ void captureFrame(void)
         //*******************************//
         video.read(frame); 
         sem_post(&semCaptureFrameCplt);
+        std::cout << "size : " << sizeof(bpsUARTSendDataTypeDef) << std::endl;
         //*******************************//
         if (count == 1000)
         {
