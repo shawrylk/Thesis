@@ -32,7 +32,7 @@ bpsSocketSendDataTypeDef AppData;
 //*******************************//
 std::mutex STMMutex;
 std::mutex AppMutex;
-sem_t semCaptureFrameCplt;
+sem_t semCaptureFrameCplt, semProcessFrameCplt;
 //*******************************//
 void captureFrame(void);
 void processFrame(void);
@@ -52,6 +52,7 @@ int main()
     STMData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 240;
     STMData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] = 240;
     sem_init(&semCaptureFrameCplt, 0, 0);
+    sem_init(&semProcessFrameCplt, 0, 0);
     //*******************************//
     std::thread thread1(captureFrame);
     std::thread thread2(processFrame);
@@ -79,6 +80,7 @@ void captureFrame(void)
 	video.set(CAP_PROP_FRAME_HEIGHT,FRAME_HEIGHT);
     video.set(CAP_PROP_FPS, FPS);
     //*******************************//
+    sleep(1);
     while (1)
     {
         //*******************************//
@@ -156,6 +158,7 @@ void processFrame(void)
                 bFoundObject = false;
             }
         }
+        sem_post(&semProcessFrameCplt);
         //*******************************//
         xKF = KF.predict(x);
         yKF = KF.predict(y);
@@ -209,6 +212,8 @@ void showImage(void)
     while(1)
     {
         //*******************************//
+        sem_wait(&semProcessFrameCplt);
+        //*******************************//
         if (count == 0)
             start = std::chrono::high_resolution_clock::now();
         count++;
@@ -218,7 +223,7 @@ void showImage(void)
         rectangle(frame, bbox, Scalar( 255, 0, 0 ), 2, 1 ); 
         imshow("frame", frame);
         imshow("thresh", thresh);
-        waitKey(1);
+        //waitKey(1);
         //*******************************//
         if (count == 1000)
         {
