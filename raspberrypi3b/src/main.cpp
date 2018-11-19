@@ -74,7 +74,7 @@ int main( int argc, char *argv[] )
     thread1.join();
     thread2.join();
     if (showFrame)
-        hread3.join();
+        thread3.join();
     return 0;
 }
 //*******************************//
