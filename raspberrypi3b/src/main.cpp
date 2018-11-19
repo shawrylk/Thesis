@@ -65,8 +65,11 @@ int main( int argc, char *argv[] )
     //*******************************//
     std::thread thread1(captureFrame);
     std::thread thread2(processFrame);
+    std::thread thread3;
     if (showFrame)
-        std::thread thread3(showImage);
+    {
+        thread3 = std::thread(showImage);
+    }
     //*******************************//
     server.attach(recvFunc);
     server.poll();
