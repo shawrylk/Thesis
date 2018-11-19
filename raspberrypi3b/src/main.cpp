@@ -24,7 +24,8 @@ using namespace std;
 #define RECT_SIZE       2
 //*******************************//
 Mat frame, gray, mblur, thresh, contour;
-int B, C, S, G, T;
+int B = 70, C = 70, S = 100, T = 90;
+
 //*******************************//
 bpsUARTSendDataTypeDef STMData;
 bpsUARTReceiveDataTypeDef RaspiEncoderCnt;
@@ -62,6 +63,7 @@ int main( int argc, char *argv[] )
     STMData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] = 240;
     sem_init(&semCaptureFrameCplt, 0, 0);
     sem_init(&semProcessFrameCplt, 0, 0);
+    onTrackbar_changed(0, nullptr);
     //*******************************//
     std::thread thread1(captureFrame);
     std::thread thread2(processFrame);
@@ -212,10 +214,7 @@ void showImage(void)
     auto start = std::chrono::high_resolution_clock::now();
     float fps;
     //*******************************//
-    B=70;
-    C=70;
-    S=100;
-    T=90;
+    
     namedWindow(winName);
     createTrackbar( "Brightness",winName, &B, 100, onTrackbarChanged );
     createTrackbar( "Contrast",winName, &C, 100,onTrackbarChanged );
