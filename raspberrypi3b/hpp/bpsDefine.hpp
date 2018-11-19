@@ -115,7 +115,7 @@ bpsUARTSendDataTypeDef; //56
 
 typedef	struct	
 {
-	bpsCommandTypeDef			command;
+	bpsDataTypeDef				content;
 }	
 fuckyou; //56
 
