@@ -106,7 +106,7 @@ bpsSocketSendDataTypeDef;
 
 typedef	struct	
 {
-	int16_t						detectedBall;
+	int8_t						detectedBall;
 	int16_t						ballCoordinate[BPS_NUMBER_OF_AXIS];
 	bpsCommandTypeDef			command;
 	bpsDataTypeDef				content;
