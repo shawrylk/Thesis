@@ -45,8 +45,14 @@ bpsServer server(22396);
 bpsUART UART("/dev/serial0",1000000);
 VideoCapture video(0);
 //*******************************//
-int main()
+int main( int argc, char *argv[] )
 {
+    //*******************************//
+    if( argc == 2 ) {
+        if (strcmp(argv[1], "showFrame") == 0)
+      printf("Run show frame thread\n");
+      #define SHOW_FRAME 1
+   }
     //*******************************//
     STMData.command = BPS_MODE_SETPOINT;
     STMData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 240;
@@ -56,14 +62,18 @@ int main()
     //*******************************//
     std::thread thread1(captureFrame);
     std::thread thread2(processFrame);
+    #ifdef SHOW_FRAME
     std::thread thread3(showImage);
+    #endif
     //*******************************//
     server.attach(recvFunc);
     server.poll();
     //*******************************//
     thread1.join();
     thread2.join();
+    #ifdef SHOW_FRAME
     thread3.join();
+    #endif
     return 0;
 }
 //*******************************//
