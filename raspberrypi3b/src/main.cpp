@@ -149,7 +149,6 @@ void processFrame(void)
                     }
                     else 
                         bFoundObject = false;
-                        putText(frame,"OBJECT NOT FOUND!",Point(0,50),1,2,Scalar(0,0,255),2);
                 }
             }
             else 
