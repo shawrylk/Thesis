@@ -48,10 +48,13 @@ VideoCapture video(0);
 int main( int argc, char *argv[] )
 {
     //*******************************//
+    bool showFrame = false;
     if( argc == 2 ) {
         if (strcmp(argv[1], "showFrame") == 0)
-      printf("Run show frame thread\n");
-      #define SHOW_FRAME 1
+        {
+            printf("Run show frame thread\n");
+            showFrame = true;
+        }
    }
     //*******************************//
     STMData.command = BPS_MODE_SETPOINT;
@@ -62,18 +65,16 @@ int main( int argc, char *argv[] )
     //*******************************//
     std::thread thread1(captureFrame);
     std::thread thread2(processFrame);
-    #ifdef SHOW_FRAME
-    std::thread thread3(showImage);
-    #endif
+    if (showFrame)
+        std::thread thread3(showImage);
     //*******************************//
     server.attach(recvFunc);
     server.poll();
     //*******************************//
     thread1.join();
     thread2.join();
-    #ifdef SHOW_FRAME
-    thread3.join();
-    #endif
+    if (showFrame)
+        hread3.join();
     return 0;
 }
 //*******************************//
