@@ -174,9 +174,9 @@ void processFrame(void)
         server.send((char *)&AppData, sizeof(bpsSocketSendDataTypeDef));
         AppMutex.unlock();
         //*******************************//
+        std::cout << count << " ";
         if (count == 1000)
-        {
-            std::cout << count << " ";
+        {         
             auto end = std::chrono::high_resolution_clock::now();
             auto diff = std::chrono::duration_cast<chrono::seconds>(end - start);
             fps = 1000 / static_cast<double>(diff.count());
