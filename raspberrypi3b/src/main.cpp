@@ -1,3 +1,4 @@
+
 #include <opencv2/opencv.hpp>
 #include <opencv2/core/ocl.hpp>
 #include <thread>
@@ -8,205 +9,142 @@
 #include "bpsUART.hpp"
 #include "bpsServer.hpp"
 #include "bpsKalmanFilter.hpp"
+//*******************************//
 using namespace cv;
 using namespace std;
- 
-// Convert to string
+ //*******************************//
 #define SSTR( x ) static_cast< std::ostringstream & >( \
-( std::ostringstream() << std::dec << x ) ).str()
+        ( std::ostringstream() << std::dec << x ) ).str()
 #define FRAME_WIDTH     480
 #define FRAME_HEIGHT    480
 #define FPS             90
-#define H_MIN           26
-#define H_MAX           46
-#define S_MIN           22
-#define S_MAX           187
-#define V_MIN           217
-#define V_MAX           256
-#define MAX_NUM_OBJECTS 100
-#define MIN_OBJECT_AREA 20*20
-#define MAX_OBJECT_AREA FRAME_HEIGHT*FRAME_WIDTH/1.5
+#define MAX_NUM_OBJECTS 10
+#define MIN_OBJECT_AREA 120*120
+#define MAX_OBJECT_AREA 140*140
 #define RECT_SIZE       130
-#define THRESH_MAX      40
-sem_t semCaptureFrameCplt, semProcessFrameCplt, semPreProcessFrameCplt, semContourFrameCplt, semTrackingObjectCplt;
-bool bFoundObject = false;
-Mat frame, gray, mblur, thresh, contour;
-vector< vector<Point> > contours;
-vector<Vec4i> hierarchy;
-
+//*******************************//
+UMat frame, gray, mblur, thresh, contour;
+int B, C, S, G, T;
+//*******************************//
 bpsUARTSendDataTypeDef STMData;
 bpsUARTReceiveDataTypeDef RaspiEncoderCnt;
 bpsSocketSendDataTypeDef AppData;
+//*******************************//
 std::mutex STMMutex;
 std::mutex AppMutex;
+std::mutex frameMutex;
+//*******************************//
 void captureFrame(void);
-void preProcessFrame(void);
 void processFrame(void);
 void showImage(void);
-//void server(void);
-void testUART(void);
-int sendFunc (char *sendData, int sendLen);
 int recvFunc (char *recvData, int recvLen);
 void onTrackbarChanged(int, void*);
-
+//*******************************//
 ::KalmanFilter KF(240, 0.01, 1);
 bpsServer server(22396);
 bpsUART UART("/dev/serial0",1000000);
-
-//*******************//
-float Brightness;
-float Contrast ;
-float Saturation;
-float Gain;
-float Thres;
-int B;
-int C;
-int S;
-int G;
-int T;
 VideoCapture video(0);
-//*****************//
-
+//*******************************//
 int main()
 {
-    //cv::ocl::setUseOpenCL(false);
-    
-    sem_init(&semCaptureFrameCplt, 0, 0);
-    sem_init(&semProcessFrameCplt, 0, 0);
-    sem_init(&semPreProcessFrameCplt, 0, 0);
-    sem_init(&semContourFrameCplt, 0, 0);
-    sem_init(&semTrackingObjectCplt, 0, 0);
+    //*******************************//
     STMData.command = BPS_MODE_SETPOINT;
     STMData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 240;
     STMData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] = 240;
+    //*******************************//
     std::thread thread1(captureFrame);
     std::thread thread2(processFrame);
-    std::thread thread3(preProcessFrame);
-    //std::thread thread4(testUART);
-    std::thread thread5(showImage);
+    std::thread thread3(showImage);
+    //*******************************//
     server.attach(recvFunc);
     server.poll();
+    //*******************************//
     thread1.join();
     thread2.join();
-    //thread3.join();
-    //thread4.join();
-    thread5.join();
+    thread3.join();
     return 0;
 }
+//*******************************//
 void captureFrame(void)
 {
-    
+    //*******************************//
+    int count = 0;
+    auto start = std::chrono::high_resolution_clock::now();
+    float fps;
+    //*******************************//
     if(!video.isOpened())
         std::cout << "Could not read video file" << endl; 
     video.set(CAP_PROP_FRAME_WIDTH,FRAME_WIDTH);
 	video.set(CAP_PROP_FRAME_HEIGHT,FRAME_HEIGHT);
     video.set(CAP_PROP_FPS, FPS);
-    int count = 0;
-    auto start = std::chrono::high_resolution_clock::now();
-    float fps;
+    //*******************************//
     sleep(1);
     while (1)
     {
+        //*******************************//
         if (count == 0)
             start = std::chrono::high_resolution_clock::now();
-        bool ok = video.read(frame); 
         count++;
-        if (ok)
-        {    
-            sem_post(&semCaptureFrameCplt);
-        }
+        //*******************************//
+        frameMutex.lock();
+        video.read(frame); 
+        frameMutex.unlock();
+        //*******************************//
         if (count == 1000)
         {
             auto end = std::chrono::high_resolution_clock::now();
             auto diff = std::chrono::duration_cast<chrono::seconds>(end - start);
             fps = 1000 / static_cast<double>(diff.count());
-            std::cout << "thread 1 " << fps << "\n";
+            std::cout << "thread capture frame " << fps << "\n";
             count = 0;
         }
-    }
-}
-void preProcessFrame(void)
-{
-    int count = 0;
-    auto start = std::chrono::high_resolution_clock::now();
-    float fps;
-    sleep(1);
-    while (1)
-    {
-        if (count == 0)
-            start = std::chrono::high_resolution_clock::now();
-        count++;
-        sem_wait(&semCaptureFrameCplt);   
-        cvtColor(frame,gray,COLOR_BGR2GRAY);
-        //medianBlur(gray, gray, 5);
-        
-        threshold(gray,thresh,T,255,0);
-        
-        
-        //gray = (gray -10.5 ) / 10.5;
-        //threshold(gray,thresh,25,255,0);
-        //medianBlur(gray,mblur,137);
-        //create structuring element that will be used to "dilate" and "erode" image.
-        //the element chosen here is a 3px by 3px rectangle
-
-        //Mat erodeElement = getStructuringElement( MORPH_ELLIPSE,Size(3,3));
-        //dilate with larger element so make sure object is nicely visible
-        //Mat dilateElement = getStructuringElement( MORPH_ELLIPSE,Size(5,5));
-
-        //erode(thresh,thresh,erodeElement);
-        //erode(thresh,thresh,erodeElement);
-        //dilate(thresh,thresh,dilateElement);
-        sem_post(&semPreProcessFrameCplt);
-        if (count == 1000)
-        {
-            auto end = std::chrono::high_resolution_clock::now();
-            auto diff = std::chrono::duration_cast<chrono::seconds>(end - start);
-            fps = 1000 / static_cast<double>(diff.count());
-            std::cout << "thread 2 " << fps << "\n";
-            count = 0;
-        }
+        //*******************************//
     }
 }
 
 void processFrame(void)
 {
-    int count = 0;
+    //*******************************//
+    vector< vector<Point> > contours;
+    vector<Vec4i> hierarchy;
+    bool bFoundObject = false;  
     int x = 240,y =240;
     int xKF, yKF;
+    double refArea;
+    bool objectFound = false;
+    int index;
+    int count = 0;
     auto start = std::chrono::high_resolution_clock::now();
     float fps;
+    //*******************************//
     sleep(1);
     while(1)
     {     
+        //*******************************//
         if (count == 0)
             start = std::chrono::high_resolution_clock::now();
         count++;
-        sem_wait(&semPreProcessFrameCplt);            
+        //*******************************//
+        frameMutex.lock();
+        cvtColor(frame,gray,COLOR_BGR2GRAY);
+        frameMutex.unlock();
+        threshold(gray,thresh,T,255,0);
         findContours(thresh,contours,hierarchy,RETR_TREE,CHAIN_APPROX_SIMPLE );
-        double refArea = 0;
-	    bool objectFound = false;
-        double area;
-        int index;
+        //*******************************//
         if (hierarchy.size() > 0) 
         {
-            int numObjects = hierarchy.size();
-            //if number of objects greater than MAX_NUM_OBJECTS we have a noisy filter
-            if(numObjects<MAX_NUM_OBJECTS)
+            refArea = 0;
+            if(hierarchy.size() < MAX_NUM_OBJECTS)
             {
                 for (index = 0; index >= 0; index = hierarchy[index][0]) 
                 {
                     Moments moment = moments((cv::Mat)contours[index]);
-                    area = moment.m00;
-                    //if the area is less than 20 px by 20px then it is probably just noise
-                    //if the area is the same as the 3/2 of the image size, probably just a bad filter
-                    //we only want the object with the largest area so we safe a reference area each
-                    //iteration and compare it to the area in the next iteration.
-                    if(area>MIN_OBJECT_AREA && area<MAX_OBJECT_AREA && area>refArea)
+                    if(moment.m00 > MIN_OBJECT_AREA && moment.m00 < MAX_OBJECT_AREA && moment.m00 > refArea)
                     {
-                        x = moment.m10/area;
-                        y = moment.m01/area;
+                        x = moment.m10/moment.m00;
+                        y = moment.m01/moment.m00;
                         bFoundObject = true;
-                        refArea = area;
+                        refArea = moment.m00;
                     }
                     else 
                         bFoundObject = false;
@@ -218,98 +156,104 @@ void processFrame(void)
                 bFoundObject = false;
             }
         }
-        
+        //*******************************//
+        xKF = KF.predict(x);
+        yKF = KF.predict(y);
+        STMMutex.lock();
         if (bFoundObject)
-        {
-            xKF = KF.predict(x);
-            yKF = KF.predict(y);
-            STMMutex.lock();
-            STMData.ballCoordinate[BPS_X_AXIS] = xKF;
-            STMData.ballCoordinate[BPS_Y_AXIS] = yKF;
-            STMMutex.unlock();
-            UART.send(&STMData, sizeof(bpsUARTSendDataTypeDef));
-            //STMMutex.unlock();
-            AppMutex.lock();
-            AppData.ballCoordinate[BPS_X_AXIS] = xKF;
-            AppData.ballCoordinate[BPS_Y_AXIS] = yKF;
-            server.send((char *)&AppData, sizeof(bpsSocketSendDataTypeDef));
-            AppMutex.unlock();
-        }
-        sem_post(&semProcessFrameCplt);
+            STMData.detectedBall = 1;
+        else
+            STMData.detectedBall = 0;
+        STMData.ballCoordinate[BPS_X_AXIS] = xKF;
+        STMData.ballCoordinate[BPS_Y_AXIS] = yKF;
+        STMMutex.unlock();
+        UART.send(&STMData, sizeof(bpsUARTSendDataTypeDef));
+        AppMutex.lock();
+        AppData.ballCoordinate[BPS_X_AXIS] = xKF;
+        AppData.ballCoordinate[BPS_Y_AXIS] = yKF;
+        server.send((char *)&AppData, sizeof(bpsSocketSendDataTypeDef));
+        AppMutex.unlock();
+        //*******************************//
         if (count == 1000)
         {
             auto end = std::chrono::high_resolution_clock::now();
             auto diff = std::chrono::duration_cast<chrono::seconds>(end - start);
             fps = 1000 / static_cast<double>(diff.count());
-            std::cout << "thread 3 " << fps << "\n";
+            std::cout << "thread process frame " << fps << "\n";
             count = 0;
         }
+        //*******************************//
     }
 }
 
 void showImage(void)
 {
+    //*******************************//
+    Rect2d bbox;
+    char winName[6] = "frame";
     int count = 0;
     auto start = std::chrono::high_resolution_clock::now();
     float fps;
-    Rect2d bbox;
-    char winName[6] = "frame";
-    namedWindow(winName);
-
-
-
+    //*******************************//
     B=70;
     C=70;
     S=100;
     T=80;
+    namedWindow(winName);
     createTrackbar( "Brightness",winName, &B, 100, onTrackbarChanged );
     createTrackbar( "Contrast",winName, &C, 100,onTrackbarChanged );
     createTrackbar( "Saturation",winName, &S, 100,onTrackbarChanged);
     createTrackbar( "Thres",winName, &T, 255,onTrackbarChanged);
+    //*******************************//
     sleep(1);
     while(1)
     {
-        sem_wait(&semProcessFrameCplt);
+        //*******************************//
         if (count == 0)
             start = std::chrono::high_resolution_clock::now();
         count++;
+        //*******************************//
         Rect2d bbox(STMData.ballCoordinate[BPS_X_AXIS] - RECT_SIZE/2, 
-            STMData.ballCoordinate[BPS_Y_AXIS] - RECT_SIZE/2, RECT_SIZE, RECT_SIZE); 
+                    STMData.ballCoordinate[BPS_Y_AXIS] - RECT_SIZE/2, RECT_SIZE, RECT_SIZE); 
         rectangle(frame, bbox, Scalar( 255, 0, 0 ), 2, 1 ); 
         imshow("frame", frame);
         imshow("thresh", thresh);
         waitKey(1);
+        //*******************************//
         if (count == 1000)
         {
             auto end = std::chrono::system_clock::now();
             auto diff = std::chrono::duration_cast<chrono::seconds>(end - start);
             fps = 1000 / static_cast<double>(diff.count());
-            std::cout << "thread 5 " << fps << "\n";
+            std::cout << "thread show frame " << fps << "\n";
             count = 0;
         }
+        //*******************************//
     }
 }
 
 
 int recvFunc (char *recvData, int recvLen)
 {
+    //*******************************//
     bpsSocketReceiveDataTypeDef *data = (bpsSocketReceiveDataTypeDef*)recvData ;
     STMMutex.lock();
     memcpy(&STMData.command, data, sizeof(bpsSocketReceiveDataTypeDef));
     STMMutex.unlock();
+    //*******************************//
     if (UART.dataAvailable())
     {
         UART.recv(&RaspiEncoderCnt,sizeof(bpsUARTReceiveDataTypeDef));
         AppMutex.lock();
         memcpy(&AppData.encoderCnt, &RaspiEncoderCnt, sizeof(bpsUARTReceiveDataTypeDef));
+        AppMutex.unlock();
         std::cout << "encoderCnt x:= " << AppData.encoderCnt[0] << std::endl;
         std::cout << "encoderCnt y:= " << AppData.encoderCnt[1] << std::endl;
-        AppMutex.unlock();
     }
+    //*******************************//
     switch (data->command)
     {
         case  BPS_MODE_CIRCLE:
-            //memcpy(&(STMData.command), data, sizeof(bpsSocketReceiveDataTypeDef));
             std::cout << "circle mode \n";
             std::cout << "x: " << data->content.circleProperties.centerCoordinate[BPS_X_AXIS] << " -- ";
             std::cout << "y: " << data->content.circleProperties.centerCoordinate[BPS_Y_AXIS] << std::endl;
@@ -317,13 +261,11 @@ int recvFunc (char *recvData, int recvLen)
             std::cout << "s: " << data->content.circleProperties.speed << std::endl;
             break;
         case BPS_MODE_SETPOINT:
-            //memcpy(&(STMData.command), data, sizeof(bpsSocketReceiveDataTypeDef));
             std::cout << "setpoint mode \n";
             std::cout << "x: " << data->content.pointProperties.setpointCoordinate[BPS_X_AXIS] << " -- ";
             std::cout << "y: " << data->content.pointProperties.setpointCoordinate[BPS_Y_AXIS] << std::endl;
             break;
         case BPS_MODE_RECTANGLE:
-            //memcpy(&(STMData.command), data, sizeof(bpsSocketReceiveDataTypeDef));
             std::cout << "rectangle mode \n";
             std::cout << "TL x: " << data->content.rectangleProperties.vertexCoordinate[BPS_TOP_LEFT][BPS_X_AXIS] << " -- ";
             std::cout << "TL y: " << data->content.rectangleProperties.vertexCoordinate[BPS_TOP_LEFT][BPS_Y_AXIS] << std::endl;
@@ -339,7 +281,6 @@ int recvFunc (char *recvData, int recvLen)
 
             break;
         case BPS_UPDATE_PID:
-            //memcpy(&(STMData.command), data, sizeof(bpsSocketReceiveDataTypeDef));
             std::cout << "update PID \n";
 
             std::cout << "Kp Outer x: " << data->content.PIDProperties.Kp[BPS_OUTER_PID][BPS_X_AXIS] << " -- ";
@@ -365,15 +306,15 @@ int recvFunc (char *recvData, int recvLen)
             std::cout << "error data\n";
             break;
     }
+    //*******************************//
     return 0;
 }
 
 void onTrackbarChanged(int, void*)
 {
-    Brightness =float(B)/100;
-    Contrast   =float(C)/100;
-    Saturation =float(S)/100;
-    video.set(CAP_PROP_BRIGHTNESS,Brightness);
-    video.set(CAP_PROP_CONTRAST, Contrast);
-    video.set(CAP_PROP_SATURATION, Saturation);
+    //*******************************//
+    video.set(CAP_PROP_BRIGHTNESS, float(B)/100);
+    video.set(CAP_PROP_CONTRAST, float(C)/100);
+    video.set(CAP_PROP_SATURATION, float(S)/100);
+    //*******************************//
 }

@@ -6,6 +6,7 @@
 
 HAL_StatusTypeDef		bpsStartEncoder				(void);
 HAL_StatusTypeDef		bpsReadEncoderCnt			(bpsAxisTypeDef axis, int16_t* encoderCnt_out);
+HAL_StatusTypeDef 		bpsResetEncoderCnt			(bpsAxisTypeDef axis);
 HAL_StatusTypeDef		bpsStartPWM					(void);
 HAL_StatusTypeDef		bpsSetPWMDuty				(bpsAxisTypeDef axis, uint16_t duty, bpsDirectionTypeDef direction);
 HAL_StatusTypeDef		bpsUARTReceiveData			(bpsUARTReceiveDataTypeDef* receiveData);

@@ -19,6 +19,16 @@ HAL_StatusTypeDef bpsReadEncoderCnt(bpsAxisTypeDef axis, int16_t* encoderCnt_out
 	return HAL_OK;
 }
 
+HAL_StatusTypeDef bpsResetEncoderCnt(bpsAxisTypeDef axis)
+{
+	if (axis == BPS_X_AXIS)
+		ENCODER_X_REG->CNT = 0;
+	else if (axis == BPS_Y_AXIS)
+		ENCODER_Y_REG->CNT = 0;
+	else return HAL_ERROR;
+	return HAL_OK;
+}
+
 HAL_StatusTypeDef bpsStartPWM()
 {
 	HAL_StatusTypeDef	ret;
@@ -152,20 +162,25 @@ HAL_StatusTypeDef bpsFindThresholds(bpsAxisTypeDef axis, int16_t *min, int16_t *
 {
 	int16_t temp;
 	HAL_StatusTypeDef ret;
-	ret = bpsControlMotor(axis, -1 * MAX_PWM_DUTY / 3);
+	ret = bpsControlMotor(axis, -1 * MAX_PWM_DUTY / 4);
 	ret |= bpsReadEncoderCnt(axis, &temp);
 	do {
 		*min = temp;
 		HAL_Delay(100);
 		ret |= bpsReadEncoderCnt(axis, &temp);
 	} while (*min != temp);
-
-	ret |= bpsControlMotor(axis, MAX_PWM_DUTY / 3);
+	bpsControlMotor(axis, 0);
+	HAL_Delay(100);
+	ret |= bpsReadEncoderCnt(axis, min);
+	ret |= bpsControlMotor(axis, MAX_PWM_DUTY / 4);
 	ret |= bpsReadEncoderCnt(axis, &temp);
 	do {
 		*max = temp;
 		HAL_Delay(100);
 		ret |= bpsReadEncoderCnt(axis, &temp);
 	} while (*max != temp);
+	bpsControlMotor(axis, 0);
+	HAL_Delay(100);
+	ret |= bpsReadEncoderCnt(axis, max);
 	return ret;
 }

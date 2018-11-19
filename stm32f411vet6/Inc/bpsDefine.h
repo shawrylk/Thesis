@@ -42,13 +42,16 @@ typedef enum
     BPS_NUMBER_OF_PID_LOOP
 }
 bpsPIDPositionTypeDef;
+
 typedef enum
 {
-	BPS_MIN,
-	BPS_MAX,
-	BPS_BOUNDARY
+	BPS_ENCODER_MIN,
+	BPS_ENCODER_MAX,
+	BPS_ENCODER_REF,
+	BPS_ENCODER
 }
-bpsBoundaryTypeDef;
+bpsEncoderTypeDef;
+
 typedef enum 
 {
 	BPS_X_AXIS,
@@ -123,6 +126,7 @@ bpsDataTypeDef; //48
 
 typedef struct 
 {
+	int8_t						detectedBall;
 	int16_t						ballCoordinate[BPS_NUMBER_OF_AXIS];
 	bpsCommandTypeDef			command;
 	bpsDataTypeDef				content;
