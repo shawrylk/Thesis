@@ -19,9 +19,9 @@ using namespace std;
 #define FRAME_HEIGHT    480
 #define FPS             90
 #define MAX_NUM_OBJECTS 10
-#define MIN_OBJECT_AREA 120*120
+#define MIN_OBJECT_AREA 80*80
 #define MAX_OBJECT_AREA 200*200
-#define RECT_SIZE       5
+#define RECT_SIZE       2
 //*******************************//
 UMat frame, gray, mblur, thresh, contour;
 int B, C, S, G, T;
@@ -166,13 +166,15 @@ void processFrame(void)
             STMData.detectedBall = 0;
         STMData.ballCoordinate[BPS_X_AXIS] = xKF;
         STMData.ballCoordinate[BPS_Y_AXIS] = yKF;
-        STMMutex.unlock();
         UART.send(&STMData, sizeof(bpsUARTSendDataTypeDef));
+        STMMutex.unlock();
+        std::cout << "1";
         AppMutex.lock();
         AppData.ballCoordinate[BPS_X_AXIS] = xKF;
         AppData.ballCoordinate[BPS_Y_AXIS] = yKF;
         server.send((char *)&AppData, sizeof(bpsSocketSendDataTypeDef));
         AppMutex.unlock();
+        std::cout << "2";
         //*******************************//
         if (count == 1000)
         {
