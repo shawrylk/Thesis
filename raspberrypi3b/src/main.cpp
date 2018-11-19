@@ -21,7 +21,7 @@ using namespace std;
 #define MAX_NUM_OBJECTS 10
 #define MIN_OBJECT_AREA 120*120
 #define MAX_OBJECT_AREA 140*140
-#define RECT_SIZE       130
+#define RECT_SIZE       5
 //*******************************//
 UMat frame, gray, mblur, thresh, contour;
 int B, C, S, G, T;
@@ -212,8 +212,8 @@ void showImage(void)
             start = std::chrono::high_resolution_clock::now();
         count++;
         //*******************************//
-        Rect2d bbox(STMData.ballCoordinate[BPS_X_AXIS] - RECT_SIZE/2, 
-                    STMData.ballCoordinate[BPS_Y_AXIS] - RECT_SIZE/2, RECT_SIZE, RECT_SIZE); 
+        Rect2d bbox(STMData.ballCoordinate[BPS_X_AXIS], 
+                    STMData.ballCoordinate[BPS_Y_AXIS], RECT_SIZE, RECT_SIZE); 
         rectangle(frame, bbox, Scalar( 255, 0, 0 ), 2, 1 ); 
         imshow("frame", frame);
         imshow("thresh", thresh);
