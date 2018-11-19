@@ -116,7 +116,6 @@ bpsUARTSendDataTypeDef; //60
 typedef	struct	
 {
 	int8_t						detectedBall; //1
-	int16_t						ballCoordinate[BPS_NUMBER_OF_AXIS]; //4
 	bpsCommandTypeDef			command; //4
 }	
 fuckyou; //56
