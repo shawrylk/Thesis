@@ -20,7 +20,7 @@ using namespace std;
 #define FPS             90
 #define MAX_NUM_OBJECTS 10
 #define MIN_OBJECT_AREA 120*120
-#define MAX_OBJECT_AREA 140*140
+#define MAX_OBJECT_AREA 200*200
 #define RECT_SIZE       5
 //*******************************//
 UMat frame, gray, mblur, thresh, contour;
