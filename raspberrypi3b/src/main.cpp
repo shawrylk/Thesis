@@ -202,7 +202,6 @@ void showImage(void)
     C=70;
     S=100;
     T=90;
-    namedWindow(winName);
     createTrackbar( "Brightness",winName, &B, 100, onTrackbarChanged );
     createTrackbar( "Contrast",winName, &C, 100,onTrackbarChanged );
     createTrackbar( "Saturation",winName, &S, 100,onTrackbarChanged);
@@ -223,7 +222,7 @@ void showImage(void)
         rectangle(frame, bbox, Scalar( 255, 0, 0 ), 2, 1 ); 
         imshow("frame", frame);
         imshow("thresh", thresh);
-        //waitKey(1);
+        waitKey(1);
         //*******************************//
         if (count == 1000)
         {
