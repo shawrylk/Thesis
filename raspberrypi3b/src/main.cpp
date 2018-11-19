@@ -128,35 +128,35 @@ void processFrame(void)
         //*******************************//
         cvtColor(frame,gray,COLOR_BGR2GRAY);
         threshold(gray,thresh,T,255,0);
-        // findContours(thresh,contours,hierarchy,RETR_TREE,CHAIN_APPROX_SIMPLE );
-        // //*******************************//
-        // if (hierarchy.size() > 0) 
-        // {
-        //     refArea = 0;
-        //     if(hierarchy.size() < MAX_NUM_OBJECTS)
-        //     {
-        //         for (index = 0; index >= 0; index = hierarchy[index][0]) 
-        //         {
-        //             Moments moment = moments((cv::Mat)contours[index]);
-        //             if(moment.m00 > MIN_OBJECT_AREA && moment.m00 < MAX_OBJECT_AREA && moment.m00 > refArea)
-        //             {
-        //                 x = moment.m10/moment.m00;
-        //                 y = moment.m01/moment.m00;
-        //                 bFoundObject = true;
-        //                 refArea = moment.m00;
-        //             }
-        //             else 
-        //                 bFoundObject = false;
-        //                 putText(frame,"OBJECT NOT FOUND!",Point(0,50),1,2,Scalar(0,0,255),2);
-        //         }
-        //     }
-        //     else 
-        //     {
-        //         putText(frame,"TOO MUCH NOISE!",Point(0,50),1,2,Scalar(0,0,255),2);
-        //         bFoundObject = false;
-        //     }
-        // }
-        // //*******************************//
+        findContours(thresh,contours,hierarchy,RETR_TREE,CHAIN_APPROX_SIMPLE );
+        //*******************************//
+        if (hierarchy.size() > 0) 
+        {
+            refArea = 0;
+            if(hierarchy.size() < MAX_NUM_OBJECTS)
+            {
+                for (index = 0; index >= 0; index = hierarchy[index][0]) 
+                {
+                    Moments moment = moments((cv::Mat)contours[index]);
+                    if(moment.m00 > MIN_OBJECT_AREA && moment.m00 < MAX_OBJECT_AREA && moment.m00 > refArea)
+                    {
+                        x = moment.m10/moment.m00;
+                        y = moment.m01/moment.m00;
+                        bFoundObject = true;
+                        refArea = moment.m00;
+                    }
+                    else 
+                        bFoundObject = false;
+                        putText(frame,"OBJECT NOT FOUND!",Point(0,50),1,2,Scalar(0,0,255),2);
+                }
+            }
+            else 
+            {
+                putText(frame,"TOO MUCH NOISE!",Point(0,50),1,2,Scalar(0,0,255),2);
+                bFoundObject = false;
+            }
+        }
+        //*******************************//
         xKF = KF.predict(x);
         yKF = KF.predict(y);
         STMMutex.lock();
@@ -174,7 +174,6 @@ void processFrame(void)
         server.send((char *)&AppData, sizeof(bpsSocketSendDataTypeDef));
         AppMutex.unlock();
         //*******************************//
-        std::cout << count << " ";
         if (count == 1000)
         {         
             auto end = std::chrono::high_resolution_clock::now();
