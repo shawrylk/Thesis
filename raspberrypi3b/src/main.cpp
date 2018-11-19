@@ -63,7 +63,7 @@ int main( int argc, char *argv[] )
     STMData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] = 240;
     sem_init(&semCaptureFrameCplt, 0, 0);
     sem_init(&semProcessFrameCplt, 0, 0);
-    onTrackbar_changed(0, nullptr);
+    onTrackbarChanged(0, nullptr);
     //*******************************//
     std::thread thread1(captureFrame);
     std::thread thread2(processFrame);
