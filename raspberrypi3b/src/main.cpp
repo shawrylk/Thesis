@@ -78,7 +78,6 @@ void captureFrame(void)
 	video.set(CAP_PROP_FRAME_HEIGHT,FRAME_HEIGHT);
     video.set(CAP_PROP_FPS, FPS);
     //*******************************//
-    sleep(1);
     while (1)
     {
         //*******************************//
