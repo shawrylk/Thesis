@@ -32,7 +32,7 @@ bpsSocketSendDataTypeDef AppData;
 //*******************************//
 std::mutex STMMutex;
 std::mutex AppMutex;
-std::mutex frameMutex;
+sem_t semCaptureFrameCplt;
 //*******************************//
 void captureFrame(void);
 void processFrame(void);
@@ -51,6 +51,7 @@ int main()
     STMData.command = BPS_MODE_SETPOINT;
     STMData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 240;
     STMData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] = 240;
+    sem_init(&semCaptureFrameCplt, 0, 0);
     //*******************************//
     std::thread thread1(captureFrame);
     std::thread thread2(processFrame);
@@ -85,9 +86,8 @@ void captureFrame(void)
             start = std::chrono::high_resolution_clock::now();
         count++;
         //*******************************//
-        frameMutex.lock();
         video.read(frame); 
-        frameMutex.unlock();
+        sem_post(&semCaptureFrameCplt);
         //*******************************//
         if (count == 1000)
         {
@@ -120,13 +120,13 @@ void processFrame(void)
     while(1)
     {     
         //*******************************//
+        sem_wait(&semCaptureFrameCplt);
+        //*******************************//
         if (count == 0)
             start = std::chrono::high_resolution_clock::now();
         count++;
         //*******************************//
-        frameMutex.lock();
         cvtColor(frame,gray,COLOR_BGR2GRAY);
-        frameMutex.unlock();
         threshold(gray,thresh,T,255,0);
         // findContours(thresh,contours,hierarchy,RETR_TREE,CHAIN_APPROX_SIMPLE );
         // //*******************************//
