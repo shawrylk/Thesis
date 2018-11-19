@@ -113,12 +113,6 @@ typedef	struct
 }	
 bpsUARTSendDataTypeDef; //60
 
-typedef	struct	
-{
-	int8_t						detectedBall; //1
-	bpsCommandTypeDef			command; //4
-}	
-fuckyou; //56
 
 typedef struct
 {

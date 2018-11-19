@@ -106,7 +106,6 @@ void captureFrame(void)
         //*******************************//
         video.read(frame); 
         sem_post(&semCaptureFrameCplt);
-        std::cout << "size of UART: " << sizeof(fuckyou) << std::endl;
         //*******************************//
         if (count == 1000)
         {
