@@ -113,6 +113,13 @@ typedef	struct
 }	
 bpsUARTSendDataTypeDef; //56
 
+typedef	struct	
+{
+	int8_t						detectedBall;
+	int16_t						ballCoordinate[BPS_NUMBER_OF_AXIS];
+}	
+fuckyou; //56
+
 typedef struct
 {
     int16_t                     encoderCnt[BPS_NUMBER_OF_AXIS];
