@@ -154,23 +154,24 @@ void bpsTaskSetup(void *pointer)
 	//this task run first, then blocked forever
 	bpsSharedDataTypeDef* sd = (bpsSharedDataTypeDef*)pointer;
 	sd->UARTData.command = BPS_UPDATE_PID;
-	sd->UARTData.content.PIDProperties.Kp[BPS_OUTER_PID][BPS_X_AXIS] = 10;
-	sd->UARTData.content.PIDProperties.Ki[BPS_OUTER_PID][BPS_X_AXIS] = 100;
+	sd->UARTData.content.PIDProperties.Kp[BPS_OUTER_PID][BPS_X_AXIS] = 0.01;
+	sd->UARTData.content.PIDProperties.Ki[BPS_OUTER_PID][BPS_X_AXIS] = 0.01;
 	sd->UARTData.content.PIDProperties.Kd[BPS_OUTER_PID][BPS_X_AXIS] = 0.1;
 
-	sd->UARTData.content.PIDProperties.Kp[BPS_OUTER_PID][BPS_Y_AXIS] = 10;
-	sd->UARTData.content.PIDProperties.Ki[BPS_OUTER_PID][BPS_Y_AXIS] = 100;
+	sd->UARTData.content.PIDProperties.Kp[BPS_OUTER_PID][BPS_Y_AXIS] = 0.01;
+	sd->UARTData.content.PIDProperties.Ki[BPS_OUTER_PID][BPS_Y_AXIS] = 0.01;
 	sd->UARTData.content.PIDProperties.Kd[BPS_OUTER_PID][BPS_Y_AXIS] = 0.1;
 
-	sd->UARTData.content.PIDProperties.Kp[BPS_INNER_PID][BPS_X_AXIS] = 72;
+	sd->UARTData.content.PIDProperties.Kp[BPS_INNER_PID][BPS_X_AXIS] = 128;
 	sd->UARTData.content.PIDProperties.Ki[BPS_INNER_PID][BPS_X_AXIS] = 468;
-	sd->UARTData.content.PIDProperties.Kd[BPS_INNER_PID][BPS_X_AXIS] = 1.5;
+	sd->UARTData.content.PIDProperties.Kd[BPS_INNER_PID][BPS_X_AXIS] = 1;
 
-	sd->UARTData.content.PIDProperties.Kp[BPS_INNER_PID][BPS_Y_AXIS] = 72;
+	sd->UARTData.content.PIDProperties.Kp[BPS_INNER_PID][BPS_Y_AXIS] = 128;
 	sd->UARTData.content.PIDProperties.Ki[BPS_INNER_PID][BPS_Y_AXIS] = 468;
 	sd->UARTData.content.PIDProperties.Kd[BPS_INNER_PID][BPS_Y_AXIS] = 1;
 	xTaskNotifyGive(taskNumber[TASK_UPDATE_SETPOINT]);
 	vTaskDelay(pdMS_TO_TICKS(11));
+	sd->UARTData.detectedBall = 0;
 	sd->UARTData.ballCoordinate[BPS_X_AXIS] = 240;
 	sd->UARTData.ballCoordinate[BPS_Y_AXIS] = 240;
 	sd->UARTData.command = BPS_MODE_SETPOINT;
@@ -178,20 +179,20 @@ void bpsTaskSetup(void *pointer)
 	sd->UARTData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] = 240;
 	xTaskNotifyGive(taskNumber[TASK_UPDATE_SETPOINT]);
 	vTaskDelay(pdMS_TO_TICKS(11));
-	do {
-		encXMin = sd->encoderCnt[BPS_ENCODER_MIN][BPS_X_AXIS];
-		encXMax = sd->encoderCnt[BPS_ENCODER_MAX][BPS_X_AXIS];
+	// do {
+	// 	encXMin = sd->encoderCnt[BPS_ENCODER_MIN][BPS_X_AXIS];
+	// 	encXMax = sd->encoderCnt[BPS_ENCODER_MAX][BPS_X_AXIS];
 		bpsFindThresholds(BPS_X_AXIS, &sd->encoderCnt[BPS_ENCODER_MIN][BPS_X_AXIS], &sd->encoderCnt[BPS_ENCODER_MAX][BPS_X_AXIS]);
 		encX = (sd->encoderCnt[BPS_ENCODER_MIN][BPS_X_AXIS] + sd->encoderCnt[BPS_ENCODER_MAX][BPS_X_AXIS])/2;
-	} while (encXMin != sd->encoderCnt[BPS_ENCODER_MIN][BPS_X_AXIS] && encXMax != sd->encoderCnt[BPS_ENCODER_MAX][BPS_X_AXIS]);
+	// } while (encXMin != sd->encoderCnt[BPS_ENCODER_MIN][BPS_X_AXIS] && encXMax != sd->encoderCnt[BPS_ENCODER_MAX][BPS_X_AXIS]);
 	HAL_Delay(100);
 
-	do {
-		encYMin = sd->encoderCnt[BPS_ENCODER_MIN][BPS_Y_AXIS];
-		encYMax = sd->encoderCnt[BPS_ENCODER_MAX][BPS_Y_AXIS];
+	// do {
+	// 	encYMin = sd->encoderCnt[BPS_ENCODER_MIN][BPS_Y_AXIS];
+	// 	encYMax = sd->encoderCnt[BPS_ENCODER_MAX][BPS_Y_AXIS];
 		bpsFindThresholds(BPS_Y_AXIS, &sd->encoderCnt[BPS_ENCODER_MIN][BPS_Y_AXIS], &sd->encoderCnt[BPS_ENCODER_MAX][BPS_Y_AXIS]);
-		encX = (sd->encoderCnt[BPS_ENCODER_MIN][BPS_Y_AXIS] + sd->encoderCnt[BPS_ENCODER_MAX][BPS_Y_AXIS])/2;
-	} while (encYMin != sd->encoderCnt[BPS_ENCODER_MIN][BPS_Y_AXIS] && encYMax != sd->encoderCnt[BPS_ENCODER_MAX][BPS_Y_AXIS]);
+		encY = (sd->encoderCnt[BPS_ENCODER_MIN][BPS_Y_AXIS] + sd->encoderCnt[BPS_ENCODER_MAX][BPS_Y_AXIS])/2;
+	// } while (encYMin != sd->encoderCnt[BPS_ENCODER_MIN][BPS_Y_AXIS] && encYMax != sd->encoderCnt[BPS_ENCODER_MAX][BPS_Y_AXIS]);
 	
 	bpsControlMotor(BPS_X_AXIS, 0);
 	bpsControlMotor(BPS_Y_AXIS, 0);
@@ -214,7 +215,7 @@ void bpsTaskSetup(void *pointer)
 						DT_INNER_LOOP);		
 		bpsControlMotor(BPS_Y_AXIS, sd->PIDSamples[BPS_INNER_PID][BPS_Y_AXIS][0]);	
 		HAL_Delay(1);
-	//} while( sd->errorSamples[BPS_INNER_PID][BPS_Y_AXIS][0] != 0);
+	//} while(1);
 	} while (sd->errorSamples[BPS_INNER_PID][BPS_X_AXIS][0] != 0 && sd->errorSamples[BPS_INNER_PID][BPS_Y_AXIS][0] != 0);
 	bpsResetEncoderCnt(BPS_X_AXIS);
 	bpsResetEncoderCnt(BPS_Y_AXIS);
