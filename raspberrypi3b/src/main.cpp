@@ -23,7 +23,7 @@ using namespace std;
 #define MAX_OBJECT_AREA 120*120
 #define RECT_SIZE       2
 //*******************************//
-UMat frame, gray, mblur, thresh, contour;
+Mat frame, gray, mblur, thresh, contour;
 int B, C, S, G, T;
 //*******************************//
 bpsUARTSendDataTypeDef STMData;
@@ -199,7 +199,7 @@ void showImage(void)
     B=70;
     C=70;
     S=100;
-    T=80;
+    T=90;
     namedWindow(winName);
     createTrackbar( "Brightness",winName, &B, 100, onTrackbarChanged );
     createTrackbar( "Contrast",winName, &C, 100,onTrackbarChanged );
