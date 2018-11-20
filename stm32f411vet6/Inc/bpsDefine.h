@@ -22,8 +22,10 @@ extern	DMA_HandleTypeDef			hdma_usart2_rx;
 #define	SEND_DATA_HANDLE			huart2
 #define	RECEIVE_DATA_HANDLE			huart2
 #define	DMA_HANDLE					hdma_usart2_rx
-#define MIN_PWM_DUTY				0
-#define	MAX_PWM_DUTY				9599
+#define	MAX_PWM_DUTY				4799
+#define MIN_PWM_DUTY				-4799
+#define MAX_ENCODER_CNT				40		// 8 pulses are 1 degree, so 80 pulses are 10 degrees
+#define MIN_ENCODER_CNT				-40
 #define NUMBER_OF_SAMPLE			2
 #define	DT_OUTER_LOOP				0.0112f  // 11.2 ms
 #define	DT_INNER_LOOP				0.0010f	//  1 ms
@@ -42,15 +44,6 @@ typedef enum
     BPS_NUMBER_OF_PID_LOOP
 }
 bpsPIDPositionTypeDef;
-
-typedef enum
-{
-	BPS_ENCODER_MIN,
-	BPS_ENCODER_MAX,
-	BPS_ENCODER_REF,
-	BPS_ENCODER
-}
-bpsEncoderTypeDef;
 
 typedef enum 
 {

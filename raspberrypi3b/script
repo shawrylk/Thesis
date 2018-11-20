@@ -6,6 +6,11 @@ bps_run()
 	$BPS_PATH/bin/bpsRaspberryPi3B
 }
 
+bps_run_frame()
+{
+	$BPS_PATH/bin/bpsRaspberryPi3B showFrame
+}
+
 bps_install_dependency()
 {
 	cd ~
@@ -177,6 +182,9 @@ while test ${#} -gt 0; do
 			;;
 		run)
 			bps_run
+			;;
+		runFrame)
+			bps_run_frame
 			;;
 		install_opencv)
 			bps_install_opencv

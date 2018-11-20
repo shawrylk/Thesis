@@ -17,7 +17,7 @@ typedef struct
 {
     bpsUARTReceiveDataTypeDef				UARTData;
     int16_t              				 	setpoint[BPS_NUMBER_OF_AXIS];
-    int16_t                                 encoderCnt[BPS_ENCODER][BPS_NUMBER_OF_AXIS];
+    int16_t                                 encoderCntRef[BPS_NUMBER_OF_AXIS];
     bpsPIDTypeDef                           PIDParams;
     int16_t                                 errorSamples[BPS_NUMBER_OF_PID_LOOP][BPS_NUMBER_OF_AXIS][NUMBER_OF_SAMPLE];
     float                                   PIDSamples[BPS_NUMBER_OF_PID_LOOP][BPS_NUMBER_OF_AXIS][NUMBER_OF_SAMPLE];

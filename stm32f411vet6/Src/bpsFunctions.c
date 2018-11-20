@@ -131,10 +131,6 @@ HAL_StatusTypeDef bpsAppendPIDSamples(float* PIDSamples, float newSample)
 
 HAL_StatusTypeDef bpsControlMotor(bpsAxisTypeDef axis ,float PID)
 {
-	if (PID > MAX_PWM_DUTY)
-		PID = MAX_PWM_DUTY;
-	if (PID < -MAX_PWM_DUTY)
-		PID = -MAX_PWM_DUTY;
 	if (PID >= 0)
 	{
 		return bpsSetPWMDuty(axis, PID, BPS_FORWARD);
@@ -162,25 +158,44 @@ HAL_StatusTypeDef bpsFindThresholds(bpsAxisTypeDef axis, int16_t *min, int16_t *
 {
 	int16_t temp;
 	HAL_StatusTypeDef ret;
-	ret = bpsControlMotor(axis, -1 * MAX_PWM_DUTY / 3);
+	ret = bpsControlMotor(axis, -1 * MAX_PWM_DUTY / 1.5);
 	ret |= bpsReadEncoderCnt(axis, &temp);
 	do {
 		*min = temp;
-		HAL_Delay(100);
+		HAL_Delay(200);
 		ret |= bpsReadEncoderCnt(axis, &temp);
 	} while (*min != temp);
 	bpsControlMotor(axis, 0);
-	HAL_Delay(1000);
 	ret |= bpsReadEncoderCnt(axis, min);
-	ret |= bpsControlMotor(axis, MAX_PWM_DUTY / 3);
+	HAL_Delay(200);
+	ret |= bpsControlMotor(axis, MAX_PWM_DUTY / 1.5);
 	ret |= bpsReadEncoderCnt(axis, &temp);
 	do {
 		*max = temp;
-		HAL_Delay(100);
+		HAL_Delay(200);
 		ret |= bpsReadEncoderCnt(axis, &temp);
 	} while (*max != temp);
 	bpsControlMotor(axis, 0);
-	HAL_Delay(1000);
 	ret |= bpsReadEncoderCnt(axis, max);
 	return ret;
+}
+
+float encoderSaturation(float PID)
+{
+	if (PID > MAX_ENCODER_CNT)
+		return MAX_ENCODER_CNT;
+	else if (PID < MIN_ENCODER_CNT)
+		return MIN_ENCODER_CNT;
+	else
+		return PID;
+}
+
+float PWMSaturation(float PID)
+{
+	if (PID > MAX_PWM_DUTY)
+		return MAX_PWM_DUTY;
+	else if (PID < MIN_PWM_DUTY)
+		return MIN_PWM_DUTY;
+	else
+		return PID;
 }
