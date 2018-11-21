@@ -6,7 +6,7 @@ bpsUARTSendDataTypeDef 	sendData;
 bpsSharedDataTypeDef 	sharedData;
 TaskHandle_t   			taskNumber[NUMBER_OF_TASK];
 int16_t encoderValue;
-
+int16_t encX = 0, encXMin = 0, encXMax = 0, encY = 0, encYMin = 0, encYMax = 0;
 BOOL delay1ms = false;
 
 void bpsTaskUpdateUARTData(void* pointer)
@@ -150,25 +150,25 @@ void bpsTaskUARTSendData(void* pointer)
 
 void bpsTaskSetup(void *pointer)
 {
-	int16_t encX = 0, encXMin = 0, encXMax = 0, encY = 0, encYMin = 0, encYMax = 0;
+	
 	//this task run first, then blocked forever
 	bpsSharedDataTypeDef* sd = (bpsSharedDataTypeDef*)pointer;
 	sd->UARTData.command = BPS_UPDATE_PID;
-	sd->UARTData.content.PIDProperties.Kp[BPS_OUTER_PID][BPS_X_AXIS] = 0.128;
-	sd->UARTData.content.PIDProperties.Ki[BPS_OUTER_PID][BPS_X_AXIS] = 0.468;
-	sd->UARTData.content.PIDProperties.Kd[BPS_OUTER_PID][BPS_X_AXIS] = 0.001;
+	sd->UARTData.content.PIDProperties.Kp[BPS_OUTER_PID][BPS_X_AXIS] = 42;
+	sd->UARTData.content.PIDProperties.Ki[BPS_OUTER_PID][BPS_X_AXIS] = 20;
+	sd->UARTData.content.PIDProperties.Kd[BPS_OUTER_PID][BPS_X_AXIS] = 32;
 
-	sd->UARTData.content.PIDProperties.Kp[BPS_OUTER_PID][BPS_Y_AXIS] = 0.128;
-	sd->UARTData.content.PIDProperties.Ki[BPS_OUTER_PID][BPS_Y_AXIS] = 0.468;
-	sd->UARTData.content.PIDProperties.Kd[BPS_OUTER_PID][BPS_Y_AXIS] = 0.001;
+	sd->UARTData.content.PIDProperties.Kp[BPS_OUTER_PID][BPS_Y_AXIS] = 42;
+	sd->UARTData.content.PIDProperties.Ki[BPS_OUTER_PID][BPS_Y_AXIS] = 20;
+	sd->UARTData.content.PIDProperties.Kd[BPS_OUTER_PID][BPS_Y_AXIS] = 32;
 
 	sd->UARTData.content.PIDProperties.Kp[BPS_INNER_PID][BPS_X_AXIS] = 128;
-	sd->UARTData.content.PIDProperties.Ki[BPS_INNER_PID][BPS_X_AXIS] = 468;
-	sd->UARTData.content.PIDProperties.Kd[BPS_INNER_PID][BPS_X_AXIS] = 1;
+	sd->UARTData.content.PIDProperties.Ki[BPS_INNER_PID][BPS_X_AXIS] = 600;
+	sd->UARTData.content.PIDProperties.Kd[BPS_INNER_PID][BPS_X_AXIS] = 100;
 
 	sd->UARTData.content.PIDProperties.Kp[BPS_INNER_PID][BPS_Y_AXIS] = 128;
-	sd->UARTData.content.PIDProperties.Ki[BPS_INNER_PID][BPS_Y_AXIS] = 468;
-	sd->UARTData.content.PIDProperties.Kd[BPS_INNER_PID][BPS_Y_AXIS] = 1;
+	sd->UARTData.content.PIDProperties.Ki[BPS_INNER_PID][BPS_Y_AXIS] = 600;
+	sd->UARTData.content.PIDProperties.Kd[BPS_INNER_PID][BPS_Y_AXIS] = 100;
 	xTaskNotifyGive(taskNumber[TASK_UPDATE_SETPOINT]);
 	vTaskDelay(pdMS_TO_TICKS(11));
 	sd->UARTData.detectedBall = 0;
@@ -180,34 +180,23 @@ void bpsTaskSetup(void *pointer)
 	xTaskNotifyGive(taskNumber[TASK_UPDATE_SETPOINT]);
 	vTaskDelay(pdMS_TO_TICKS(11));
 
-	bpsFindThresholds(BPS_X_AXIS, &encXMin, &encXMax);
-	encX = (encXMin + encXMax)/2;
-	HAL_Delay(100);
-
-	bpsFindThresholds(BPS_Y_AXIS, &encYMin, &encYMax);
-	encY = (encYMin + encYMax)/2;
-	
-	bpsControlMotor(BPS_X_AXIS, 0);
-	bpsControlMotor(BPS_Y_AXIS, 0);
 	do {
-		bpsReadEncoderCnt(BPS_X_AXIS, &encoderValue);
-		bpsCalculatePID(encX, encoderValue, sd->PIDParams.Kp[BPS_INNER_PID][BPS_X_AXIS], 
+
+		bpsReadEncoderCnt(BPS_X_AXIS, &encX);
+		bpsCalculatePID(0, encX, sd->PIDParams.Kp[BPS_INNER_PID][BPS_X_AXIS], 
 						sd->PIDParams.Ki[BPS_INNER_PID][BPS_X_AXIS], sd->PIDParams.Kd[BPS_INNER_PID][BPS_X_AXIS], 
 						&sd->errorSamples[BPS_INNER_PID][BPS_X_AXIS][0], &sd->PIDSamples[BPS_INNER_PID][BPS_X_AXIS][0],
 						DT_INNER_LOOP);
 		bpsControlMotor(BPS_X_AXIS, PWMSaturation(sd->PIDSamples[BPS_INNER_PID][BPS_X_AXIS][0]));
-		bpsReadEncoderCnt(BPS_Y_AXIS, &encoderValue);
-		bpsCalculatePID(encY, encoderValue, sd->PIDParams.Kp[BPS_INNER_PID][BPS_Y_AXIS], 
+		bpsReadEncoderCnt(BPS_Y_AXIS, &encY);
+		bpsCalculatePID(0, encY, sd->PIDParams.Kp[BPS_INNER_PID][BPS_Y_AXIS], 
 						sd->PIDParams.Ki[BPS_INNER_PID][BPS_Y_AXIS], sd->PIDParams.Kd[BPS_INNER_PID][BPS_Y_AXIS], 
 						&sd->errorSamples[BPS_INNER_PID][BPS_Y_AXIS][0], &sd->PIDSamples[BPS_INNER_PID][BPS_Y_AXIS][0],
 						DT_INNER_LOOP);		
 		bpsControlMotor(BPS_Y_AXIS, PWMSaturation(sd->PIDSamples[BPS_INNER_PID][BPS_Y_AXIS][0]));	
 		HAL_Delay(1);
+	//} while (1);
 	} while (sd->errorSamples[BPS_INNER_PID][BPS_X_AXIS][0] != 0 && sd->errorSamples[BPS_INNER_PID][BPS_Y_AXIS][0] != 0);
-	bpsResetEncoderCnt(BPS_X_AXIS);
-	bpsResetEncoderCnt(BPS_Y_AXIS);
-	bpsControlMotor(BPS_X_AXIS, 0);
-	bpsControlMotor(BPS_Y_AXIS, 0);
 	// blocked forever, because task is designed not to exit when done it job
 	// this task should be write as a normal function, but i have aldready designed 
 	//it as a task at first, so whatever! it still runs well

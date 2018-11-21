@@ -24,7 +24,7 @@ using namespace std;
 #define RECT_SIZE       2
 //*******************************//
 Mat frame, gray, mblur, thresh, contour;
-int B = 70, C = 70, S = 100, T = 90;
+int B = 70, C = 100, S = 100, T = 150;
 
 //*******************************//
 bpsUARTSendDataTypeDef STMData;
@@ -148,6 +148,7 @@ void processFrame(void)
         threshold(gray,thresh,T,255,0);
         findContours(thresh,contours,hierarchy,RETR_TREE,CHAIN_APPROX_SIMPLE );
         //*******************************//
+        bFoundObject = false;
         if (hierarchy.size() > 0) 
         {
             refArea = 0;

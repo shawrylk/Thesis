@@ -158,24 +158,25 @@ HAL_StatusTypeDef bpsFindThresholds(bpsAxisTypeDef axis, int16_t *min, int16_t *
 {
 	int16_t temp;
 	HAL_StatusTypeDef ret;
-	ret = bpsControlMotor(axis, -1 * MAX_PWM_DUTY / 1.5);
+	ret = bpsControlMotor(axis, -1 * MAX_PWM_DUTY / 1.6);
 	ret |= bpsReadEncoderCnt(axis, &temp);
 	do {
 		*min = temp;
-		HAL_Delay(200);
+		HAL_Delay(300);
 		ret |= bpsReadEncoderCnt(axis, &temp);
 	} while (*min != temp);
-	bpsControlMotor(axis, 0);
+	ret |= bpsControlMotor(axis, 0);
+	HAL_Delay(1000);
 	ret |= bpsReadEncoderCnt(axis, min);
-	HAL_Delay(200);
-	ret |= bpsControlMotor(axis, MAX_PWM_DUTY / 1.5);
+	ret |= bpsControlMotor(axis, MAX_PWM_DUTY / 1.6);
 	ret |= bpsReadEncoderCnt(axis, &temp);
 	do {
 		*max = temp;
-		HAL_Delay(200);
+		HAL_Delay(300);
 		ret |= bpsReadEncoderCnt(axis, &temp);
 	} while (*max != temp);
-	bpsControlMotor(axis, 0);
+	ret |= bpsControlMotor(axis, 0);
+	HAL_Delay(1000);
 	ret |= bpsReadEncoderCnt(axis, max);
 	return ret;
 }
@@ -196,6 +197,8 @@ float PWMSaturation(float PID)
 		return MAX_PWM_DUTY;
 	else if (PID < MIN_PWM_DUTY)
 		return MIN_PWM_DUTY;
-	else
+	else if (PID > MAX_PWM_DUTY / 2.4 || PID < MIN_PWM_DUTY / 2.4)
 		return PID;
+	else
+		return 0;
 }
