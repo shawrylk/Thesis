@@ -176,8 +176,8 @@ void processFrame(void)
         }
         sem_post(&semProcessFrameCplt);
         //*******************************//
-        xKF = KF.predict(x);
-        yKF = KF.predict(y);
+        xKF = x;//KF.predict(x);
+        yKF = y;//KF.predict(y);
         if (bFoundObject)
             std::cout << "x = " << xKF << " y = " << yKF << std::endl;
         STMMutex.lock();

@@ -82,11 +82,11 @@ void bpsTaskCalRefEncoderValue(void *pointer)
 		// if raspi detected ball, then calculate reference encoder value
 		if (sd->UARTData.detectedBall)
 		{
-			bpsCalculatePID(sd->setpoint[BPS_X_AXIS], sd->UARTData.ballCoordinate[BPS_X_AXIS], sd->PIDParams.Kp[BPS_OUTER_PID][BPS_X_AXIS], 
+			bpsCalculatePID(sd->setpoint[BPS_X_AXIS], 480 - sd->UARTData.ballCoordinate[BPS_X_AXIS], sd->PIDParams.Kp[BPS_OUTER_PID][BPS_X_AXIS], 
 							sd->PIDParams.Ki[BPS_OUTER_PID][BPS_X_AXIS], sd->PIDParams.Kd[BPS_OUTER_PID][BPS_X_AXIS], 
 							&sd->errorSamples[BPS_OUTER_PID][BPS_X_AXIS][0], &sd->PIDSamples[BPS_OUTER_PID][BPS_X_AXIS][0],
 							DT_OUTER_LOOP);
-			bpsCalculatePID(sd->setpoint[BPS_Y_AXIS], 480 - sd->UARTData.ballCoordinate[BPS_Y_AXIS], sd->PIDParams.Kp[BPS_OUTER_PID][BPS_Y_AXIS], 
+			bpsCalculatePID(sd->setpoint[BPS_Y_AXIS],sd->UARTData.ballCoordinate[BPS_Y_AXIS], sd->PIDParams.Kp[BPS_OUTER_PID][BPS_Y_AXIS], 
 							sd->PIDParams.Ki[BPS_OUTER_PID][BPS_Y_AXIS], sd->PIDParams.Kd[BPS_OUTER_PID][BPS_Y_AXIS], 
 							&sd->errorSamples[BPS_OUTER_PID][BPS_Y_AXIS][0], &sd->PIDSamples[BPS_OUTER_PID][BPS_Y_AXIS][0],
 							DT_OUTER_LOOP);			
