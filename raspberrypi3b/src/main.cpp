@@ -24,7 +24,7 @@ using namespace std;
 #define RECT_SIZE       2
 //*******************************//
 Mat frame, gray, mblur, thresh, contour;
-int B = 70, C = 100, S = 100, T = 150;
+int B = 70, C = 100, S = 100, T = 110;
 
 //*******************************//
 bpsUARTSendDataTypeDef STMData;
