@@ -25,7 +25,7 @@ using namespace std;
 //*******************************//
 Mat frame, gray, mblur, thresh, contour;
 int B = 70, C = 100, S = 100, T = 110;
-
+int LH = 10,LS = 10,LV = 10,HH = 255,HS = 255,HV = 255;
 //*******************************//
 bpsUARTSendDataTypeDef STMData;
 bpsUARTReceiveDataTypeDef RaspiEncoderCnt;
@@ -144,8 +144,12 @@ void processFrame(void)
             start = std::chrono::high_resolution_clock::now();
         count++;
         //*******************************//
-        cvtColor(frame,gray,COLOR_BGR2GRAY);
-        threshold(gray,thresh,T,255,1);
+        cvtColor(frame,gray,COLOR_BGR2HSV);
+        inRange( gray,                                     // Thresholding the image
+                     cv::Scalar(LH,  LS,  LV ),
+                     cv::Scalar(HH, HS, HV),
+                     thresh );
+        //threshold(gray,thresh,T,255,1);
         findContours(thresh,contours,hierarchy,RETR_TREE,CHAIN_APPROX_SIMPLE );
         //*******************************//
         bFoundObject = false;
@@ -221,7 +225,12 @@ void showImage(void)
     createTrackbar( "Brightness",winName, &B, 100, onTrackbarChanged );
     createTrackbar( "Contrast",winName, &C, 100,onTrackbarChanged );
     createTrackbar( "Saturation",winName, &S, 100,onTrackbarChanged);
-    createTrackbar( "Thres",winName, &T, 255,onTrackbarChanged);
+    createTrackbar( "LH",winName, &LH, 255,onTrackbarChanged);
+    createTrackbar( "LS",winName, &LS, 255,onTrackbarChanged);
+    createTrackbar( "LV",winName, &LV, 255,onTrackbarChanged);
+    createTrackbar( "HH",winName, &HH, 255,onTrackbarChanged);
+    createTrackbar( "HS",winName, &HS, 255,onTrackbarChanged);
+    createTrackbar( "HV",winName, &HV, 255,onTrackbarChanged);
     //*******************************//
     sleep(1);
     while(1)
