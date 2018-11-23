@@ -9,31 +9,21 @@
 using namespace cv;
 using namespace std;
  
-float Brightness;
-float Contrast ;
-float Saturation;
-float Gain;
-float Thres;
 int B;
 int C;
 int S;
 int G;
 int T;
 char winName[20]="Live";
-Mat frame, gray, thresh;
+Mat frame, gray, thresh1, thresh2;
 VideoCapture cap(0);
 
 void onTrackbar_changed(int, void*)
 {
- Brightness =float(B)/100;
- Contrast   =float(C)/100;
- Saturation =float(S)/100;
- Gain       =float(G)/100;
-Thres       =float(T)/255;
-cap.set(CAP_PROP_BRIGHTNESS,Brightness);
-cap.set(CAP_PROP_CONTRAST, Contrast);
-cap.set(CAP_PROP_SATURATION, Saturation);
-cap.set(CAP_PROP_GAIN, Gain);
+
+cap.set(CAP_PROP_BRIGHTNESS,B);
+cap.set(CAP_PROP_CONTRAST, C);
+cap.set(CAP_PROP_SATURATION, S);
 
 }
 
@@ -58,15 +48,15 @@ int main(int, char**)
  cout<<"Default Gain--------------> "<<Gain<<endl<<endl;
  cout<<"===================================="<<endl;
 
-  B=int(Brightness*100);
-  C=int(Contrast*100);
-  S=int(Saturation*100);
-  G=int(Gain*100);
-  T=int(25*255);  
+  B=70;
+  C=100;
+  S=100;
+  G=150;
+  T=110;
 createTrackbar( "Brightness",winName, &B, 100, onTrackbar_changed );
 createTrackbar( "Contrast",winName, &C, 100,onTrackbar_changed );
 createTrackbar( "Saturation",winName, &S, 100,onTrackbar_changed);
-createTrackbar( "Gain",winName, &G, 100,onTrackbar_changed);
+createTrackbar( "InThres",winName, &G, 255,onTrackbar_changed);
 createTrackbar( "Thres",winName, &T, 255,onTrackbar_changed);
     int i=0;
     char name[10];
@@ -77,10 +67,11 @@ createTrackbar( "Thres",winName, &T, 255,onTrackbar_changed);
 		cvtColor(frame,gray,COLOR_BGR2GRAY);
         //medianBlur(gray, gray, 5);
         //std::cout << T <<std::endl;
-        threshold(gray,thresh,T,255,0);
+        threshold(gray,thresh1,G,255,1);
+        threshold(thresh1,thresh2,T,255,0);
         imshow(winName, frame);
-        imshow("gray", gray);
-        imshow("thresh", thresh);
+        imshow("thresh1", thresh1);
+        imshow("thresh2", thresh2);
         char c=waitKey(30);
 
         if(c=='s') {

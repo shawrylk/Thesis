@@ -220,7 +220,7 @@
       <pMultCmdsp></pMultCmdsp>
       <SystemViewers>
         <Entry>
-          <Name>System Viewer\TIM4</Name>
+          <Name>System Viewer\TIM3</Name>
           <WinId>35904</WinId>
         </Entry>
       </SystemViewers>
@@ -627,7 +627,7 @@
       <GroupNumber>4</GroupNumber>
       <FileNumber>31</FileNumber>
       <FileType>1</FileType>
-      <tvExp>0</tvExp>
+      <tvExp>1</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>..\Src\bpsFunctions.c</PathWithFileName>
@@ -639,7 +639,7 @@
       <GroupNumber>4</GroupNumber>
       <FileNumber>32</FileNumber>
       <FileType>1</FileType>
-      <tvExp>1</tvExp>
+      <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>..\Src\bpsTasks.c</PathWithFileName>
