@@ -23,7 +23,7 @@ using namespace std;
 #define MAX_OBJECT_AREA 120*120
 #define RECT_SIZE       2
 //*******************************//
-Mat frame, gray, mblur, thresh, contour;
+Mat frame, hsv, range, bin, contour;
 int B = 90, C = 100, S = 100, T = 128;
 int LH = 0,LS = 0,LV = 255,HH = 255,HS = 150,HV = 255;
 //*******************************//
@@ -140,7 +140,8 @@ void preProcessFrame(void)
             start = std::chrono::high_resolution_clock::now();
         count++;
         //*******************************//
-        cvtColor(frame,gray,COLOR_BGR2HSV);
+        cvtColor(frame,hsv,COLOR_BGR2HSV);
+        inRange( hsv, cv::Scalar(LH,  LS,  LV ), cv::Scalar(HH, HS, HV), range );
         sem_post(&semPreProcessFrameCplt);
         //*******************************//
         if (count == 1000)
@@ -180,12 +181,8 @@ void processFrame(void)
             start = std::chrono::high_resolution_clock::now();
         count++;
         //*******************************//
-        inRange( gray,                                     // Thresholding the image
-                     cv::Scalar(LH,  LS,  LV ),
-                     cv::Scalar(HH, HS, HV),
-                     thresh );
-        threshold(thresh,thresh,T,255,1);
-        findContours(thresh,contours,hierarchy,RETR_TREE,CHAIN_APPROX_SIMPLE );
+        threshold(range,bin,T,255,1);
+        findContours(bin,contours,hierarchy,RETR_TREE,CHAIN_APPROX_SIMPLE );
         //*******************************//
         bFoundObject = false;
         if (hierarchy.size() > 0) 
@@ -281,7 +278,7 @@ void showImage(void)
                     STMData.ballCoordinate[BPS_Y_AXIS], RECT_SIZE, RECT_SIZE); 
         rectangle(frame, bbox, Scalar( 255, 0, 0 ), 2, 1 ); 
         imshow("frame", frame);
-        imshow("thresh", thresh);
+        imshow("thresh", bin);
         waitKey(1);
         //*******************************//
         if (count == 1000)
