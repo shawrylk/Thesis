@@ -183,7 +183,7 @@ void processFrame(void)
         count++;
         //*******************************//
         inRange( hsv, cv::Scalar(LH,  LS,  LV ), cv::Scalar(HH, HS, HV), range );
-        bin = 255 - range;
+        threshold(range, bin, 128, 255, 1);
         findContours(bin,contours,hierarchy,RETR_TREE,CHAIN_APPROX_SIMPLE );
         //*******************************//
         bFoundObject = false;
