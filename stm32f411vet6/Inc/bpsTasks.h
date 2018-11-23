@@ -21,6 +21,7 @@ typedef struct
     bpsPIDTypeDef                           PIDParams;
     int16_t                                 errorSamples[BPS_NUMBER_OF_PID_LOOP][BPS_NUMBER_OF_AXIS][NUMBER_OF_SAMPLE];
     float                                   PIDSamples[BPS_NUMBER_OF_PID_LOOP][BPS_NUMBER_OF_AXIS][NUMBER_OF_SAMPLE];
+    float                                   integralSum[BPS_NUMBER_OF_PID_LOOP][BPS_NUMBER_OF_AXIS][NUMBER_OF_SAMPLE];
 }
 bpsSharedDataTypeDef; //212
 

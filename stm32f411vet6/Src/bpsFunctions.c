@@ -105,6 +105,22 @@ HAL_StatusTypeDef bpsCalculatePID(int16_t setpoint, int16_t currentPoint, float 
 	return ret;
 }
 
+HAL_StatusTypeDef bpsCalculateContinousPID(int16_t setpoint, int16_t currentPoint, float Kp, 
+									float Ki, float Kd, int16_t* errorSamples_out, float* PIDSamples_out, float* integralSum, float time)
+{
+	HAL_StatusTypeDef ret;
+	if (PIDSamples_out == NULL || errorSamples_out == NULL)
+		return HAL_ERROR;
+	int16_t e = setpoint - currentPoint;
+	float PID = Kp * e
+			+	*integralSum + Ki * e * time;
+			+	Kd * (e - *errorSamples_out) / time;
+	ret = bpsAppendErrorSamples(errorSamples_out, e);
+	ret |= bpsAppendPIDSamples(PIDSamples_out, PID);
+	ret |= bpsAppendPIDSamples(integralSum, *integralSum + Ki * e * time);
+	return ret;
+}
+
 HAL_StatusTypeDef bpsAppendErrorSamples(int16_t* errorSamples, int16_t newSample)
 {
 
@@ -197,7 +213,7 @@ float PWMSaturation(float PID)
 		return MAX_PWM_DUTY;
 	else if (PID < MIN_PWM_DUTY)
 		return MIN_PWM_DUTY;
-	else if (PID > 500 || PID < MIN_PWM_DUTY -500)
+	else if (PID > MAX_PWM_DUTY / 9 || PID < MIN_PWM_DUTY / 9)
 		return PID;
 	else
 		return 0;

@@ -48,11 +48,12 @@ void bpsTaskUpdateSetpoint(void* pointer)
 				memset(&sd->errorSamples, 0, sizeof(sd->errorSamples));
 				// clear PIDSamples
 				memset(&sd->PIDSamples, 0, sizeof(sd->PIDSamples));
-				xTaskNotifyGive(taskNumber[TASK_CAL_REF_ENCODER_VALUE]);
+				memset(&sd->integralSum, 0, sizeof(sd->integralSum));
+				xTaskNotifyGive(taskNumber[TASK_CONTROL_MOTOR]);
 				break;
 			case BPS_MODE_SETPOINT:
 				memcpy(&sd->setpoint, &sd->UARTData.content, sizeof(bpsCircleTypeDef));
-				xTaskNotifyGive(taskNumber[TASK_CAL_REF_ENCODER_VALUE]);
+				xTaskNotifyGive(taskNumber[TASK_CONTROL_MOTOR]);
 				break;
 			case BPS_MODE_CIRCLE:
 				bpsCalSetpoint4CircleMode(	sd->UARTData.content.circleProperties.centerCoordinate[BPS_X_AXIS], 
@@ -61,10 +62,10 @@ void bpsTaskUpdateSetpoint(void* pointer)
 				bpsCalSetpoint4CircleMode(	sd->UARTData.content.circleProperties.centerCoordinate[BPS_Y_AXIS], 
 					sd->UARTData.content.circleProperties.radius, &sd->UARTData.content.circleProperties.currentAngle,
 					sd->UARTData.content.circleProperties.speed, &sd->setpoint[BPS_Y_AXIS], BPS_Y_AXIS);		
-				xTaskNotifyGive(taskNumber[TASK_CAL_REF_ENCODER_VALUE]);
+				xTaskNotifyGive(taskNumber[TASK_CONTROL_MOTOR]);
 				break;
 			case BPS_MODE_RECTANGLE:
-				xTaskNotifyGive(taskNumber[TASK_CAL_REF_ENCODER_VALUE]);
+				xTaskNotifyGive(taskNumber[TASK_CONTROL_MOTOR]);
 				break;
 			default:
 				break;
@@ -111,22 +112,44 @@ void bpsTaskControlMotor(void* pointer)
 	{
 		// wait notification from calculate reference encoder value task
 		ulTaskNotifyTake(pdFALSE, portMAX_DELAY);
-		bpsReadEncoderCnt(BPS_X_AXIS, &encoderValue);
-		bpsCalculatePID(sd->encoderCntRef[BPS_X_AXIS], encoderValue, sd->PIDParams.Kp[BPS_INNER_PID][BPS_X_AXIS], 
-						sd->PIDParams.Ki[BPS_INNER_PID][BPS_X_AXIS], sd->PIDParams.Kd[BPS_INNER_PID][BPS_X_AXIS], 
-						&sd->errorSamples[BPS_INNER_PID][BPS_X_AXIS][0], &sd->PIDSamples[BPS_INNER_PID][BPS_X_AXIS][0],
-						DT_INNER_LOOP);
-		bpsReadEncoderCnt(BPS_Y_AXIS, &encoderValue);
-		bpsCalculatePID(sd->encoderCntRef[BPS_Y_AXIS], encoderValue, sd->PIDParams.Kp[BPS_INNER_PID][BPS_Y_AXIS], 
-						sd->PIDParams.Ki[BPS_INNER_PID][BPS_Y_AXIS], sd->PIDParams.Kd[BPS_INNER_PID][BPS_Y_AXIS], 
-						&sd->errorSamples[BPS_INNER_PID][BPS_Y_AXIS][0], &sd->PIDSamples[BPS_INNER_PID][BPS_Y_AXIS][0],
-						DT_INNER_LOOP);				
-		bpsControlMotor(BPS_X_AXIS, PWMSaturation(sd->PIDSamples[BPS_INNER_PID][BPS_X_AXIS][0]));
-		bpsControlMotor(BPS_Y_AXIS, PWMSaturation(sd->PIDSamples[BPS_INNER_PID][BPS_Y_AXIS][0]));
+		if (sd->UARTData.detectedBall)
+		{
+			//bpsReadEncoderCnt(BPS_X_AXIS, &encoderValue);
+			//bpsCalculatePID(sd->encoderCntRef[BPS_X_AXIS], encoderValue, 
+			// bpsCalculatePID(sd->setpoint[BPS_X_AXIS], sd->UARTData.ballCoordinate[BPS_X_AXIS],
+			// 				sd->PIDParams.Kp[BPS_INNER_PID][BPS_X_AXIS], 
+			// 				sd->PIDParams.Ki[BPS_INNER_PID][BPS_X_AXIS], sd->PIDParams.Kd[BPS_INNER_PID][BPS_X_AXIS], 
+			// 				&sd->errorSamples[BPS_INNER_PID][BPS_X_AXIS][0], &sd->PIDSamples[BPS_INNER_PID][BPS_X_AXIS][0],
+			// 				//DT_INNER_LOOP);
+			// 				DT_OUTER_LOOP);
+			// bpsReadEncoderCnt(BPS_Y_AXIS, &encoderValue);
+			bpsCalculateContinousPID(sd->setpoint[BPS_X_AXIS], sd->UARTData.ballCoordinate[BPS_X_AXIS],
+							sd->PIDParams.Kp[BPS_INNER_PID][BPS_X_AXIS], 
+							sd->PIDParams.Ki[BPS_INNER_PID][BPS_X_AXIS], sd->PIDParams.Kd[BPS_INNER_PID][BPS_X_AXIS], 
+							&sd->errorSamples[BPS_INNER_PID][BPS_X_AXIS][0], &sd->PIDSamples[BPS_INNER_PID][BPS_X_AXIS][0],
+							&sd->integralSum[BPS_INNER_PID][BPS_X_AXIS][0],
+							//DT_INNER_LOOP);
+							DT_OUTER_LOOP);
+			//bpsReadEncoderCnt(BPS_Y_AXIS, &encoderValue);
+			//bpsCalculatePID(sd->encoderCntRef[BPS_Y_AXIS], encoderValue, 
+			bpsCalculateContinousPID(sd->setpoint[BPS_Y_AXIS], sd->UARTData.ballCoordinate[BPS_Y_AXIS],
+							sd->PIDParams.Kp[BPS_INNER_PID][BPS_Y_AXIS], 
+							sd->PIDParams.Ki[BPS_INNER_PID][BPS_Y_AXIS], sd->PIDParams.Kd[BPS_INNER_PID][BPS_Y_AXIS], 
+							&sd->errorSamples[BPS_INNER_PID][BPS_Y_AXIS][0], &sd->PIDSamples[BPS_INNER_PID][BPS_Y_AXIS][0],
+							&sd->integralSum[BPS_INNER_PID][BPS_Y_AXIS][0],
+							//DT_INNER_LOOP);	
+							DT_OUTER_LOOP);			
+			bpsControlMotor(BPS_X_AXIS, PWMSaturation(sd->PIDSamples[BPS_INNER_PID][BPS_X_AXIS][0]));
+			bpsControlMotor(BPS_Y_AXIS, PWMSaturation(sd->PIDSamples[BPS_INNER_PID][BPS_Y_AXIS][0]));
+		} else
+		{
+			bpsControlMotor(BPS_X_AXIS, 0);
+			bpsControlMotor(BPS_Y_AXIS, 0);
+		}
 		//delay 1ms to accomplish 1ms discrete PID, also give cpu time for UART send data task to run
-		if (delay1ms)
-			vTaskDelay(pdMS_TO_TICKS(1));
-		delay1ms = true;
+		// if (delay1ms)
+		// 	vTaskDelay(pdMS_TO_TICKS(1));
+		// delay1ms = true;
 		xTaskNotifyGive(taskNumber[TASK_UPDATE_SETPOINT]);
 	}
 }
@@ -162,13 +185,13 @@ void bpsTaskSetup(void *pointer)
 	sd->UARTData.content.PIDProperties.Ki[BPS_OUTER_PID][BPS_Y_AXIS] = 0;
 	sd->UARTData.content.PIDProperties.Kd[BPS_OUTER_PID][BPS_Y_AXIS] = 0;
 
-	sd->UARTData.content.PIDProperties.Kp[BPS_INNER_PID][BPS_X_AXIS] = 128;
-	sd->UARTData.content.PIDProperties.Ki[BPS_INNER_PID][BPS_X_AXIS] = 600;
-	sd->UARTData.content.PIDProperties.Kd[BPS_INNER_PID][BPS_X_AXIS] = 100;
+	sd->UARTData.content.PIDProperties.Kp[BPS_INNER_PID][BPS_X_AXIS] = 9876;
+	sd->UARTData.content.PIDProperties.Ki[BPS_INNER_PID][BPS_X_AXIS] = 0;
+	sd->UARTData.content.PIDProperties.Kd[BPS_INNER_PID][BPS_X_AXIS] = 0;
 
-	sd->UARTData.content.PIDProperties.Kp[BPS_INNER_PID][BPS_Y_AXIS] = 128; //128
-	sd->UARTData.content.PIDProperties.Ki[BPS_INNER_PID][BPS_Y_AXIS] = 600; //600
-	sd->UARTData.content.PIDProperties.Kd[BPS_INNER_PID][BPS_Y_AXIS] = 100; //100
+	sd->UARTData.content.PIDProperties.Kp[BPS_INNER_PID][BPS_Y_AXIS] = 9876; //128
+	sd->UARTData.content.PIDProperties.Ki[BPS_INNER_PID][BPS_Y_AXIS] = 0; //600
+	sd->UARTData.content.PIDProperties.Kd[BPS_INNER_PID][BPS_Y_AXIS] = 0; //100
 	xTaskNotifyGive(taskNumber[TASK_UPDATE_SETPOINT]);
 	vTaskDelay(pdMS_TO_TICKS(11));
 	sd->UARTData.detectedBall = 0;
@@ -180,22 +203,22 @@ void bpsTaskSetup(void *pointer)
 	xTaskNotifyGive(taskNumber[TASK_UPDATE_SETPOINT]);
 	vTaskDelay(pdMS_TO_TICKS(11));
 
-	do {
+	// do {
 
-		bpsReadEncoderCnt(BPS_X_AXIS, &encX);
-		bpsCalculatePID(0, encX, sd->PIDParams.Kp[BPS_INNER_PID][BPS_X_AXIS], 
-						sd->PIDParams.Ki[BPS_INNER_PID][BPS_X_AXIS], sd->PIDParams.Kd[BPS_INNER_PID][BPS_X_AXIS], 
-						&sd->errorSamples[BPS_INNER_PID][BPS_X_AXIS][0], &sd->PIDSamples[BPS_INNER_PID][BPS_X_AXIS][0],
-						DT_INNER_LOOP);
-		bpsControlMotor(BPS_X_AXIS, PWMSaturation(sd->PIDSamples[BPS_INNER_PID][BPS_X_AXIS][0]));
-		bpsReadEncoderCnt(BPS_Y_AXIS, &encY);
-		bpsCalculatePID(0, encY, sd->PIDParams.Kp[BPS_INNER_PID][BPS_Y_AXIS], 
-						sd->PIDParams.Ki[BPS_INNER_PID][BPS_Y_AXIS], sd->PIDParams.Kd[BPS_INNER_PID][BPS_Y_AXIS], 
-						&sd->errorSamples[BPS_INNER_PID][BPS_Y_AXIS][0], &sd->PIDSamples[BPS_INNER_PID][BPS_Y_AXIS][0],
-						DT_INNER_LOOP);		
-		bpsControlMotor(BPS_Y_AXIS, PWMSaturation(sd->PIDSamples[BPS_INNER_PID][BPS_Y_AXIS][0]));	
-		HAL_Delay(1);
-	} while (1);
+	// 	bpsReadEncoderCnt(BPS_X_AXIS, &encX);
+	// 	bpsCalculatePID(0, encX, sd->PIDParams.Kp[BPS_INNER_PID][BPS_X_AXIS], 
+	// 					sd->PIDParams.Ki[BPS_INNER_PID][BPS_X_AXIS], sd->PIDParams.Kd[BPS_INNER_PID][BPS_X_AXIS], 
+	// 					&sd->errorSamples[BPS_INNER_PID][BPS_X_AXIS][0], &sd->PIDSamples[BPS_INNER_PID][BPS_X_AXIS][0],
+	// 					DT_INNER_LOOP);
+	// 	bpsControlMotor(BPS_X_AXIS, PWMSaturation(sd->PIDSamples[BPS_INNER_PID][BPS_X_AXIS][0]));
+	// 	bpsReadEncoderCnt(BPS_Y_AXIS, &encY);
+	// 	bpsCalculatePID(0, encY, sd->PIDParams.Kp[BPS_INNER_PID][BPS_Y_AXIS], 
+	// 					sd->PIDParams.Ki[BPS_INNER_PID][BPS_Y_AXIS], sd->PIDParams.Kd[BPS_INNER_PID][BPS_Y_AXIS], 
+	// 					&sd->errorSamples[BPS_INNER_PID][BPS_Y_AXIS][0], &sd->PIDSamples[BPS_INNER_PID][BPS_Y_AXIS][0],
+	// 					DT_INNER_LOOP);		
+	// 	bpsControlMotor(BPS_Y_AXIS, PWMSaturation(sd->PIDSamples[BPS_INNER_PID][BPS_Y_AXIS][0]));	
+	// 	HAL_Delay(1);
+	//} while (1);
 	//} while (sd->errorSamples[BPS_INNER_PID][BPS_X_AXIS][0] != 0 && sd->errorSamples[BPS_INNER_PID][BPS_Y_AXIS][0] != 0);
 	// blocked forever, because task is designed not to exit when done it job
 	// this task should be write as a normal function, but i have aldready designed 
