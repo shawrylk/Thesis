@@ -19,8 +19,8 @@ using namespace std;
 #define FRAME_HEIGHT    480
 #define FPS             90
 #define MAX_NUM_OBJECTS 100
-#define MIN_OBJECT_AREA 80*80
-#define MAX_OBJECT_AREA 120*120
+#define MIN_OBJECT_AREA 60*60
+#define MAX_OBJECT_AREA 140*140
 #define RECT_SIZE       2
 //*******************************//
 UMat frame, hsv, range, bin, contour;
@@ -217,7 +217,7 @@ void processFrame(void)
         if (bFoundObject)
             std::cout << "x = " << xKF << " y = " << yKF << std::endl;
         else
-            std::cout << "ball not found" << std::endl;
+            std::cout << "!";
         STMMutex.lock();
         if (bFoundObject)
             STMData.detectedBall = 1;
