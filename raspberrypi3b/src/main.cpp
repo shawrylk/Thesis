@@ -24,8 +24,8 @@ using namespace std;
 #define RECT_SIZE       2
 //*******************************//
 Mat frame, gray, mblur, thresh, contour;
-int B = 70, C = 100, S = 100, T = 110;
-int LH = 10,LS = 10,LV = 10,HH = 255,HS = 255,HV = 255;
+int B = 90, C = 100, S = 100, T = 110;
+int LH = 0,LS = 0,LV = 255,HH = 255,HS = 0,HV = 255;
 //*******************************//
 bpsUARTSendDataTypeDef STMData;
 bpsUARTReceiveDataTypeDef RaspiEncoderCnt;
@@ -149,7 +149,7 @@ void processFrame(void)
                      cv::Scalar(LH,  LS,  LV ),
                      cv::Scalar(HH, HS, HV),
                      thresh );
-        //threshold(gray,thresh,T,255,1);
+        threshold(thresh,thresh,T,255,1);
         findContours(thresh,contours,hierarchy,RETR_TREE,CHAIN_APPROX_SIMPLE );
         //*******************************//
         bFoundObject = false;
