@@ -149,7 +149,7 @@ void processFrame(void)
                      cv::Scalar(LH,  LS,  LV ),
                      cv::Scalar(HH, HS, HV),
                      thresh );
-        threshold(thresh,thresh,T,255,1);
+        //threshold(thresh,thresh,T,255,1);
         findContours(thresh,contours,hierarchy,RETR_TREE,CHAIN_APPROX_SIMPLE );
         //*******************************//
         bFoundObject = false;
