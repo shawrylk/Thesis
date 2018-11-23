@@ -145,7 +145,7 @@ void processFrame(void)
         count++;
         //*******************************//
         cvtColor(frame,gray,COLOR_BGR2GRAY);
-        threshold(gray,thresh,T,255,0);
+        threshold(gray,thresh,T,255,1);
         findContours(thresh,contours,hierarchy,RETR_TREE,CHAIN_APPROX_SIMPLE );
         //*******************************//
         bFoundObject = false;
