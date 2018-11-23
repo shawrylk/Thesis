@@ -213,8 +213,8 @@ float PWMSaturation(float PID)
 		return MAX_PWM_DUTY;
 	else if (PID < MIN_PWM_DUTY)
 		return MIN_PWM_DUTY;
-	else if (PID > MAX_PWM_DUTY / 9 || PID < MIN_PWM_DUTY / 9)
+	else //if (PID > MAX_PWM_DUTY / 20 || PID < MIN_PWM_DUTY / 20)
 		return PID;
-	else
-		return 0;
+	//else
+	//	return 0;
 }

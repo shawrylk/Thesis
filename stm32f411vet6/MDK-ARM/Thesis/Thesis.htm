@@ -3,7 +3,7 @@
 <title>Static Call Graph - [Thesis\Thesis.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image Thesis\Thesis.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060528: Last Updated: Fri Nov 23 22:31:02 2018
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060528: Last Updated: Sat Nov 24 00:28:06 2018
 <BR><P>
 <H3>Maximum Stack Usage =        288 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -923,7 +923,7 @@ Global Symbols
 <P><STRONG><a name="[2]"></a>NMI_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32f4xx_it.o(i.NMI_Handler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f411xe.o(RESET)
 </UL>
-<P><STRONG><a name="[d4]"></a>PWMSaturation</STRONG> (Thumb, 58 bytes, Stack size 0 bytes, bpsfunctions.o(i.PWMSaturation))
+<P><STRONG><a name="[d4]"></a>PWMSaturation</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, bpsfunctions.o(i.PWMSaturation))
 <BR><BR>[Called By]<UL><LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsTaskControlMotor
 </UL>
 
@@ -1186,7 +1186,7 @@ Global Symbols
 <LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsTaskControlMotor
 </UL>
 
-<P><STRONG><a name="[cc]"></a>bpsSetPWMDuty</STRONG> (Thumb, 72 bytes, Stack size 12 bytes, bpsfunctions.o(i.bpsSetPWMDuty))
+<P><STRONG><a name="[cc]"></a>bpsSetPWMDuty</STRONG> (Thumb, 70 bytes, Stack size 12 bytes, bpsfunctions.o(i.bpsSetPWMDuty))
 <BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = bpsSetPWMDuty
 </UL>
 <BR>[Called By]<UL><LI><a href="#[cb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsControlMotor
@@ -1233,7 +1233,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> bpstasks.o(i.bpsBallAndPlateSystemStart)
 </UL>
-<P><STRONG><a name="[4b]"></a>bpsTaskSetup</STRONG> (Thumb, 132 bytes, Stack size 0 bytes, bpstasks.o(i.bpsTaskSetup))
+<P><STRONG><a name="[4b]"></a>bpsTaskSetup</STRONG> (Thumb, 148 bytes, Stack size 0 bytes, bpstasks.o(i.bpsTaskSetup))
 <BR><BR>[Stack]<UL><LI>Max Depth = 64<LI>Call Chain = bpsTaskSetup &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
