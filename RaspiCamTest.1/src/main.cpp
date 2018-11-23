@@ -55,10 +55,10 @@ createTrackbar( "Thres",winName, &T, 255,onTrackbar_changed);
 		cvtColor(frame,gray,COLOR_BGR2GRAY);
         //medianBlur(gray, gray, 5);
         //std::cout << T <<std::endl;
-        threshold(gray,thresh1,G,255,1);
-        threshold(thresh1,thresh2,T,255,0);
+        //threshold(gray,thresh1,G,255,1);
+        threshold(thresh1,thresh2,T,255,1);
         imshow(winName, frame);
-        imshow("thresh1", thresh1);
+        //imshow("thresh1", thresh1);
         imshow("thresh2", thresh2);
         char c=waitKey(30);
 
