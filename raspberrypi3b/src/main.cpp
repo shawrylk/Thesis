@@ -23,7 +23,7 @@ using namespace std;
 #define MAX_OBJECT_AREA 120*120
 #define RECT_SIZE       2
 //*******************************//
-Mat frame, hsv, range, bin, contour;
+UMat frame, hsv, range, bin, contour;
 int B = 90, C = 100, S = 100, T = 128;
 int LH = 0,LS = 0,LV = 255,HH = 90,HS = 30,HV = 255;
 //*******************************//
