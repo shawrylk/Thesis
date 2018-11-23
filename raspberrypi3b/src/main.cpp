@@ -2,6 +2,7 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/core/ocl.hpp>
 #include <thread>
+#include <pthread.h>
 #include <semaphore.h>
 #include <unistd.h>
 #include <iostream>
@@ -18,9 +19,9 @@ using namespace std;
 #define FRAME_WIDTH     480
 #define FRAME_HEIGHT    480
 #define FPS             90
-#define MAX_NUM_OBJECTS 100
-#define MIN_OBJECT_AREA 60*60
-#define MAX_OBJECT_AREA 140*140
+#define MAX_NUM_OBJECTS 200
+#define MIN_OBJECT_AREA 90*90
+#define MAX_OBJECT_AREA 110*110
 #define RECT_SIZE       2
 //*******************************//
 UMat frame, hsv, range, bin, contour;
