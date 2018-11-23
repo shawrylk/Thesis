@@ -67,6 +67,7 @@ int main( int argc, char *argv[] )
     sem_init(&semPreProcessFrameCplt, 0, 0);
     sem_init(&semProcessFrameCplt, 0, 0);
     onTrackbarChanged(0, nullptr);
+    std::cout << "sizeof = " << sizeof(bpsUARTSendDataTypeDef) << std::endl;
     //*******************************//
     std::thread thread1(captureFrame);
     std::thread thread2(preProcessFrame);
