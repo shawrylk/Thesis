@@ -148,7 +148,7 @@ void preProcessFrame(void)
             auto end = std::chrono::high_resolution_clock::now();
             auto diff = std::chrono::duration_cast<chrono::seconds>(end - start);
             fps = 1000 / static_cast<double>(diff.count());
-            std::cout << "thread process frame " << fps << "\n";
+            std::cout << "thread pre-process frame " << fps << "\n";
             count = 0;
         }
         //*******************************//
@@ -180,12 +180,11 @@ void processFrame(void)
             start = std::chrono::high_resolution_clock::now();
         count++;
         //*******************************//
-        cvtColor(frame,gray,COLOR_BGR2HSV);
         inRange( gray,                                     // Thresholding the image
                      cv::Scalar(LH,  LS,  LV ),
                      cv::Scalar(HH, HS, HV),
                      thresh );
-        //threshold(thresh,thresh,T,255,1);
+        threshold(thresh,thresh,T,255,1);
         findContours(thresh,contours,hierarchy,RETR_TREE,CHAIN_APPROX_SIMPLE );
         //*******************************//
         bFoundObject = false;
