@@ -141,7 +141,6 @@ void preProcessFrame(void)
         count++;
         //*******************************//
         cvtColor(frame,hsv,COLOR_BGR2HSV);
-        inRange( hsv, cv::Scalar(LH,  LS,  LV ), cv::Scalar(HH, HS, HV), range );
         sem_post(&semPreProcessFrameCplt);
         //*******************************//
         if (count == 1000)
@@ -181,6 +180,7 @@ void processFrame(void)
             start = std::chrono::high_resolution_clock::now();
         count++;
         //*******************************//
+        inRange( hsv, cv::Scalar(LH,  LS,  LV ), cv::Scalar(HH, HS, HV), range );
         threshold(range,bin,T,255,1);
         findContours(bin,contours,hierarchy,RETR_TREE,CHAIN_APPROX_SIMPLE );
         //*******************************//
