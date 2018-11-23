@@ -25,7 +25,7 @@ using namespace std;
 //*******************************//
 UMat frame, hsv, range, bin, contour;
 int B = 90, C = 100, S = 100, T = 128;
-int LH = 0,LS = 0,LV = 255,HH = 90,HS = 30,HV = 255;
+int LH = 0,LS = 0,LV = 255,HH = 255,HS = 150,HV = 255;
 //*******************************//
 bpsUARTSendDataTypeDef STMData;
 bpsUARTReceiveDataTypeDef RaspiEncoderCnt;
