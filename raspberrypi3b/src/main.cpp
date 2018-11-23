@@ -25,7 +25,7 @@ using namespace std;
 //*******************************//
 Mat frame, gray, mblur, thresh, contour;
 int B = 90, C = 100, S = 100, T = 128;
-int LH = 0,LS = 0,LV = 255,HH = 255,HS = 0,HV = 255;
+int LH = 0,LS = 0,LV = 255,HH = 255,HS = 150,HV = 255;
 //*******************************//
 bpsUARTSendDataTypeDef STMData;
 bpsUARTReceiveDataTypeDef RaspiEncoderCnt;
@@ -33,9 +33,10 @@ bpsSocketSendDataTypeDef AppData;
 //*******************************//
 std::mutex STMMutex;
 std::mutex AppMutex;
-sem_t semCaptureFrameCplt, semProcessFrameCplt;
+sem_t semCaptureFrameCplt, semPreProcessFrameCplt, semProcessFrameCplt;
 //*******************************//
 void captureFrame(void);
+void preProcessFrame(void);
 void processFrame(void);
 void showImage(void);
 int recvFunc (char *recvData, int recvLen);
@@ -62,15 +63,17 @@ int main( int argc, char *argv[] )
     STMData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 240;
     STMData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] = 240;
     sem_init(&semCaptureFrameCplt, 0, 0);
+    sem_init(&semPreProcessFrameCplt, 0, 0);
     sem_init(&semProcessFrameCplt, 0, 0);
     onTrackbarChanged(0, nullptr);
     //*******************************//
     std::thread thread1(captureFrame);
-    std::thread thread2(processFrame);
-    std::thread thread3;
+    std::thread thread2(preProcessFrame);
+    std::thread thread3(processFrame);
+    std::thread thread4;
     if (showFrame)
     {
-        thread3 = std::thread(showImage);
+        thread4 = std::thread(showImage);
     }
     //*******************************//
     server.attach(recvFunc);
@@ -78,8 +81,9 @@ int main( int argc, char *argv[] )
     //*******************************//
     thread1.join();
     thread2.join();
+    thread3.join();
     if (showFrame)
-        thread3.join();
+        thread4.join();
     return 0;
 }
 //*******************************//
@@ -119,6 +123,38 @@ void captureFrame(void)
     }
 }
 
+void preProcessFrame(void)
+{
+    //*******************************//
+    int count = 0;
+    auto start = std::chrono::high_resolution_clock::now();
+    float fps;
+    //*******************************//
+    sleep(1);
+    while(1)
+    {     
+        //*******************************//
+        sem_wait(&semCaptureFrameCplt);
+        //*******************************//
+        if (count == 0)
+            start = std::chrono::high_resolution_clock::now();
+        count++;
+        //*******************************//
+        cvtColor(frame,gray,COLOR_BGR2HSV);
+        sem_post(&semPreProcessFrameCplt);
+        //*******************************//
+        if (count == 1000)
+        {         
+            auto end = std::chrono::high_resolution_clock::now();
+            auto diff = std::chrono::duration_cast<chrono::seconds>(end - start);
+            fps = 1000 / static_cast<double>(diff.count());
+            std::cout << "thread process frame " << fps << "\n";
+            count = 0;
+        }
+        //*******************************//
+    }
+}
+
 void processFrame(void)
 {
     //*******************************//
@@ -138,7 +174,7 @@ void processFrame(void)
     while(1)
     {     
         //*******************************//
-        sem_wait(&semCaptureFrameCplt);
+        sem_wait(&semPreProcessFrameCplt);
         //*******************************//
         if (count == 0)
             start = std::chrono::high_resolution_clock::now();
