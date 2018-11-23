@@ -17,14 +17,14 @@ using namespace std;
         ( std::ostringstream() << std::dec << x ) ).str()
 #define FRAME_WIDTH     480
 #define FRAME_HEIGHT    480
-#define FPS             30
+#define FPS             90
 #define MAX_NUM_OBJECTS 10
 #define MIN_OBJECT_AREA 80*80
 #define MAX_OBJECT_AREA 120*120
 #define RECT_SIZE       2
 //*******************************//
 Mat frame, gray, mblur, thresh, contour;
-int B = 90, C = 100, S = 100, T = 110;
+int B = 90, C = 100, S = 100, T = 128;
 int LH = 0,LS = 0,LV = 255,HH = 255,HS = 0,HV = 255;
 //*******************************//
 bpsUARTSendDataTypeDef STMData;
