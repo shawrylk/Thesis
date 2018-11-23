@@ -36,18 +36,6 @@ int main(int, char**)
     cout<<"Press 's' to save snapshot"<<endl;
  namedWindow(winName);
 
- Brightness = cap.get(CAP_PROP_BRIGHTNESS);
- Contrast   = cap.get(CAP_PROP_CONTRAST );
- Saturation = cap.get(CAP_PROP_SATURATION);
- Gain       = cap.get(CAP_PROP_GAIN);
-
- cout<<"===================================="<<endl<<endl;
- cout<<"Default Brightness -------> "<<Brightness<<endl;
- cout<<"Default Contrast----------> "<<Contrast<<endl;
- cout<<"Default Saturation--------> "<<Saturation<<endl;
- cout<<"Default Gain--------------> "<<Gain<<endl<<endl;
- cout<<"===================================="<<endl;
-
   B=70;
   C=100;
   S=100;
