@@ -216,6 +216,8 @@ void processFrame(void)
         yKF = y;//KF.predict(y);
         if (bFoundObject)
             std::cout << "x = " << xKF << " y = " << yKF << std::endl;
+        else
+            std::cout << "ball not found" << std::endl;
         STMMutex.lock();
         if (bFoundObject)
             STMData.detectedBall = 1;
