@@ -143,7 +143,7 @@ void bpsTaskControlMotor(void* pointer)
 		}
 		//delay 1ms to accomplish 1ms discrete PID, also give cpu time for UART send data task to run
 		// if (delay1ms)
-		// 	vTaskDelay(pdMS_TO_TICKS(1));
+		//vTaskDelay(pdMS_TO_TICKS(DT_OUTER_LOOP/3));
 		// delay1ms = true;
 		//xTaskNotifyGive(taskNumber[TASK_UPDATE_SETPOINT]);
 		//xTaskNotifyGive(taskNumber[TASK_SEND_UART_DATA]);
@@ -181,13 +181,13 @@ void bpsTaskSetup(void *pointer)
 	sd->UARTData.content.PIDProperties.Ki[BPS_OUTER_PID][BPS_Y_AXIS] = 0;
 	sd->UARTData.content.PIDProperties.Kd[BPS_OUTER_PID][BPS_Y_AXIS] = 0;
 
-	sd->UARTData.content.PIDProperties.Kp[BPS_INNER_PID][BPS_X_AXIS] = 9.428925;
-	sd->UARTData.content.PIDProperties.Ki[BPS_INNER_PID][BPS_X_AXIS] = 0.001354*0;
-	sd->UARTData.content.PIDProperties.Kd[BPS_INNER_PID][BPS_X_AXIS] = 4.45569*0.05;
+	sd->UARTData.content.PIDProperties.Kp[BPS_INNER_PID][BPS_X_AXIS] = 0.84;
+	sd->UARTData.content.PIDProperties.Ki[BPS_INNER_PID][BPS_X_AXIS] = 0.96;
+	sd->UARTData.content.PIDProperties.Kd[BPS_INNER_PID][BPS_X_AXIS] = 0;
 
-	sd->UARTData.content.PIDProperties.Kp[BPS_INNER_PID][BPS_Y_AXIS] = 9.428925; //0.171435*55; 
-	sd->UARTData.content.PIDProperties.Ki[BPS_INNER_PID][BPS_Y_AXIS] = 0.001354*0; //600
-	sd->UARTData.content.PIDProperties.Kd[BPS_INNER_PID][BPS_Y_AXIS] = 4.45569*0.05;
+	sd->UARTData.content.PIDProperties.Kp[BPS_INNER_PID][BPS_Y_AXIS] = 0.84;
+	sd->UARTData.content.PIDProperties.Ki[BPS_INNER_PID][BPS_Y_AXIS] = 0.96;
+	sd->UARTData.content.PIDProperties.Kd[BPS_INNER_PID][BPS_Y_AXIS] = 0;
 	; //100
 	xTaskNotifyGive(taskNumber[TASK_UPDATE_SETPOINT]);
 	vTaskDelay(pdMS_TO_TICKS(11));

@@ -3,7 +3,7 @@
 <title>Static Call Graph - [Thesis\Thesis.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image Thesis\Thesis.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060528: Last Updated: Sat Nov 24 07:58:04 2018
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060528: Last Updated: Sat Nov 24 19:58:37 2018
 <BR><P>
 <H3>Maximum Stack Usage =        288 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -716,8 +716,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIM_Base_Init
 </UL>
 
-<P><STRONG><a name="[d0]"></a>HAL_TIM_Base_Start</STRONG> (Thumb, 26 bytes, Stack size 0 bytes, stm32f4xx_hal_tim.o(i.HAL_TIM_Base_Start))
-<BR><BR>[Called By]<UL><LI><a href="#[cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsStartPWM
+<P><STRONG><a name="[cf]"></a>HAL_TIM_Base_Start</STRONG> (Thumb, 26 bytes, Stack size 0 bytes, stm32f4xx_hal_tim.o(i.HAL_TIM_Base_Start))
+<BR><BR>[Called By]<UL><LI><a href="#[ce]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsStartPWM
 </UL>
 
 <P><STRONG><a name="[79]"></a>HAL_TIM_Base_Start_IT</STRONG> (Thumb, 24 bytes, Stack size 0 bytes, stm32f4xx_hal_tim.o(i.HAL_TIM_Base_Start_IT))
@@ -758,7 +758,7 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_CCxChannelCmd
 </UL>
-<BR>[Called By]<UL><LI><a href="#[ce]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsStartEncoder
+<BR>[Called By]<UL><LI><a href="#[cd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsStartEncoder
 </UL>
 
 <P><STRONG><a name="[8c]"></a>HAL_TIM_IC_CaptureCallback</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32f4xx_hal_tim.o(i.HAL_TIM_IC_CaptureCallback))
@@ -824,7 +824,7 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_CCxChannelCmd
 </UL>
-<BR>[Called By]<UL><LI><a href="#[cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsStartPWM
+<BR>[Called By]<UL><LI><a href="#[ce]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsStartPWM
 </UL>
 
 <P><STRONG><a name="[8f]"></a>HAL_TIM_PeriodElapsedCallback</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, main.o(i.HAL_TIM_PeriodElapsedCallback))
@@ -923,9 +923,8 @@ Global Symbols
 <P><STRONG><a name="[2]"></a>NMI_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32f4xx_it.o(i.NMI_Handler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f411xe.o(RESET)
 </UL>
-<P><STRONG><a name="[c9]"></a>PWMSaturation</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, bpsfunctions.o(i.PWMSaturation))
-<BR><BR>[Called By]<UL><LI><a href="#[c8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsCalculatePID
-<LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsTaskControlMotor
+<P><STRONG><a name="[d4]"></a>PWMSaturation</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, bpsfunctions.o(i.PWMSaturation))
+<BR><BR>[Called By]<UL><LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsTaskControlMotor
 </UL>
 
 <P><STRONG><a name="[53]"></a>StartDefaultTask</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, main.o(i.StartDefaultTask))
@@ -1134,11 +1133,11 @@ Global Symbols
 <LI><a href="#[b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_cos
 </UL>
 
-<P><STRONG><a name="[ca]"></a>bpsAppendErrorSamples</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, bpsfunctions.o(i.bpsAppendErrorSamples))
+<P><STRONG><a name="[c9]"></a>bpsAppendErrorSamples</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, bpsfunctions.o(i.bpsAppendErrorSamples))
 <BR><BR>[Called By]<UL><LI><a href="#[c8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsCalculatePID
 </UL>
 
-<P><STRONG><a name="[cb]"></a>bpsAppendPIDSamples</STRONG> (Thumb, 22 bytes, Stack size 0 bytes, bpsfunctions.o(i.bpsAppendPIDSamples))
+<P><STRONG><a name="[ca]"></a>bpsAppendPIDSamples</STRONG> (Thumb, 22 bytes, Stack size 0 bytes, bpsfunctions.o(i.bpsAppendPIDSamples))
 <BR><BR>[Called By]<UL><LI><a href="#[c8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsCalculatePID
 </UL>
 
@@ -1164,37 +1163,36 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsTaskUpdateSetpoint
 </UL>
 
-<P><STRONG><a name="[c8]"></a>bpsCalculatePID</STRONG> (Thumb, 162 bytes, Stack size 8 bytes, bpsfunctions.o(i.bpsCalculatePID))
-<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = bpsCalculatePID
+<P><STRONG><a name="[c8]"></a>bpsCalculatePID</STRONG> (Thumb, 122 bytes, Stack size 4 bytes, bpsfunctions.o(i.bpsCalculatePID))
+<BR><BR>[Stack]<UL><LI>Max Depth = 4<LI>Call Chain = bpsCalculatePID
 </UL>
-<BR>[Calls]<UL><LI><a href="#[cb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsAppendPIDSamples
-<LI><a href="#[ca]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsAppendErrorSamples
-<LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PWMSaturation
+<BR>[Calls]<UL><LI><a href="#[ca]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsAppendPIDSamples
+<LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsAppendErrorSamples
 </UL>
 <BR>[Called By]<UL><LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsTaskControlMotor
 <LI><a href="#[4e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsTaskCalRefEncoderValue
 </UL>
 
-<P><STRONG><a name="[cc]"></a>bpsControlMotor</STRONG> (Thumb, 44 bytes, Stack size 0 bytes, bpsfunctions.o(i.bpsControlMotor))
+<P><STRONG><a name="[cb]"></a>bpsControlMotor</STRONG> (Thumb, 44 bytes, Stack size 0 bytes, bpsfunctions.o(i.bpsControlMotor))
 <BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = bpsControlMotor &rArr; bpsSetPWMDuty
 </UL>
-<BR>[Calls]<UL><LI><a href="#[cd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsSetPWMDuty
+<BR>[Calls]<UL><LI><a href="#[cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsSetPWMDuty
 </UL>
 <BR>[Called By]<UL><LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsTaskControlMotor
 </UL>
 
-<P><STRONG><a name="[d4]"></a>bpsReadEncoderCnt</STRONG> (Thumb, 24 bytes, Stack size 0 bytes, bpsfunctions.o(i.bpsReadEncoderCnt))
+<P><STRONG><a name="[d3]"></a>bpsReadEncoderCnt</STRONG> (Thumb, 24 bytes, Stack size 0 bytes, bpsfunctions.o(i.bpsReadEncoderCnt))
 <BR><BR>[Called By]<UL><LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsTaskUARTSendData
 <LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsTaskControlMotor
 </UL>
 
-<P><STRONG><a name="[cd]"></a>bpsSetPWMDuty</STRONG> (Thumb, 70 bytes, Stack size 12 bytes, bpsfunctions.o(i.bpsSetPWMDuty))
+<P><STRONG><a name="[cc]"></a>bpsSetPWMDuty</STRONG> (Thumb, 70 bytes, Stack size 12 bytes, bpsfunctions.o(i.bpsSetPWMDuty))
 <BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = bpsSetPWMDuty
 </UL>
-<BR>[Called By]<UL><LI><a href="#[cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsControlMotor
+<BR>[Called By]<UL><LI><a href="#[cb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsControlMotor
 </UL>
 
-<P><STRONG><a name="[ce]"></a>bpsStartEncoder</STRONG> (Thumb, 24 bytes, Stack size 8 bytes, bpsfunctions.o(i.bpsStartEncoder))
+<P><STRONG><a name="[cd]"></a>bpsStartEncoder</STRONG> (Thumb, 24 bytes, Stack size 8 bytes, bpsfunctions.o(i.bpsStartEncoder))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = bpsStartEncoder &rArr; HAL_TIM_Encoder_Start &rArr; TIM_CCxChannelCmd
 </UL>
 <BR>[Calls]<UL><LI><a href="#[89]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIM_Encoder_Start
@@ -1202,11 +1200,11 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsTaskControlMotor
 </UL>
 
-<P><STRONG><a name="[cf]"></a>bpsStartPWM</STRONG> (Thumb, 52 bytes, Stack size 8 bytes, bpsfunctions.o(i.bpsStartPWM))
+<P><STRONG><a name="[ce]"></a>bpsStartPWM</STRONG> (Thumb, 52 bytes, Stack size 8 bytes, bpsfunctions.o(i.bpsStartPWM))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = bpsStartPWM &rArr; HAL_TIM_PWM_Start &rArr; TIM_CCxChannelCmd
 </UL>
 <BR>[Calls]<UL><LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIM_PWM_Start
-<LI><a href="#[d0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIM_Base_Start
+<LI><a href="#[cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIM_Base_Start
 </UL>
 <BR>[Called By]<UL><LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsTaskControlMotor
 </UL>
@@ -1214,23 +1212,23 @@ Global Symbols
 <P><STRONG><a name="[4e]"></a>bpsTaskCalRefEncoderValue</STRONG> (Thumb, 164 bytes, Stack size 8 bytes, bpstasks.o(i.bpsTaskCalRefEncoderValue))
 <BR><BR>[Stack]<UL><LI>Max Depth = 60<LI>Call Chain = bpsTaskCalRefEncoderValue &rArr; ulTaskNotifyTake &rArr; prvAddCurrentTaskToDelayedList &rArr; vListInsert
 </UL>
-<BR>[Calls]<UL><LI><a href="#[d3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
-<LI><a href="#[d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;encoderSaturation
+<BR>[Calls]<UL><LI><a href="#[d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
+<LI><a href="#[d1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;encoderSaturation
 <LI><a href="#[c8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsCalculatePID
-<LI><a href="#[d1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ulTaskNotifyTake
+<LI><a href="#[d0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ulTaskNotifyTake
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> bpstasks.o(i.bpsBallAndPlateSystemStart)
 </UL>
 <P><STRONG><a name="[4f]"></a>bpsTaskControlMotor</STRONG> (Thumb, 200 bytes, Stack size 8 bytes, bpstasks.o(i.bpsTaskControlMotor))
 <BR><BR>[Stack]<UL><LI>Max Depth = 60<LI>Call Chain = bpsTaskControlMotor &rArr; ulTaskNotifyTake &rArr; prvAddCurrentTaskToDelayedList &rArr; vListInsert
 </UL>
-<BR>[Calls]<UL><LI><a href="#[cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsStartPWM
-<LI><a href="#[ce]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsStartEncoder
-<LI><a href="#[d4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsReadEncoderCnt
-<LI><a href="#[cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsControlMotor
+<BR>[Calls]<UL><LI><a href="#[ce]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsStartPWM
+<LI><a href="#[cd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsStartEncoder
+<LI><a href="#[d3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsReadEncoderCnt
+<LI><a href="#[cb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsControlMotor
 <LI><a href="#[c8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsCalculatePID
-<LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PWMSaturation
-<LI><a href="#[d1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ulTaskNotifyTake
+<LI><a href="#[d4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PWMSaturation
+<LI><a href="#[d0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ulTaskNotifyTake
 <LI><a href="#[d5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> bpstasks.o(i.bpsBallAndPlateSystemStart)
@@ -1238,7 +1236,7 @@ Global Symbols
 <P><STRONG><a name="[4b]"></a>bpsTaskSetup</STRONG> (Thumb, 132 bytes, Stack size 0 bytes, bpstasks.o(i.bpsTaskSetup))
 <BR><BR>[Stack]<UL><LI>Max Depth = 64<LI>Call Chain = bpsTaskSetup &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
-<BR>[Calls]<UL><LI><a href="#[d3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
+<BR>[Calls]<UL><LI><a href="#[d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
 <LI><a href="#[d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelay
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> bpstasks.o(i.bpsBallAndPlateSystemStart)
@@ -1247,17 +1245,17 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 60<LI>Call Chain = bpsTaskUARTSendData &rArr; ulTaskNotifyTake &rArr; prvAddCurrentTaskToDelayedList &rArr; vListInsert
 </UL>
 <BR>[Calls]<UL><LI><a href="#[d7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsUARTSendData
-<LI><a href="#[d4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsReadEncoderCnt
-<LI><a href="#[d1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ulTaskNotifyTake
+<LI><a href="#[d3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsReadEncoderCnt
+<LI><a href="#[d0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ulTaskNotifyTake
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> bpstasks.o(i.bpsBallAndPlateSystemStart)
 </UL>
 <P><STRONG><a name="[4d]"></a>bpsTaskUpdateSetpoint</STRONG> (Thumb, 152 bytes, Stack size 16 bytes, bpstasks.o(i.bpsTaskUpdateSetpoint))
 <BR><BR>[Stack]<UL><LI>Max Depth = 288<LI>Call Chain = bpsTaskUpdateSetpoint &rArr; bpsCalSetpoint4CircleMode &rArr; __hardfp_sin &rArr; __ieee754_rem_pio2 &rArr; __aeabi_dmul &rArr; _double_epilogue &rArr; _double_round
 </UL>
-<BR>[Calls]<UL><LI><a href="#[d3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
+<BR>[Calls]<UL><LI><a href="#[d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
 <LI><a href="#[c7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsCalSetpoint4CircleMode
-<LI><a href="#[d1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ulTaskNotifyTake
+<LI><a href="#[d0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ulTaskNotifyTake
 <LI><a href="#[d5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
 <LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
 </UL>
@@ -1266,9 +1264,9 @@ Global Symbols
 <P><STRONG><a name="[4c]"></a>bpsTaskUpdateUARTData</STRONG> (Thumb, 54 bytes, Stack size 56 bytes, bpstasks.o(i.bpsTaskUpdateUARTData))
 <BR><BR>[Stack]<UL><LI>Max Depth = 116<LI>Call Chain = bpsTaskUpdateUARTData &rArr; bpsUARTReceiveData &rArr; HAL_UART_Receive_DMA &rArr; HAL_DMA_Start_IT &rArr; DMA_SetConfig
 </UL>
-<BR>[Calls]<UL><LI><a href="#[d3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
+<BR>[Calls]<UL><LI><a href="#[d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
 <LI><a href="#[d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsUARTReceiveData
-<LI><a href="#[d1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ulTaskNotifyTake
+<LI><a href="#[d0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ulTaskNotifyTake
 <LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> bpstasks.o(i.bpsBallAndPlateSystemStart)
@@ -1287,7 +1285,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsTaskUARTSendData
 </UL>
 
-<P><STRONG><a name="[d2]"></a>encoderSaturation</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, bpsfunctions.o(i.encoderSaturation))
+<P><STRONG><a name="[d1]"></a>encoderSaturation</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, bpsfunctions.o(i.encoderSaturation))
 <BR><BR>[Called By]<UL><LI><a href="#[4e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsTaskCalRefEncoderValue
 </UL>
 
@@ -1367,7 +1365,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[ee]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvInitialiseNewTask
 </UL>
 
-<P><STRONG><a name="[d1]"></a>ulTaskNotifyTake</STRONG> (Thumb, 96 bytes, Stack size 16 bytes, tasks.o(i.ulTaskNotifyTake))
+<P><STRONG><a name="[d0]"></a>ulTaskNotifyTake</STRONG> (Thumb, 96 bytes, Stack size 16 bytes, tasks.o(i.ulTaskNotifyTake))
 <BR><BR>[Stack]<UL><LI>Max Depth = 52<LI>Call Chain = ulTaskNotifyTake &rArr; prvAddCurrentTaskToDelayedList &rArr; vListInsert
 </UL>
 <BR>[Calls]<UL><LI><a href="#[e8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortExitCritical
@@ -1382,7 +1380,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[e2]"></a>uxListRemove</STRONG> (Thumb, 36 bytes, Stack size 0 bytes, list.o(i.uxListRemove))
-<BR><BR>[Called By]<UL><LI><a href="#[d3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
+<BR><BR>[Called By]<UL><LI><a href="#[d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
 <LI><a href="#[eb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskResumeAll
 <LI><a href="#[fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskIncrementTick
 <LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskNotifyGiveFromISR
@@ -1405,7 +1403,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[e3]"></a>vListInsertEnd</STRONG> (Thumb, 24 bytes, Stack size 0 bytes, list.o(i.vListInsertEnd))
-<BR><BR>[Called By]<UL><LI><a href="#[d3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
+<BR><BR>[Called By]<UL><LI><a href="#[d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
 <LI><a href="#[eb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskResumeAll
 <LI><a href="#[fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskIncrementTick
 <LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskNotifyGiveFromISR
@@ -1414,17 +1412,17 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[e6]"></a>vPortEnterCritical</STRONG> (Thumb, 54 bytes, Stack size 0 bytes, port.o(i.vPortEnterCritical))
-<BR><BR>[Called By]<UL><LI><a href="#[d3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
+<BR><BR>[Called By]<UL><LI><a href="#[d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
 <LI><a href="#[eb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskResumeAll
-<LI><a href="#[d1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ulTaskNotifyTake
+<LI><a href="#[d0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ulTaskNotifyTake
 <LI><a href="#[e9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvCheckTasksWaitingTermination
 <LI><a href="#[e5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvAddNewTaskToReadyList
 </UL>
 
 <P><STRONG><a name="[e8]"></a>vPortExitCritical</STRONG> (Thumb, 34 bytes, Stack size 0 bytes, port.o(i.vPortExitCritical))
-<BR><BR>[Called By]<UL><LI><a href="#[d3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
+<BR><BR>[Called By]<UL><LI><a href="#[d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
 <LI><a href="#[eb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskResumeAll
-<LI><a href="#[d1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ulTaskNotifyTake
+<LI><a href="#[d0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ulTaskNotifyTake
 <LI><a href="#[e9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvCheckTasksWaitingTermination
 <LI><a href="#[e5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvAddNewTaskToReadyList
 </UL>
@@ -1524,7 +1522,7 @@ Global Symbols
 <LI><a href="#[c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsBallAndPlateSystemStart
 </UL>
 
-<P><STRONG><a name="[d3]"></a>xTaskGenericNotify</STRONG> (Thumb, 190 bytes, Stack size 24 bytes, tasks.o(i.xTaskGenericNotify))
+<P><STRONG><a name="[d2]"></a>xTaskGenericNotify</STRONG> (Thumb, 190 bytes, Stack size 24 bytes, tasks.o(i.xTaskGenericNotify))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = xTaskGenericNotify
 </UL>
 <BR>[Calls]<UL><LI><a href="#[e8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortExitCritical
@@ -1708,7 +1706,7 @@ Local Symbols
 <LI><a href="#[e2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uxListRemove
 </UL>
 <BR>[Called By]<UL><LI><a href="#[d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelay
-<LI><a href="#[d1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ulTaskNotifyTake
+<LI><a href="#[d0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ulTaskNotifyTake
 </UL>
 
 <P><STRONG><a name="[e5]"></a>prvAddNewTaskToReadyList</STRONG> (Thumb, 194 bytes, Stack size 24 bytes, tasks.o(i.prvAddNewTaskToReadyList))
