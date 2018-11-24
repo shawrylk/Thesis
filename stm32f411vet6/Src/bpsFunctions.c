@@ -100,6 +100,9 @@ HAL_StatusTypeDef bpsCalculatePID(int16_t setpoint, int16_t currentPoint, float 
 			+	(-Kp + Ki * time / 2 - Kd / time * 2) * *errorSamples_out
 			+	(Kd / time) * *(errorSamples_out + 1)
 			+	*PIDSamples_out;
+	if ((PID > MAX_PWM_DUTY && e > 0) || (PID < MIN_PWM_DUTY && e < 0))
+		PID = 0;
+	PID = PWMSaturation(PID);
 	ret = bpsAppendErrorSamples(errorSamples_out, e);
 	ret |= bpsAppendPIDSamples(PIDSamples_out, PID);
 	return ret;

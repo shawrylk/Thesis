@@ -90,12 +90,14 @@ typedef union
 }	
 bpsDataTypeDef; //48
 
+#pragma pack(push,2)
 typedef struct 
 {
 	bpsCommandTypeDef			command;
 	bpsDataTypeDef				content;
 }	
 bpsSocketReceiveDataTypeDef; //52
+#pragma pack(pop)
 
 typedef struct
 {
