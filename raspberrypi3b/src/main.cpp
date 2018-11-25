@@ -20,13 +20,13 @@ using namespace std;
 #define FRAME_HEIGHT    480
 #define FPS             90
 #define MAX_NUM_OBJECTS 200
-#define MIN_OBJECT_AREA 5*5
-#define MAX_OBJECT_AREA 20*20
+#define MIN_OBJECT_AREA 90*90
+#define MAX_OBJECT_AREA 110*110
 #define RECT_SIZE       2
 //*******************************//
 UMat frame, hsv, range, bin, contour;
 int B = 90, C = 100, S = 100, T = 128;
-int LH = 0,LS = 0,LV = 255,HH = 255,HS = 255,HV = 255;
+int LH = 0,LS = 0,LV = 255,HH = 255,HS = 30,HV = 255;
 //*******************************//
 bpsUARTSendDataTypeDef STMData;
 bpsUARTReceiveDataTypeDef RaspiEncoderCnt;
