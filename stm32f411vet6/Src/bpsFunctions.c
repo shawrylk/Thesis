@@ -90,16 +90,17 @@ HAL_StatusTypeDef bpsUARTSendData(bpsUARTSendDataTypeDef* sendData)
 }
 
 HAL_StatusTypeDef bpsCalculatePID(int16_t setpoint, int16_t currentPoint, float Kp, 
-									float Ki, float Kd, int16_t* errorSamples_out, float* PIDSamples_out, float time)
+									float Ki, float Kd, float N, int16_t* errorSamples_out, float* PIDSamples_out, float time)
 {
 	HAL_StatusTypeDef ret;
 	if (PIDSamples_out == NULL || errorSamples_out == NULL)
 		return HAL_ERROR;
 	int16_t e = setpoint - currentPoint;
-	float PID = (Kp + Ki * time / 2 + Kd / time) * e
-			+	(-Kp + Ki * time / 2 - Kd / time * 2) * *errorSamples_out
-			+	(Kd / time) * *(errorSamples_out + 1)
-			+	*PIDSamples_out;
+	float PID = (2*Kp + Ki*time + 2*Kd*N/(N*time+1)) * e
+			+	(-2*Kp*(N*time+2)/(N*time+1) + Ki*time*N*time/(N*time+1) - 4*Kd*N/(N*time+1)) * *errorSamples_out
+			+	(2*Kp/(N*time +1) - Ki*time/(N*time +1) + 2*Kd*N/(N*time +1)) * *(errorSamples_out + 1)
+			+	(N*time+2)/(N*time+1) * *PIDSamples_out;
+			- 	1/(N*time +1) * (*PIDSamples_out + 1);
 	//PID = PWMSaturation(PID);
 	ret = bpsAppendErrorSamples(errorSamples_out, e);
 	ret |= bpsAppendPIDSamples(PIDSamples_out, PID);
