@@ -92,9 +92,9 @@ int main( int argc, char *argv[] )
 void captureFrame(void)
 {
     //*******************************//
-    int count = 0;
-    auto start = std::chrono::high_resolution_clock::now();
-    float fps;
+    // int count = 0;
+    // auto start = std::chrono::high_resolution_clock::now();
+    // float fps;
     //*******************************//
     if(!video.isOpened())
         std::cout << "Could not read video file" << endl; 
@@ -106,21 +106,21 @@ void captureFrame(void)
     while (1)
     {
         //*******************************//
-        if (count == 0)
-            start = std::chrono::high_resolution_clock::now();
-        count++;
+        // if (count == 0)
+        //     start = std::chrono::high_resolution_clock::now();
+        // count++;
         //*******************************//
         video.read(frame); 
         sem_post(&semCaptureFrameCplt);
         //*******************************//
-        if (count == 1000)
-        {
-            auto end = std::chrono::high_resolution_clock::now();
-            auto diff = std::chrono::duration_cast<chrono::seconds>(end - start);
-            fps = 1000 / static_cast<double>(diff.count());
-            std::cout << "thread capture frame " << fps << "\n";
-            count = 0;
-        }
+        // if (count == 90)
+        // {
+        //     auto end = std::chrono::high_resolution_clock::now();
+        //     auto diff = std::chrono::duration_cast<chrono::seconds>(end - start);
+        //     fps = 90 / static_cast<double>(diff.count());
+        //     std::cout << "thread capture frame " << fps << "\n";
+        //     count = 0;
+        // }
         //*******************************//
     }
 }
@@ -128,9 +128,9 @@ void captureFrame(void)
 void preProcessFrame(void)
 {
     //*******************************//
-    int count = 0;
-    auto start = std::chrono::high_resolution_clock::now();
-    float fps;
+    // int count = 0;
+    // auto start = std::chrono::high_resolution_clock::now();
+    // float fps;
     //*******************************//
     sleep(1);
     while(1)
@@ -138,21 +138,21 @@ void preProcessFrame(void)
         //*******************************//
         sem_wait(&semCaptureFrameCplt);
         //*******************************//
-        if (count == 0)
-            start = std::chrono::high_resolution_clock::now();
-        count++;
+        // if (count == 0)
+        //     start = std::chrono::high_resolution_clock::now();
+        // count++;
         //*******************************//
         cvtColor(frame,hsv,COLOR_BGR2HSV);
         sem_post(&semPreProcessFrameCplt);
         //*******************************//
-        if (count == 1000)
-        {         
-            auto end = std::chrono::high_resolution_clock::now();
-            auto diff = std::chrono::duration_cast<chrono::seconds>(end - start);
-            fps = 1000 / static_cast<double>(diff.count());
-            std::cout << "thread pre-process frame " << fps << "\n";
-            count = 0;
-        }
+        // if (count == 90)
+        // {         
+        //     auto end = std::chrono::high_resolution_clock::now();
+        //     auto diff = std::chrono::duration_cast<chrono::seconds>(end - start);
+        //     fps = 90 / static_cast<double>(diff.count());
+        //     std::cout << "thread pre-process frame " << fps << "\n";
+        //     count = 0;
+        // }
         //*******************************//
     }
 }
@@ -235,11 +235,12 @@ void processFrame(void)
         server.send((char *)&AppData, sizeof(bpsSocketSendDataTypeDef));
         AppMutex.unlock();
         //*******************************//
-        if (count == 1000)
+        if (count == 90)
         {         
             auto end = std::chrono::high_resolution_clock::now();
             auto diff = std::chrono::duration_cast<chrono::seconds>(end - start);
-            fps = 1000 / static_cast<double>(diff.count());
+            fps = 90 / static_cast<double>(diff.count());
+            std::cout << count << std::endl;
             std::cout << "thread process frame " << fps << "\n";
             count = 0;
         }
@@ -252,9 +253,9 @@ void showImage(void)
     //*******************************//
     Rect2d bbox;
     char winName[6] = "frame";
-    int count = 0;
-    auto start = std::chrono::high_resolution_clock::now();
-    float fps;
+    // int count = 0;
+    // auto start = std::chrono::high_resolution_clock::now();
+    // float fps;
     //*******************************//
     
     namedWindow(winName);
@@ -274,9 +275,9 @@ void showImage(void)
         //*******************************//
         sem_wait(&semProcessFrameCplt);
         //*******************************//
-        if (count == 0)
-            start = std::chrono::high_resolution_clock::now();
-        count++;
+        // if (count == 0)
+        //     start = std::chrono::high_resolution_clock::now();
+        // count++;
         //*******************************//
         Rect2d bbox(STMData.ballCoordinate[BPS_X_AXIS], 
                     STMData.ballCoordinate[BPS_Y_AXIS], RECT_SIZE, RECT_SIZE); 
@@ -285,14 +286,14 @@ void showImage(void)
         imshow("thresh", bin);
         waitKey(1);
         //*******************************//
-        if (count == 1000)
-        {
-            auto end = std::chrono::system_clock::now();
-            auto diff = std::chrono::duration_cast<chrono::seconds>(end - start);
-            fps = 1000 / static_cast<double>(diff.count());
-            std::cout << "thread show frame " << fps << "\n";
-            count = 0;
-        }
+        // if (count == 90)
+        // {
+        //     auto end = std::chrono::system_clock::now();
+        //     auto diff = std::chrono::duration_cast<chrono::seconds>(end - start);
+        //     fps = 90 / static_cast<double>(diff.count());
+        //     std::cout << "thread show frame " << fps << "\n";
+        //     count = 0;
+        // }
         //*******************************//
     }
 }
