@@ -85,17 +85,19 @@ void bpsTaskCalRefEncoderValue(void *pointer)
 							sd->PIDParams.Ki[BPS_OUTER_PID][BPS_X_AXIS], sd->PIDParams.Kd[BPS_OUTER_PID][BPS_X_AXIS], 
 							&sd->errorSamples[BPS_OUTER_PID][BPS_X_AXIS][0], &sd->PIDSamples[BPS_OUTER_PID][BPS_X_AXIS][0],
 							DT_OUTER_LOOP, false);
-			bpsDiscretePID(sd->setpoint[BPS_Y_AXIS], 480 - sd->UARTData.ballCoordinate[BPS_Y_AXIS], sd->PIDParams.Kp[BPS_OUTER_PID][BPS_Y_AXIS], 
+			bpsDiscretePID(sd->setpoint[BPS_Y_AXIS], sd->UARTData.ballCoordinate[BPS_Y_AXIS], sd->PIDParams.Kp[BPS_OUTER_PID][BPS_Y_AXIS], 
 							sd->PIDParams.Ki[BPS_OUTER_PID][BPS_Y_AXIS], sd->PIDParams.Kd[BPS_OUTER_PID][BPS_Y_AXIS], 
 							&sd->errorSamples[BPS_OUTER_PID][BPS_Y_AXIS][0], &sd->PIDSamples[BPS_OUTER_PID][BPS_Y_AXIS][0],
 							DT_OUTER_LOOP, false);			
-			sd->encoderCntRef[BPS_X_AXIS] = encoderSaturation(sd->PIDSamples[BPS_OUTER_PID][BPS_X_AXIS][0]) + 0x4000;
-			sd->encoderCntRef[BPS_Y_AXIS] = encoderSaturation(sd->PIDSamples[BPS_OUTER_PID][BPS_Y_AXIS][0]) + 0x4000;
+			sd->encoderCntRef[BPS_X_AXIS] = encoderSaturation(sd->PIDSamples[BPS_OUTER_PID][BPS_X_AXIS][0]);
+			sd->encoderCntRef[BPS_Y_AXIS] = encoderSaturation(sd->PIDSamples[BPS_OUTER_PID][BPS_Y_AXIS][0]);
 		}
 		else
 		{
-			sd->encoderCntRef[BPS_X_AXIS] = 0x4000;
-			sd->encoderCntRef[BPS_Y_AXIS] = 0x4000;
+			sd->encoderCntRef[BPS_X_AXIS] = 0;
+			sd->encoderCntRef[BPS_Y_AXIS] = 0;
+			memset(&sd->errorSamples, 0, sizeof(sd->errorSamples));
+			memset(&sd->PIDSamples, 0, sizeof(sd->PIDSamples));
 		}
 		xTaskNotifyGive(taskNumber[TASK_CONTROL_MOTOR]);
 	}
@@ -111,13 +113,14 @@ void bpsTaskControlMotor(void* pointer)
 	{
 		// wait notification from calculate reference encoder value task
 		ulTaskNotifyTake(pdFALSE, portMAX_DELAY);
+		
 		bpsReadEncoderCnt(BPS_X_AXIS, &encX);
 		bpsDiscretePID(sd->encoderCntRef[BPS_X_AXIS], encX, 
 						sd->PIDParams.Kp[BPS_INNER_PID][BPS_X_AXIS], 
 						sd->PIDParams.Ki[BPS_INNER_PID][BPS_X_AXIS], sd->PIDParams.Kd[BPS_INNER_PID][BPS_X_AXIS], 
 						&sd->errorSamples[BPS_INNER_PID][BPS_X_AXIS][0], &sd->PIDSamples[BPS_INNER_PID][BPS_X_AXIS][0],
 						DT_INNER_LOOP, true);
-		if (sd->PIDSamples[BPS_INNER_PID][BPS_X_AXIS][0] > 100 || sd->PIDSamples[BPS_INNER_PID][BPS_X_AXIS][0] < -100)
+		if (sd->PIDSamples[BPS_INNER_PID][BPS_X_AXIS][0] > 50 || sd->PIDSamples[BPS_INNER_PID][BPS_X_AXIS][0] < -50)
 			bpsControlMotor(BPS_X_AXIS, sd->PIDSamples[BPS_INNER_PID][BPS_X_AXIS][0]);
 		else
 			bpsControlMotor(BPS_X_AXIS, 0);
@@ -128,7 +131,7 @@ void bpsTaskControlMotor(void* pointer)
 						sd->PIDParams.Ki[BPS_INNER_PID][BPS_Y_AXIS], sd->PIDParams.Kd[BPS_INNER_PID][BPS_Y_AXIS], 
 						&sd->errorSamples[BPS_INNER_PID][BPS_Y_AXIS][0], &sd->PIDSamples[BPS_INNER_PID][BPS_Y_AXIS][0],
 						DT_INNER_LOOP, true);	
-		if (sd->PIDSamples[BPS_INNER_PID][BPS_Y_AXIS][0] > 100 || sd->PIDSamples[BPS_INNER_PID][BPS_Y_AXIS][0] < -100)
+		if (sd->PIDSamples[BPS_INNER_PID][BPS_Y_AXIS][0] > 50 || sd->PIDSamples[BPS_INNER_PID][BPS_Y_AXIS][0] < -50)
 			bpsControlMotor(BPS_Y_AXIS, sd->PIDSamples[BPS_INNER_PID][BPS_Y_AXIS][0]);	
 		else
 			bpsControlMotor(BPS_Y_AXIS, 0);	
@@ -161,25 +164,23 @@ void bpsTaskSetup(void *pointer)
 {
 	
 	//this task run first, then blocked forever
-	bpsSetEncoderCnt(BPS_X_AXIS, 0x4000);
-	bpsSetEncoderCnt(BPS_Y_AXIS, 0x4000);
 	bpsSharedDataTypeDef* sd = (bpsSharedDataTypeDef*)pointer;
 	sd->UARTData.command = BPS_UPDATE_PID;
-	sd->UARTData.content.PIDProperties.Kp[BPS_OUTER_PID][BPS_X_AXIS] = 0.05;
-	sd->UARTData.content.PIDProperties.Ki[BPS_OUTER_PID][BPS_X_AXIS] = 0;
-	sd->UARTData.content.PIDProperties.Kd[BPS_OUTER_PID][BPS_X_AXIS] = 0.03;
+	sd->UARTData.content.PIDProperties.Kp[BPS_OUTER_PID][BPS_X_AXIS] = 2.6;
+	sd->UARTData.content.PIDProperties.Ki[BPS_OUTER_PID][BPS_X_AXIS] = 0.01;
+	sd->UARTData.content.PIDProperties.Kd[BPS_OUTER_PID][BPS_X_AXIS] = 1.56;
 
-	sd->UARTData.content.PIDProperties.Kp[BPS_OUTER_PID][BPS_Y_AXIS] = 0.05;
-	sd->UARTData.content.PIDProperties.Ki[BPS_OUTER_PID][BPS_Y_AXIS] = 0;
-	sd->UARTData.content.PIDProperties.Kd[BPS_OUTER_PID][BPS_Y_AXIS] = 0.03;
+	sd->UARTData.content.PIDProperties.Kp[BPS_OUTER_PID][BPS_Y_AXIS] = 2.6;
+	sd->UARTData.content.PIDProperties.Ki[BPS_OUTER_PID][BPS_Y_AXIS] = 0.01;
+	sd->UARTData.content.PIDProperties.Kd[BPS_OUTER_PID][BPS_Y_AXIS] = 1.56;
 
-	sd->UARTData.content.PIDProperties.Kp[BPS_INNER_PID][BPS_X_AXIS] = 18;
-	sd->UARTData.content.PIDProperties.Ki[BPS_INNER_PID][BPS_X_AXIS] = 100;
-	sd->UARTData.content.PIDProperties.Kd[BPS_INNER_PID][BPS_X_AXIS] = 0.72;
+	sd->UARTData.content.PIDProperties.Kp[BPS_INNER_PID][BPS_X_AXIS] = 2;
+	sd->UARTData.content.PIDProperties.Ki[BPS_INNER_PID][BPS_X_AXIS] = 0;
+	sd->UARTData.content.PIDProperties.Kd[BPS_INNER_PID][BPS_X_AXIS] = 0;
 
-	sd->UARTData.content.PIDProperties.Kp[BPS_INNER_PID][BPS_Y_AXIS] = 18;
-	sd->UARTData.content.PIDProperties.Ki[BPS_INNER_PID][BPS_Y_AXIS] = 100;
-	sd->UARTData.content.PIDProperties.Kd[BPS_INNER_PID][BPS_Y_AXIS] = 0.72;
+	sd->UARTData.content.PIDProperties.Kp[BPS_INNER_PID][BPS_Y_AXIS] = 2;
+	sd->UARTData.content.PIDProperties.Ki[BPS_INNER_PID][BPS_Y_AXIS] = 0;
+	sd->UARTData.content.PIDProperties.Kd[BPS_INNER_PID][BPS_Y_AXIS] = 0;
 	xTaskNotifyGive(taskNumber[TASK_UPDATE_SETPOINT]);
 	vTaskDelay(pdMS_TO_TICKS(11));
 	sd->UARTData.detectedBall = 0;
@@ -190,7 +191,7 @@ void bpsTaskSetup(void *pointer)
 	sd->UARTData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] = 240;
 	xTaskNotifyGive(taskNumber[TASK_UPDATE_SETPOINT]);
 	vTaskDelay(pdMS_TO_TICKS(11));
-	
+	//while(1);
 //	do {
 //		
 //		

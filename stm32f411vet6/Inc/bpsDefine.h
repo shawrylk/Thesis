@@ -24,10 +24,10 @@ extern	DMA_HandleTypeDef			hdma_usart2_rx;
 #define	SEND_DATA_HANDLE			huart2
 #define	RECEIVE_DATA_HANDLE			huart2
 #define	DMA_HANDLE					hdma_usart2_rx
-#define	MAX_PWM_DUTY				3599 
-#define MIN_PWM_DUTY				-3599
-#define MAX_ENCODER_CNT				80		// 8 pulses are 1 degree, so 80 pulses are 10 degrees
-#define MIN_ENCODER_CNT				-80
+#define	MAX_PWM_DUTY				400 
+#define MIN_PWM_DUTY				-400
+#define MAX_ENCODER_CNT				260		// 8 pulses are 1 degree, so 80 pulses are 10 degrees
+#define MIN_ENCODER_CNT				-260
 #define NUMBER_OF_SAMPLE			3
 #define	DT_OUTER_LOOP				0.011f  // 11.2 ms
 #define	DT_INNER_LOOP				0.0010f	//  1 ms
