@@ -19,12 +19,12 @@ HAL_StatusTypeDef bpsReadEncoderCnt(bpsAxisTypeDef axis, int16_t* encoderCnt_out
 	return HAL_OK;
 }
 
-HAL_StatusTypeDef bpsResetEncoderCnt(bpsAxisTypeDef axis)
+HAL_StatusTypeDef bpsSetEncoderCnt(bpsAxisTypeDef axis, int16_t value)
 {
 	if (axis == BPS_X_AXIS)
-		ENCODER_X_REG->CNT &= 0x00;
+		ENCODER_X_REG->CNT = value;
 	else if (axis == BPS_Y_AXIS)
-		ENCODER_Y_REG->CNT &= 0x00;
+		ENCODER_Y_REG->CNT = value;
 	else return HAL_ERROR;
 	return HAL_OK;
 }
@@ -32,11 +32,12 @@ HAL_StatusTypeDef bpsResetEncoderCnt(bpsAxisTypeDef axis)
 HAL_StatusTypeDef bpsStartPWM()
 {
 	HAL_StatusTypeDef	ret;
-	ret = HAL_TIM_Base_Start(&PWM_HANDLE); 
-	ret |= HAL_TIM_PWM_Start(&PWM_HANDLE,TIM_CHANNEL_1);
-	ret |= HAL_TIM_PWM_Start(&PWM_HANDLE,TIM_CHANNEL_2);
-	ret |= HAL_TIM_PWM_Start(&PWM_HANDLE,TIM_CHANNEL_3);
-	ret |= HAL_TIM_PWM_Start(&PWM_HANDLE,TIM_CHANNEL_4);
+	ret = HAL_TIM_Base_Start(&PWM_X_HANDLE); 
+	ret |= HAL_TIM_PWM_Start(&PWM_X_HANDLE,TIM_CHANNEL_1);
+	ret |= HAL_TIM_PWM_Start(&PWM_X_HANDLE,TIM_CHANNEL_2);
+	ret |= HAL_TIM_Base_Start(&PWM_Y_HANDLE); 
+	ret |= HAL_TIM_PWM_Start(&PWM_Y_HANDLE,TIM_CHANNEL_1);
+	ret |= HAL_TIM_PWM_Start(&PWM_Y_HANDLE,TIM_CHANNEL_2);
 	return ret;
 }
 
@@ -48,13 +49,13 @@ HAL_StatusTypeDef bpsSetPWMDuty(bpsAxisTypeDef axis, uint16_t duty, bpsDirection
 	{
 		if (axis == BPS_X_AXIS)
 		{
-			__HAL_TIM_SET_COMPARE(&PWM_HANDLE,PWM_PIN_1_X,duty);
-			__HAL_TIM_SET_COMPARE(&PWM_HANDLE,PWM_PIN_2_X,0);
+			__HAL_TIM_SET_COMPARE(&PWM_X_HANDLE,PWM_PIN_1_X,duty);
+			__HAL_TIM_SET_COMPARE(&PWM_X_HANDLE,PWM_PIN_2_X,0);
 		}
 		else if (axis == BPS_Y_AXIS)
 		{
-			__HAL_TIM_SET_COMPARE(&PWM_HANDLE,PWM_PIN_1_Y,duty);
-			__HAL_TIM_SET_COMPARE(&PWM_HANDLE,PWM_PIN_2_Y,0);
+			__HAL_TIM_SET_COMPARE(&PWM_Y_HANDLE,PWM_PIN_1_Y,duty);
+			__HAL_TIM_SET_COMPARE(&PWM_Y_HANDLE,PWM_PIN_2_Y,0);
 		}
 		else return HAL_ERROR;
 	}
@@ -62,13 +63,13 @@ HAL_StatusTypeDef bpsSetPWMDuty(bpsAxisTypeDef axis, uint16_t duty, bpsDirection
 	{
 		if (axis == BPS_X_AXIS)
 		{
-			__HAL_TIM_SET_COMPARE(&PWM_HANDLE,PWM_PIN_1_X,0);
-			__HAL_TIM_SET_COMPARE(&PWM_HANDLE,PWM_PIN_2_X,duty);
+			__HAL_TIM_SET_COMPARE(&PWM_X_HANDLE,PWM_PIN_1_X,0);
+			__HAL_TIM_SET_COMPARE(&PWM_X_HANDLE,PWM_PIN_2_X,duty);
 		}
 		else if (axis == BPS_Y_AXIS)
 		{
-			__HAL_TIM_SET_COMPARE(&PWM_HANDLE,PWM_PIN_1_Y,0);
-			__HAL_TIM_SET_COMPARE(&PWM_HANDLE,PWM_PIN_2_Y,duty);
+			__HAL_TIM_SET_COMPARE(&PWM_Y_HANDLE,PWM_PIN_1_Y,0);
+			__HAL_TIM_SET_COMPARE(&PWM_Y_HANDLE,PWM_PIN_2_Y,duty);
 		}
 		else return HAL_ERROR;
 	}
@@ -89,25 +90,25 @@ HAL_StatusTypeDef bpsUARTSendData(bpsUARTSendDataTypeDef* sendData)
 	return HAL_UART_Transmit_IT(&SEND_DATA_HANDLE, (uint8_t*)sendData, sizeof(bpsUARTSendDataTypeDef));
 }
 
-HAL_StatusTypeDef bpsCalculatePID(int16_t setpoint, int16_t currentPoint, float Kp, 
-									float Ki, float Kd, float N, int16_t* errorSamples_out, float* PIDSamples_out, float time)
+HAL_StatusTypeDef bpsDiscretePID(int16_t setpoint, int16_t currentPoint, float Kp, 
+									float Ki, float Kd, int16_t* errorSamples_out, float* PIDSamples_out, float time, BOOL clamping)
 {
 	HAL_StatusTypeDef ret;
 	if (PIDSamples_out == NULL || errorSamples_out == NULL)
 		return HAL_ERROR;
 	int16_t e = setpoint - currentPoint;
-	float PID = (2*Kp + Ki*time + 2*Kd*N/(N*time+1)) * e
-			+	(-2*Kp*(N*time+2)/(N*time+1) + Ki*time*N*time/(N*time+1) - 4*Kd*N/(N*time+1)) * *errorSamples_out
-			+	(2*Kp/(N*time +1) - Ki*time/(N*time +1) + 2*Kd*N/(N*time +1)) * *(errorSamples_out + 1)
-			+	(N*time+2)/(N*time+1) * *PIDSamples_out;
-			- 	1/(N*time +1) * (*PIDSamples_out + 1);
-	//PID = PWMSaturation(PID);
+	float PID = (Kp + Ki * time / 2 + Kd / time) * e
+			+	(-Kp + Ki * time / 2 - Kd / time * 2) * *errorSamples_out
+			+	(Kd / time) * *(errorSamples_out + 1)
+			+ 	*PIDSamples_out;
+	if (clamping)
+		PID = PWMSaturation(PID);
 	ret = bpsAppendErrorSamples(errorSamples_out, e);
 	ret |= bpsAppendPIDSamples(PIDSamples_out, PID);
 	return ret;
 }
 
-HAL_StatusTypeDef bpsCalculateContinousPID(int16_t setpoint, int16_t currentPoint, float Kp, 
+HAL_StatusTypeDef bpsContinousPID(int16_t setpoint, int16_t currentPoint, float Kp, 
 									float Ki, float Kd, int16_t* errorSamples_out, float* PIDSamples_out, float* integralSum, float time)
 {
 	HAL_StatusTypeDef ret;
@@ -218,5 +219,5 @@ float PWMSaturation(float PID)
 	else //if (PID > MAX_PWM_DUTY / 20 || PID < MIN_PWM_DUTY / 20)
 		return PID;
 	//else
-	//	return 0;
+		//return 0;
 }
