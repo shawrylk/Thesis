@@ -3,7 +3,7 @@
 <title>Static Call Graph - [Thesis\Thesis.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image Thesis\Thesis.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060528: Last Updated: Thu Nov 29 23:12:05 2018
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060528: Last Updated: Sat Dec 01 23:46:50 2018
 <BR><P>
 <H3>Maximum Stack Usage =        288 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -1183,7 +1183,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsTaskControlMotor
 </UL>
 
-<P><STRONG><a name="[cc]"></a>bpsDiscretePID</STRONG> (Thumb, 134 bytes, Stack size 12 bytes, bpsfunctions.o(i.bpsDiscretePID))
+<P><STRONG><a name="[cc]"></a>bpsDiscretePID</STRONG> (Thumb, 224 bytes, Stack size 12 bytes, bpsfunctions.o(i.bpsDiscretePID))
 <BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = bpsDiscretePID
 </UL>
 <BR>[Calls]<UL><LI><a href="#[cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsAppendPIDSamples
@@ -1222,7 +1222,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsTaskControlMotor
 </UL>
 
-<P><STRONG><a name="[4e]"></a>bpsTaskCalRefEncoderValue</STRONG> (Thumb, 186 bytes, Stack size 16 bytes, bpstasks.o(i.bpsTaskCalRefEncoderValue))
+<P><STRONG><a name="[4e]"></a>bpsTaskCalRefEncoderValue</STRONG> (Thumb, 204 bytes, Stack size 16 bytes, bpstasks.o(i.bpsTaskCalRefEncoderValue))
 <BR><BR>[Stack]<UL><LI>Max Depth = 68<LI>Call Chain = bpsTaskCalRefEncoderValue &rArr; ulTaskNotifyTake &rArr; prvAddCurrentTaskToDelayedList &rArr; vListInsert
 </UL>
 <BR>[Calls]<UL><LI><a href="#[d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
@@ -1233,7 +1233,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> bpstasks.o(i.bpsBallAndPlateSystemStart)
 </UL>
-<P><STRONG><a name="[4f]"></a>bpsTaskControlMotor</STRONG> (Thumb, 242 bytes, Stack size 24 bytes, bpstasks.o(i.bpsTaskControlMotor))
+<P><STRONG><a name="[4f]"></a>bpsTaskControlMotor</STRONG> (Thumb, 250 bytes, Stack size 24 bytes, bpstasks.o(i.bpsTaskControlMotor))
 <BR><BR>[Stack]<UL><LI>Max Depth = 88<LI>Call Chain = bpsTaskControlMotor &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
@@ -1247,7 +1247,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> bpstasks.o(i.bpsBallAndPlateSystemStart)
 </UL>
-<P><STRONG><a name="[4b]"></a>bpsTaskSetup</STRONG> (Thumb, 128 bytes, Stack size 0 bytes, bpstasks.o(i.bpsTaskSetup))
+<P><STRONG><a name="[4b]"></a>bpsTaskSetup</STRONG> (Thumb, 148 bytes, Stack size 0 bytes, bpstasks.o(i.bpsTaskSetup))
 <BR><BR>[Stack]<UL><LI>Max Depth = 64<LI>Call Chain = bpsTaskSetup &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
@@ -1275,8 +1275,8 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> bpstasks.o(i.bpsBallAndPlateSystemStart)
 </UL>
-<P><STRONG><a name="[4c]"></a>bpsTaskUpdateUARTData</STRONG> (Thumb, 54 bytes, Stack size 56 bytes, bpstasks.o(i.bpsTaskUpdateUARTData))
-<BR><BR>[Stack]<UL><LI>Max Depth = 116<LI>Call Chain = bpsTaskUpdateUARTData &rArr; bpsUARTReceiveData &rArr; HAL_UART_Receive_DMA &rArr; HAL_DMA_Start_IT &rArr; DMA_SetConfig
+<P><STRONG><a name="[4c]"></a>bpsTaskUpdateUARTData</STRONG> (Thumb, 54 bytes, Stack size 72 bytes, bpstasks.o(i.bpsTaskUpdateUARTData))
+<BR><BR>[Stack]<UL><LI>Max Depth = 132<LI>Call Chain = bpsTaskUpdateUARTData &rArr; bpsUARTReceiveData &rArr; HAL_UART_Receive_DMA &rArr; HAL_DMA_Start_IT &rArr; DMA_SetConfig
 </UL>
 <BR>[Calls]<UL><LI><a href="#[d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
 <LI><a href="#[db]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsUARTReceiveData

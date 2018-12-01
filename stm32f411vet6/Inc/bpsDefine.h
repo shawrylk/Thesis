@@ -29,7 +29,7 @@ extern	DMA_HandleTypeDef			hdma_usart2_rx;
 #define MAX_ENCODER_CNT				260		// 8 pulses are 1 degree, so 80 pulses are 10 degrees
 #define MIN_ENCODER_CNT				-260
 #define NUMBER_OF_SAMPLE			3
-#define	DT_OUTER_LOOP				0.0011f  // 11.2 ms
+#define	DT_OUTER_LOOP				0.011f  // 11.2 ms
 #define	DT_INNER_LOOP				0.0010f	//  1 ms
 #define	PWM_PIN_2_X					TIM_CHANNEL_1
 #define	PWM_PIN_1_X					TIM_CHANNEL_2
@@ -107,8 +107,9 @@ typedef struct
 	float                                   Kp[BPS_NUMBER_OF_PID_LOOP][BPS_NUMBER_OF_AXIS];
     float                                   Ki[BPS_NUMBER_OF_PID_LOOP][BPS_NUMBER_OF_AXIS];
     float                                   Kd[BPS_NUMBER_OF_PID_LOOP][BPS_NUMBER_OF_AXIS];
+	float                                   Ka[BPS_NUMBER_OF_PID_LOOP][BPS_NUMBER_OF_AXIS];
 }
-bpsPIDTypeDef; //48
+bpsPIDTypeDef; //64
 
 typedef union 
 {
@@ -117,7 +118,7 @@ typedef union
 	bpsRectangleTypeDef			rectangleProperties;
 	bpsPIDTypeDef				PIDProperties;
 }	
-bpsDataTypeDef; //48
+bpsDataTypeDef; //64
 
 typedef struct 
 {

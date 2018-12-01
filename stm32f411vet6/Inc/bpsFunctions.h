@@ -11,7 +11,7 @@ HAL_StatusTypeDef		bpsStartPWM					(void);
 HAL_StatusTypeDef		bpsSetPWMDuty				(bpsAxisTypeDef axis, uint16_t duty, bpsDirectionTypeDef direction);
 HAL_StatusTypeDef		bpsUARTReceiveData			(bpsUARTReceiveDataTypeDef* receiveData);
 HAL_StatusTypeDef		bpsUARTSendData				(bpsUARTSendDataTypeDef* sendData);
-HAL_StatusTypeDef 		bpsDiscretePID				(int16_t setpoint, int16_t currentPoint, float Kp, float Ki, float Kd, 
+HAL_StatusTypeDef 		bpsDiscretePID				(int16_t setpoint, int16_t currentPoint, float Kp, float Ki, float Kd, float Ka,
 													int16_t* errorSamples_out, float* PIDSamples_out, float time, BOOL clamping);
 HAL_StatusTypeDef 		bpsContinousPID				(int16_t setpoint, int16_t currentPoint, float Kp, 
 													float Ki, float Kd,int16_t* errorSamples_out, float* PIDSamples_out, 
