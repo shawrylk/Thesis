@@ -78,7 +78,6 @@ typedef struct
 	float						Kp[BPS_NUMBER_OF_PID_LOOP][BPS_NUMBER_OF_AXIS];
     float						Ki[BPS_NUMBER_OF_PID_LOOP][BPS_NUMBER_OF_AXIS];
     float						Kd[BPS_NUMBER_OF_PID_LOOP][BPS_NUMBER_OF_AXIS];
-	float						Ka[BPS_NUMBER_OF_PID_LOOP][BPS_NUMBER_OF_AXIS];
 }
 bpsPIDTypeDef; //48
 
