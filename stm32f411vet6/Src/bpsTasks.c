@@ -8,6 +8,8 @@ TaskHandle_t   			taskNumber[NUMBER_OF_TASK];
 int16_t encoderValue;
 int16_t encX = 0, encXMin = 0, encXMax = 0, encY = 0, encYMin = 0, encYMax = 0;
 BOOL delay1ms = false;
+float vx, vy, ax, ay, axsp, aysp;
+
 void bpsTaskUpdateUARTData(void* pointer)
 {
 	bpsSharedDataTypeDef* sd = (bpsSharedDataTypeDef*)pointer;
@@ -24,6 +26,19 @@ void bpsTaskUpdateUARTData(void* pointer)
 		// so everything is synchronous
 		memcpy(&sd->UARTData, &receiveData, sizeof(bpsUARTReceiveDataTypeDef));		
 		delay1ms = false;
+		// calculate velocity and acceleration of object
+		bpsAppendInts(&sd->positionSample[BPS_X_AXIS][0], sd->UARTData.ballCoordinate[BPS_X_AXIS]);
+		bpsAppendInts(&sd->positionSample[BPS_Y_AXIS][0], sd->UARTData.ballCoordinate[BPS_Y_AXIS]);
+		vx = (sd->positionSample[BPS_X_AXIS][0] - sd->positionSample[BPS_X_AXIS][1]) / DT_OUTER_LOOP / PIXELS_PER_METER;
+		vy = (sd->positionSample[BPS_Y_AXIS][0] - sd->positionSample[BPS_Y_AXIS][1]) / DT_OUTER_LOOP / PIXELS_PER_METER;
+		ax = (sd->positionSample[BPS_X_AXIS][0] - 2 * sd->positionSample[BPS_X_AXIS][1] 
+					+ sd->positionSample[BPS_X_AXIS][2]) / DT_OUTER_LOOP / DT_OUTER_LOOP / PIXELS_PER_METER;
+		ay = (sd->positionSample[BPS_Y_AXIS][0] - 2 * sd->positionSample[BPS_Y_AXIS][1] 
+					+ sd->positionSample[BPS_Y_AXIS][2]) / DT_OUTER_LOOP / DT_OUTER_LOOP / PIXELS_PER_METER;
+		//
+		axsp = vx * vx / 2 / (sd->setpoint[BPS_X_AXIS] - sd->positionSample[BPS_X_AXIS][0]) / PIXELS_PER_METER;
+		aysp = vy * vy / 2 / (sd->setpoint[BPS_Y_AXIS] - sd->positionSample[BPS_Y_AXIS][0]) / PIXELS_PER_METER;
+
 		xTaskNotifyGive(taskNumber[TASK_UPDATE_SETPOINT]);
 		//xTaskNotifyGive(taskNumber[TASK_SEND_UART_DATA]);
 	}
@@ -79,31 +94,23 @@ void bpsTaskCalRefEncoderValue(void *pointer)
 	{
 		// wait notification from update setpoint task
 		ulTaskNotifyTake(pdFALSE, portMAX_DELAY);
-		// calculate velocity and acceleration of object
-		bpsAppendInts(&sd->positionSample[BPS_X_AXIS][0], sd->UARTData.ballCoordinate[BPS_X_AXIS]);
-		bpsAppendInts(&sd->positionSample[BPS_Y_AXIS][0], sd->UARTData.ballCoordinate[BPS_Y_AXIS]);
-		float vx, vy, ax, ay, axsp, aysp;
-		vx = (sd->positionSample[BPS_X_AXIS][0] - sd->positionSample[BPS_X_AXIS][1]) / DT_OUTER_LOOP;
-		vy = (sd->positionSample[BPS_Y_AXIS][0] - sd->positionSample[BPS_Y_AXIS][1]) / DT_OUTER_LOOP;
-		ax = (sd->positionSample[BPS_X_AXIS][0] - 2 * sd->positionSample[BPS_X_AXIS][1] 
-					+ sd->positionSample[BPS_X_AXIS][2]) / DT_OUTER_LOOP / DT_OUTER_LOOP;
-		ay = (sd->positionSample[BPS_Y_AXIS][0] - 2 * sd->positionSample[BPS_Y_AXIS][1] 
-					+ sd->positionSample[BPS_Y_AXIS][2]) / DT_OUTER_LOOP / DT_OUTER_LOOP;
-		//
-		axsp = vx * vx / 2 / (sd->setpoint[BPS_X_AXIS] - sd->positionSample[BPS_X_AXIS][0]);
-		aysp = vy * vy / 2 / (sd->setpoint[BPS_Y_AXIS] - sd->positionSample[BPS_Y_AXIS][0]);
 		if (sd->UARTData.detectedBall)
 		{
-			bpsDiscretePID(axsp, ax, sd->PIDParams.Kp[BPS_OUTER_PID][BPS_X_AXIS], 
+
+			bpsDiscretePID(sd->setpoint[BPS_X_AXIS], 480 - sd->UARTData.ballCoordinate[BPS_X_AXIS], 
+							sd->PIDParams.Kp[BPS_OUTER_PID][BPS_X_AXIS], 
 							sd->PIDParams.Ki[BPS_OUTER_PID][BPS_X_AXIS], sd->PIDParams.Kd[BPS_OUTER_PID][BPS_X_AXIS], 
 							&sd->errorSamples[BPS_OUTER_PID][BPS_X_AXIS][0], &sd->PIDSamples[BPS_OUTER_PID][BPS_X_AXIS][0],
 							DT_OUTER_LOOP, false);
-			bpsDiscretePID(aysp, ay, sd->PIDParams.Kp[BPS_OUTER_PID][BPS_Y_AXIS], 
+			bpsDiscretePID(sd->setpoint[BPS_Y_AXIS], sd->UARTData.ballCoordinate[BPS_Y_AXIS],
+							sd->PIDParams.Kp[BPS_OUTER_PID][BPS_Y_AXIS], 
 							sd->PIDParams.Ki[BPS_OUTER_PID][BPS_Y_AXIS], sd->PIDParams.Kd[BPS_OUTER_PID][BPS_Y_AXIS], 
 							&sd->errorSamples[BPS_OUTER_PID][BPS_Y_AXIS][0], &sd->PIDSamples[BPS_OUTER_PID][BPS_Y_AXIS][0],
 							DT_OUTER_LOOP, false);			
-			sd->encoderCntRef[BPS_X_AXIS] = encoderSaturation(sd->PIDSamples[BPS_OUTER_PID][BPS_X_AXIS][0]) * -0.1427;
-			sd->encoderCntRef[BPS_Y_AXIS] = encoderSaturation(sd->PIDSamples[BPS_OUTER_PID][BPS_Y_AXIS][0]) * -0.1427;
+			// sd->encoderCntRef[BPS_X_AXIS] = encoderSaturation((axsp - ax) * -0.1427 * PULSES_PER_RADIAN);
+			// sd->encoderCntRef[BPS_Y_AXIS] = encoderSaturation((axsp - ax) * -0.1427 * PULSES_PER_RADIAN);
+			sd->encoderCntRef[BPS_X_AXIS] = encoderSaturation(sd->PIDSamples[BPS_OUTER_PID][BPS_X_AXIS][0]);
+			sd->encoderCntRef[BPS_Y_AXIS] = encoderSaturation(sd->PIDSamples[BPS_OUTER_PID][BPS_Y_AXIS][0]);
 		}
 		else
 		{
@@ -151,7 +158,7 @@ void bpsTaskControlMotor(void* pointer)
 		if (delay1ms)
 			vTaskDelay(pdMS_TO_TICKS(1));
 		delay1ms = true;
-		xTaskNotifyGive(taskNumber[TASK_UPDATE_SETPOINT]);
+		xTaskNotifyGive(taskNumber[TASK_CONTROL_MOTOR]);
 		//xTaskNotifyGive(taskNumber[TASK_SEND_UART_DATA]);
 	}
 }
@@ -179,19 +186,19 @@ void bpsTaskSetup(void *pointer)
 	//this task run first, then blocked forever
 	bpsSharedDataTypeDef* sd = (bpsSharedDataTypeDef*)pointer;
 	sd->UARTData.command = BPS_UPDATE_PID;
-	sd->UARTData.content.PIDProperties.Kp[BPS_OUTER_PID][BPS_X_AXIS] = 2;
-	sd->UARTData.content.PIDProperties.Ki[BPS_OUTER_PID][BPS_X_AXIS] = 0;
-	sd->UARTData.content.PIDProperties.Kd[BPS_OUTER_PID][BPS_X_AXIS] = 0;
+	sd->UARTData.content.PIDProperties.Kp[BPS_OUTER_PID][BPS_X_AXIS] = 0.6;
+	sd->UARTData.content.PIDProperties.Ki[BPS_OUTER_PID][BPS_X_AXIS] = 0.5;
+	sd->UARTData.content.PIDProperties.Kd[BPS_OUTER_PID][BPS_X_AXIS] = 1.6;
 
-	sd->UARTData.content.PIDProperties.Kp[BPS_OUTER_PID][BPS_Y_AXIS] = 2;
-	sd->UARTData.content.PIDProperties.Ki[BPS_OUTER_PID][BPS_Y_AXIS] = 0;
-	sd->UARTData.content.PIDProperties.Kd[BPS_OUTER_PID][BPS_Y_AXIS] = 0;
+	sd->UARTData.content.PIDProperties.Kp[BPS_OUTER_PID][BPS_Y_AXIS] = 0.6;
+	sd->UARTData.content.PIDProperties.Ki[BPS_OUTER_PID][BPS_Y_AXIS] = 0.5;
+	sd->UARTData.content.PIDProperties.Kd[BPS_OUTER_PID][BPS_Y_AXIS] = 1.6;
 
-	sd->UARTData.content.PIDProperties.Kp[BPS_INNER_PID][BPS_X_AXIS] = 1;
+	sd->UARTData.content.PIDProperties.Kp[BPS_INNER_PID][BPS_X_AXIS] = 0.6;
 	sd->UARTData.content.PIDProperties.Ki[BPS_INNER_PID][BPS_X_AXIS] = 0;
 	sd->UARTData.content.PIDProperties.Kd[BPS_INNER_PID][BPS_X_AXIS] = 0;
 
-	sd->UARTData.content.PIDProperties.Kp[BPS_INNER_PID][BPS_Y_AXIS] = 1;
+	sd->UARTData.content.PIDProperties.Kp[BPS_INNER_PID][BPS_Y_AXIS] = 0.6;
 	sd->UARTData.content.PIDProperties.Ki[BPS_INNER_PID][BPS_Y_AXIS] = 0;
 	sd->UARTData.content.PIDProperties.Kd[BPS_INNER_PID][BPS_Y_AXIS] = 0;
 

@@ -94,13 +94,17 @@ HAL_StatusTypeDef bpsDiscretePID(int16_t setpoint, int16_t currentPoint, float K
 									float Ki, float Kd, int16_t* errorSamples_out, float* PIDSamples_out, float time, BOOL clamping)
 {
 	HAL_StatusTypeDef ret;
+	float PID;
 	if (PIDSamples_out == NULL || errorSamples_out == NULL)
 		return HAL_ERROR;
 	int16_t e = setpoint - currentPoint;
-	float PID = (Kp + Ki * time / 2 + Kd / time) * e
-			+	(-Kp + Ki * time / 2 - Kd / time * 2) * *errorSamples_out
-			+	(Kd / time) * *(errorSamples_out + 1)
-			+ 	*PIDSamples_out;
+//	if (-10 < e && e < 10)
+//		PID = 0;
+//	else
+		PID = (Kp + Ki * time / 2 + Kd / time) * e
+				+	(-Kp + Ki * time / 2 - Kd / time * 2) * *errorSamples_out
+				+	(Kd / time) * *(errorSamples_out + 1)
+				+ 	*PIDSamples_out;
 //	float PID = (Kp + Ki * time / 2 + Kd / time + Ka / time / time) * e
 //			+	(-Kp + Ki * time / 2 - 2 * Kd / time - 3 * Ka / time / time) * *errorSamples_out
 //			+	(Kd / time + 4 * Ka / time / time) * *(errorSamples_out + 1)
@@ -122,7 +126,7 @@ HAL_StatusTypeDef bpsAppendInts(int16_t* errorSamples, int16_t newSample)
 		return HAL_ERROR;
 	for (int i = NUMBER_OF_SAMPLE - 1; i > 0; i--)
 		*(errorSamples + i) = *(errorSamples + i - 1);
-	*errorSamples= newSample;
+	*errorSamples = newSample;
 	return HAL_OK;
 	
 }
