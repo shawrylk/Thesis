@@ -3,7 +3,7 @@
 <title>Static Call Graph - [Thesis\Thesis.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image Thesis\Thesis.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060528: Last Updated: Sat Dec 01 23:46:50 2018
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060528: Last Updated: Sun Dec 02 16:39:52 2018
 <BR><P>
 <H3>Maximum Stack Usage =        288 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -1145,11 +1145,11 @@ Global Symbols
 <LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_cos
 </UL>
 
-<P><STRONG><a name="[ce]"></a>bpsAppendErrorSamples</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, bpsfunctions.o(i.bpsAppendErrorSamples))
+<P><STRONG><a name="[cf]"></a>bpsAppendFloats</STRONG> (Thumb, 34 bytes, Stack size 0 bytes, bpsfunctions.o(i.bpsAppendFloats))
 <BR><BR>[Called By]<UL><LI><a href="#[cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsDiscretePID
 </UL>
 
-<P><STRONG><a name="[cf]"></a>bpsAppendPIDSamples</STRONG> (Thumb, 34 bytes, Stack size 0 bytes, bpsfunctions.o(i.bpsAppendPIDSamples))
+<P><STRONG><a name="[ce]"></a>bpsAppendInts</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, bpsfunctions.o(i.bpsAppendInts))
 <BR><BR>[Called By]<UL><LI><a href="#[cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsDiscretePID
 </UL>
 
@@ -1183,11 +1183,11 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsTaskControlMotor
 </UL>
 
-<P><STRONG><a name="[cc]"></a>bpsDiscretePID</STRONG> (Thumb, 224 bytes, Stack size 12 bytes, bpsfunctions.o(i.bpsDiscretePID))
+<P><STRONG><a name="[cc]"></a>bpsDiscretePID</STRONG> (Thumb, 134 bytes, Stack size 12 bytes, bpsfunctions.o(i.bpsDiscretePID))
 <BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = bpsDiscretePID
 </UL>
-<BR>[Calls]<UL><LI><a href="#[cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsAppendPIDSamples
-<LI><a href="#[ce]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsAppendErrorSamples
+<BR>[Calls]<UL><LI><a href="#[ce]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsAppendInts
+<LI><a href="#[cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsAppendFloats
 <LI><a href="#[cd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PWMSaturation
 </UL>
 <BR>[Called By]<UL><LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsTaskControlMotor
@@ -1222,7 +1222,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsTaskControlMotor
 </UL>
 
-<P><STRONG><a name="[4e]"></a>bpsTaskCalRefEncoderValue</STRONG> (Thumb, 204 bytes, Stack size 16 bytes, bpstasks.o(i.bpsTaskCalRefEncoderValue))
+<P><STRONG><a name="[4e]"></a>bpsTaskCalRefEncoderValue</STRONG> (Thumb, 194 bytes, Stack size 16 bytes, bpstasks.o(i.bpsTaskCalRefEncoderValue))
 <BR><BR>[Stack]<UL><LI>Max Depth = 68<LI>Call Chain = bpsTaskCalRefEncoderValue &rArr; ulTaskNotifyTake &rArr; prvAddCurrentTaskToDelayedList &rArr; vListInsert
 </UL>
 <BR>[Calls]<UL><LI><a href="#[d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
@@ -1233,7 +1233,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> bpstasks.o(i.bpsBallAndPlateSystemStart)
 </UL>
-<P><STRONG><a name="[4f]"></a>bpsTaskControlMotor</STRONG> (Thumb, 250 bytes, Stack size 24 bytes, bpstasks.o(i.bpsTaskControlMotor))
+<P><STRONG><a name="[4f]"></a>bpsTaskControlMotor</STRONG> (Thumb, 242 bytes, Stack size 24 bytes, bpstasks.o(i.bpsTaskControlMotor))
 <BR><BR>[Stack]<UL><LI>Max Depth = 88<LI>Call Chain = bpsTaskControlMotor &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify

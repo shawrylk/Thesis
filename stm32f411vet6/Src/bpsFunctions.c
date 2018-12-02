@@ -91,45 +91,31 @@ HAL_StatusTypeDef bpsUARTSendData(bpsUARTSendDataTypeDef* sendData)
 }
 
 HAL_StatusTypeDef bpsDiscretePID(int16_t setpoint, int16_t currentPoint, float Kp, 
-									float Ki, float Kd, float Ka, int16_t* errorSamples_out, float* PIDSamples_out, float time, BOOL clamping)
+									float Ki, float Kd, int16_t* errorSamples_out, float* PIDSamples_out, float time, BOOL clamping)
 {
 	HAL_StatusTypeDef ret;
 	if (PIDSamples_out == NULL || errorSamples_out == NULL)
 		return HAL_ERROR;
 	int16_t e = setpoint - currentPoint;
-	// float PID = (Kp + Ki * time / 2 + Kd / time) * e
-	// 		+	(-Kp + Ki * time / 2 - Kd / time * 2) * *errorSamples_out
-	// 		+	(Kd / time) * *(errorSamples_out + 1)
-	// 		+ 	*PIDSamples_out;
-	float PID = (Kp + Ki * time / 2 + Kd / time + Ka / time / time) * e
-			+	(-Kp + Ki * time / 2 - 2 * Kd / time - 3 * Ka / time / time) * *errorSamples_out
-			+	(Kd / time + 4 * Ka / time / time) * *(errorSamples_out + 1)
-			- 	(2 * Ka / time / time) * *(errorSamples_out + 2)
+	float PID = (Kp + Ki * time / 2 + Kd / time) * e
+			+	(-Kp + Ki * time / 2 - Kd / time * 2) * *errorSamples_out
+			+	(Kd / time) * *(errorSamples_out + 1)
 			+ 	*PIDSamples_out;
+//	float PID = (Kp + Ki * time / 2 + Kd / time + Ka / time / time) * e
+//			+	(-Kp + Ki * time / 2 - 2 * Kd / time - 3 * Ka / time / time) * *errorSamples_out
+//			+	(Kd / time + 4 * Ka / time / time) * *(errorSamples_out + 1)
+//			- 	(2 * Ka / time / time) * *(errorSamples_out + 2)
+//			+ 	*PIDSamples_out;
 	if (clamping)
 		PID = PWMSaturation(PID);
-	ret = bpsAppendErrorSamples(errorSamples_out, e);
-	ret |= bpsAppendPIDSamples(PIDSamples_out, PID);
+	ret = bpsAppendInts(errorSamples_out, e);
+	ret |= bpsAppendFloats(PIDSamples_out, PID);
 	return ret;
 }
 
-HAL_StatusTypeDef bpsContinousPID(int16_t setpoint, int16_t currentPoint, float Kp, 
-									float Ki, float Kd, int16_t* errorSamples_out, float* PIDSamples_out, float* integralSum, float time)
-{
-	HAL_StatusTypeDef ret;
-	if (PIDSamples_out == NULL || errorSamples_out == NULL)
-		return HAL_ERROR;
-	int16_t e = setpoint - currentPoint;
-	float PID = Kp * e
-			+	*integralSum + Ki * e * time;
-			+	Kd * (e - *errorSamples_out) / time;
-	ret = bpsAppendErrorSamples(errorSamples_out, e);
-	ret |= bpsAppendPIDSamples(PIDSamples_out, PID);
-	ret |= bpsAppendPIDSamples(integralSum, *integralSum + Ki * e * time);
-	return ret;
-}
 
-HAL_StatusTypeDef bpsAppendErrorSamples(int16_t* errorSamples, int16_t newSample)
+
+HAL_StatusTypeDef bpsAppendInts(int16_t* errorSamples, int16_t newSample)
 {
 
 	if (errorSamples == NULL)
@@ -141,7 +127,7 @@ HAL_StatusTypeDef bpsAppendErrorSamples(int16_t* errorSamples, int16_t newSample
 	
 }
 
-HAL_StatusTypeDef bpsAppendPIDSamples(float* PIDSamples, float newSample)
+HAL_StatusTypeDef bpsAppendFloats(float* PIDSamples, float newSample)
 {
 
 	if (PIDSamples == NULL)
