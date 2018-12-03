@@ -58,13 +58,12 @@ int main( int argc, char *argv[] )
         printf("Run show frame thread\n");
         showFrame = true;
     }
-    if (argc > 2)
-        if (strcmp(argv[2], "metalBall") == 0)
-        {
-            printf("Metal ball\n");
-            MIN_OBJECT_AREA = 10*10;
-            MAX_OBJECT_AREA  = 30*30;
-        }
+    if (strcmp(argv[2], "metalBall") == 0)
+    {
+        printf("Metal ball\n");
+        MIN_OBJECT_AREA = 10*10;
+        MAX_OBJECT_AREA  = 30*30;
+    }
     else
         printf("Tennis ball\n");
     //*******************************//

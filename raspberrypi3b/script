@@ -13,7 +13,7 @@ bps_run_frame()
 
 bps_run_metal()
 {
-	$BPS_PATH/bin/bpsRaspberryPi3B metalBall
+	$BPS_PATH/bin/bpsRaspberryPi3B asd metalBall
 }
 
 bps_run_frame_metal()
