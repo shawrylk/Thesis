@@ -99,7 +99,7 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
   * @retval None
   */
 int main(void)
-{
+    {
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */

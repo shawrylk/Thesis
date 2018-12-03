@@ -34,6 +34,7 @@ void bpsTaskUpdateUARTData(void* pointer)
 void bpsTaskUpdateSetpoint(void* pointer)
 {
 	bpsSharedDataTypeDef* sd = (bpsSharedDataTypeDef*)pointer;
+	float currentAngle = 0;
 	while(1)
 	{
 		// wait notification from update UART data task
@@ -53,17 +54,30 @@ void bpsTaskUpdateSetpoint(void* pointer)
 				xTaskNotifyGive(taskNumber[TASK_CAL_REF_ENCODER_VALUE]);
 				break;
 			case BPS_MODE_SETPOINT:
-				memcpy(&sd->setpoint, &sd->UARTData.content, sizeof(bpsCircleTypeDef));
-				xTaskNotifyGive(taskNumber[TASK_CAL_REF_ENCODER_VALUE]);
+				if (delay1ms)
+					xTaskNotifyGive(taskNumber[TASK_CONTROL_MOTOR]);
+				else
+				{
+					memcpy(&sd->setpoint, &sd->UARTData.content, sizeof(bpsPointTypeDef));
+					sd->setpoint[BPS_X_AXIS] = 480 - sd->setpoint[BPS_X_AXIS];
+					xTaskNotifyGive(taskNumber[TASK_CAL_REF_ENCODER_VALUE]);
+				}
 				break;
 			case BPS_MODE_CIRCLE:
-				bpsCalSetpoint4CircleMode(	sd->UARTData.content.circleProperties.centerCoordinate[BPS_X_AXIS], 
-					sd->UARTData.content.circleProperties.radius, &sd->UARTData.content.circleProperties.currentAngle,
+				
+				
+				if (delay1ms)
+					xTaskNotifyGive(taskNumber[TASK_CONTROL_MOTOR]);
+				else
+				{	
+					bpsCalSetpoint4CircleMode(480 -	sd->UARTData.content.circleProperties.centerCoordinate[BPS_X_AXIS], 
+					sd->UARTData.content.circleProperties.radius, &currentAngle,
 					sd->UARTData.content.circleProperties.speed, &sd->setpoint[BPS_X_AXIS], BPS_X_AXIS);
-				bpsCalSetpoint4CircleMode(	sd->UARTData.content.circleProperties.centerCoordinate[BPS_Y_AXIS], 
-					sd->UARTData.content.circleProperties.radius, &sd->UARTData.content.circleProperties.currentAngle,
-					sd->UARTData.content.circleProperties.speed, &sd->setpoint[BPS_Y_AXIS], BPS_Y_AXIS);		
-				xTaskNotifyGive(taskNumber[TASK_CAL_REF_ENCODER_VALUE]);
+					bpsCalSetpoint4CircleMode(sd->UARTData.content.circleProperties.centerCoordinate[BPS_Y_AXIS], 
+					sd->UARTData.content.circleProperties.radius, &currentAngle,
+					sd->UARTData.content.circleProperties.speed, &sd->setpoint[BPS_Y_AXIS], BPS_Y_AXIS);	
+					xTaskNotifyGive(taskNumber[TASK_CAL_REF_ENCODER_VALUE]);
+				}
 				break;
 			case BPS_MODE_RECTANGLE:
 				xTaskNotifyGive(taskNumber[TASK_CAL_REF_ENCODER_VALUE]);
@@ -143,27 +157,26 @@ void bpsTaskControlMotor(void* pointer)
 		if (delay1ms)
 			vTaskDelay(pdMS_TO_TICKS(1));
 		delay1ms = true;
-		xTaskNotifyGive(taskNumber[TASK_CONTROL_MOTOR]);
-		//xTaskNotifyGive(taskNumber[TASK_SEND_UART_DATA]);
+		xTaskNotifyGive(taskNumber[TASK_UPDATE_SETPOINT]);
 	}
 }
 
-void bpsTaskUARTSendData(void* pointer)
-{
-	memset((void*)&sendData, 0 , sizeof(bpsUARTSendDataTypeDef));
-	int16_t temp;
-	while(1)
-	{
-		// wait for notification from update UART data task
-		ulTaskNotifyTake(pdFALSE, portMAX_DELAY);
-		// it can get here because of control motor task is blocked
-		bpsReadEncoderCnt(BPS_X_AXIS, &temp);
-		sendData.encoderCnt[BPS_X_AXIS] = temp;
-		bpsReadEncoderCnt(BPS_Y_AXIS, &temp);
-		sendData.encoderCnt[BPS_Y_AXIS] = temp;
-		bpsUARTSendData(&sendData);
-	}
-}
+// void bpsTaskUARTSendData(void* pointer)
+// {
+// 	memset((void*)&sendData, 0 , sizeof(bpsUARTSendDataTypeDef));
+// 	int16_t temp;
+// 	while(1)
+// 	{
+// 		// wait for notification from update UART data task
+// 		ulTaskNotifyTake(pdFALSE, portMAX_DELAY);
+// 		// it can get here because of control motor task is blocked
+// 		bpsReadEncoderCnt(BPS_X_AXIS, &temp);
+// 		sendData.encoderCnt[BPS_X_AXIS] = temp;
+// 		bpsReadEncoderCnt(BPS_Y_AXIS, &temp);
+// 		sendData.encoderCnt[BPS_Y_AXIS] = temp;
+// 		bpsUARTSendData(&sendData);
+// 	}
+// }
 
 void bpsTaskSetup(void *pointer)
 {
@@ -192,9 +205,14 @@ void bpsTaskSetup(void *pointer)
 	sd->UARTData.detectedBall = 0;
 	sd->UARTData.ballCoordinate[BPS_X_AXIS] = 240;
 	sd->UARTData.ballCoordinate[BPS_Y_AXIS] = 240;
-	sd->UARTData.command = BPS_MODE_SETPOINT;
-	sd->UARTData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 240;
-	sd->UARTData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] = 240;
+	// sd->UARTData.command = BPS_MODE_SETPOINT;
+	// sd->UARTData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 240;
+	// sd->UARTData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] = 240;
+	sd->UARTData.command = BPS_MODE_CIRCLE;
+	sd->UARTData.content.circleProperties.centerCoordinate[BPS_X_AXIS] = 200;
+	sd->UARTData.content.circleProperties.centerCoordinate[BPS_Y_AXIS] = 200;
+	sd->UARTData.content.circleProperties.radius	= 40;
+	sd->UARTData.content.circleProperties.speed		= 1;
 	xTaskNotifyGive(taskNumber[TASK_UPDATE_SETPOINT]);
 	vTaskDelay(pdMS_TO_TICKS(11));
 	vTaskDelay(portMAX_DELAY);
@@ -221,5 +239,5 @@ void bpsBallAndPlateSystemStart()
 	xTaskCreate(bpsTaskCalRefEncoderValue, "Calculate reference Encoder Value", 500, (void*)&sharedData, 3, 
 				&taskNumber[TASK_CAL_REF_ENCODER_VALUE]);
     xTaskCreate(bpsTaskControlMotor, "Control Motor", 500, (void*)&sharedData, 2, &taskNumber[TASK_CONTROL_MOTOR]);
-    xTaskCreate(bpsTaskUARTSendData, "Example send data", 500, NULL,1, &taskNumber[TASK_SEND_UART_DATA]);
+    //xTaskCreate(bpsTaskUARTSendData, "Example send data", 500, NULL,1, &taskNumber[TASK_SEND_UART_DATA]);
 }

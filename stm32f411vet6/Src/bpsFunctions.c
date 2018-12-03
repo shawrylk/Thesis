@@ -158,16 +158,15 @@ HAL_StatusTypeDef bpsControlMotor(bpsAxisTypeDef axis ,float PID)
 	}
 }
 
-HAL_StatusTypeDef bpsCalSetpoint4CircleMode (int16_t centerOrdinate, uint16_t radius, uint16_t* currentAngle_out, uint16_t speed, 
+HAL_StatusTypeDef bpsCalSetpoint4CircleMode (int16_t centerOrdinate, uint16_t radius, float* currentAngle_out, uint16_t speed, 
 											int16_t* setpoint_out, bpsAxisTypeDef axis)
 {
 	if (radius == 0 || speed == 0)
 		return HAL_ERROR;
 	if (currentAngle_out == NULL || setpoint_out == NULL)
 		return HAL_ERROR;
-
-	*setpoint_out = (int16_t)(centerOrdinate + radius * (axis ? cos(*currentAngle_out * speed) : sin(*currentAngle_out * speed)));
-	if (*currentAngle_out == 360 * (uint16_t)(1 / speed)) *currentAngle_out = 0; else *currentAngle_out++;
+	*setpoint_out = centerOrdinate + radius * (int16_t)(axis == BPS_Y_AXIS ?  sin(*currentAngle_out) : cos(*currentAngle_out));
+	if (*currentAngle_out >= 2 * 3.1415) *currentAngle_out = 0; else *currentAngle_out += speed / 2 / 3.1415 / 10;
 	return HAL_OK;
 }
 

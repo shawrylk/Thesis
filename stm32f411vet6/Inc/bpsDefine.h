@@ -93,7 +93,6 @@ typedef struct
 {
 	int16_t			centerCoordinate[BPS_NUMBER_OF_AXIS];
 	uint16_t		radius;
-	uint16_t		currentAngle;
 	uint16_t		speed;
 }	
 bpsCircleTypeDef; //10
