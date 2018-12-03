@@ -11,6 +11,16 @@ bps_run_frame()
 	$BPS_PATH/bin/bpsRaspberryPi3B showFrame
 }
 
+bps_run_metal()
+{
+	$BPS_PATH/bin/bpsRaspberryPi3B metalBall
+}
+
+bps_run_frame_metal()
+{
+	$BPS_PATH/bin/bpsRaspberryPi3B showFrame metalBall
+}
+
 bps_install_dependency()
 {
 	cd ~
@@ -185,6 +195,12 @@ while test ${#} -gt 0; do
 			;;
 		runFrame)
 			bps_run_frame
+			;;
+		runMetal)
+			bps_run_metal
+			;;
+		runFrameMetal)
+			bps_run_frame_metal
 			;;
 		install_opencv)
 			bps_install_opencv
