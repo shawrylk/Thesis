@@ -331,8 +331,8 @@ int recvFunc (char *recvData, int recvLen)
         case  BPS_MODE_CIRCLE:
             std::cout << "circle mode \n";
             std::cout << "x: " << data->content.circleProperties.centerCoordinate[BPS_X_AXIS] << " -- ";
-            data->content.circleProperties.centerCoordinate[BPS_X_AXIS] = 480 - 
-                    data->content.circleProperties.centerCoordinate[BPS_X_AXIS];
+            STMData.content.circleProperties.centerCoordinate[BPS_X_AXIS] = 480 - 
+                    STMData.content.circleProperties.centerCoordinate[BPS_X_AXIS];
             std::cout << "y: " << data->content.circleProperties.centerCoordinate[BPS_Y_AXIS] << std::endl;
             std::cout << "r: " << data->content.circleProperties.radius << std::endl;
             std::cout << "s: " << data->content.circleProperties.speed << std::endl;
@@ -340,30 +340,30 @@ int recvFunc (char *recvData, int recvLen)
         case BPS_MODE_SETPOINT:
             std::cout << "setpoint mode \n";
             std::cout << "x: " << data->content.pointProperties.setpointCoordinate[BPS_X_AXIS] << " -- ";
-            data->content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 480 -
-                    data->content.pointProperties.setpointCoordinate[BPS_X_AXIS];
+            STMData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 480 -
+                    STMData.content.pointProperties.setpointCoordinate[BPS_X_AXIS];
             std::cout << "y: " << data->content.pointProperties.setpointCoordinate[BPS_Y_AXIS] << std::endl;
             break;
         case BPS_MODE_RECTANGLE:
             std::cout << "rectangle mode \n";
             std::cout << "TL x: " << data->content.rectangleProperties.vertexCoordinate[BPS_TOP_LEFT][BPS_X_AXIS] << " -- ";
-            data->content.rectangleProperties.vertexCoordinate[BPS_TOP_LEFT][BPS_X_AXIS] = 480 - 
-                    data->content.rectangleProperties.vertexCoordinate[BPS_TOP_LEFT][BPS_X_AXIS];
+            STMData.content.rectangleProperties.vertexCoordinate[BPS_TOP_LEFT][BPS_X_AXIS] = 480 - 
+                    STMData.content.rectangleProperties.vertexCoordinate[BPS_TOP_LEFT][BPS_X_AXIS];
             std::cout << "TL y: " << data->content.rectangleProperties.vertexCoordinate[BPS_TOP_LEFT][BPS_Y_AXIS] << std::endl;
 
             std::cout << "TR x: " << data->content.rectangleProperties.vertexCoordinate[BPS_TOP_RIGHT][BPS_X_AXIS] << " -- ";
-            data->content.rectangleProperties.vertexCoordinate[BPS_TOP_RIGHT][BPS_X_AXIS] = 480 - 
-                    data->content.rectangleProperties.vertexCoordinate[BPS_TOP_RIGHT][BPS_X_AXIS];
+            STMData.content.rectangleProperties.vertexCoordinate[BPS_TOP_RIGHT][BPS_X_AXIS] = 480 - 
+                    STMData.content.rectangleProperties.vertexCoordinate[BPS_TOP_RIGHT][BPS_X_AXIS];
             std::cout << "TR y: " << data->content.rectangleProperties.vertexCoordinate[BPS_TOP_RIGHT][BPS_Y_AXIS] << std::endl;
 
             std::cout << "BL x: " << data->content.rectangleProperties.vertexCoordinate[BPS_BOT_LEFT][BPS_X_AXIS] << " -- ";
-            data->content.rectangleProperties.vertexCoordinate[BPS_BOT_LEFT][BPS_X_AXIS] = 480 - 
-                    data->content.rectangleProperties.vertexCoordinate[BPS_BOT_LEFT][BPS_X_AXIS];
+            STMData.content.rectangleProperties.vertexCoordinate[BPS_BOT_LEFT][BPS_X_AXIS] = 480 - 
+                    STMData.content.rectangleProperties.vertexCoordinate[BPS_BOT_LEFT][BPS_X_AXIS];
             std::cout << "BL y: " << data->content.rectangleProperties.vertexCoordinate[BPS_BOT_LEFT][BPS_Y_AXIS] << std::endl;
 
             std::cout << "BR x: " << data->content.rectangleProperties.vertexCoordinate[BPS_BOT_RIGHT][BPS_X_AXIS] << " -- ";
-            data->content.rectangleProperties.vertexCoordinate[BPS_BOT_RIGHT][BPS_X_AXIS] = 480 - 
-                    data->content.rectangleProperties.vertexCoordinate[BPS_BOT_RIGHT][BPS_X_AXIS];
+            STMData.content.rectangleProperties.vertexCoordinate[BPS_BOT_RIGHT][BPS_X_AXIS] = 480 - 
+                    STMData.content.rectangleProperties.vertexCoordinate[BPS_BOT_RIGHT][BPS_X_AXIS];
             std::cout << "BR y: " << data->content.rectangleProperties.vertexCoordinate[BPS_BOT_RIGHT][BPS_Y_AXIS] << std::endl;
 
             break;
