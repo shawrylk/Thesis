@@ -65,7 +65,8 @@ int main( int argc, char *argv[] )
             MIN_OBJECT_AREA = 10*10;
             MAX_OBJECT_AREA  = 30*30;
         }
- 
+    else
+        printf("Tennis ball\n");
     //*******************************//
     STMData.command = BPS_MODE_SETPOINT;
     STMData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 240;
