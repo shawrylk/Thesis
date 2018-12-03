@@ -52,20 +52,22 @@ int main( int argc, char *argv[] )
 {
     //*******************************//
     bool showFrame = false;
- 
-    if (strcmp(argv[1], "showFrame") == 0)
+    if (argc > 1)
     {
-        printf("Run show frame thread\n");
-        showFrame = true;
+        if (strcmp(argv[1], "showFrame") == 0)
+        {
+            printf("Run show frame thread\n");
+            showFrame = true;
+        }
+        if (strcmp(argv[2], "metalBall") == 0)
+        {
+            printf("Metal ball\n");
+            MIN_OBJECT_AREA = 10*10;
+            MAX_OBJECT_AREA  = 30*30;
+        }
+        else
+            printf("Tennis ball\n");
     }
-    if (strcmp(argv[2], "metalBall") == 0)
-    {
-        printf("Metal ball\n");
-        MIN_OBJECT_AREA = 10*10;
-        MAX_OBJECT_AREA  = 30*30;
-    }
-    else
-        printf("Tennis ball\n");
     //*******************************//
     STMData.command = BPS_MODE_SETPOINT;
     STMData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 240;
