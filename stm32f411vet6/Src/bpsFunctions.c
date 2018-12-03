@@ -94,22 +94,20 @@ HAL_StatusTypeDef bpsDiscretePID(int16_t setpoint, int16_t currentPoint, float K
 									float Ki, float Kd, int16_t* errorSamples_out, float* PIDSamples_out, float time, BOOL clamping)
 {
 	HAL_StatusTypeDef ret;
-	float PID;
+	float PID, lastPID = 0;
 	if (PIDSamples_out == NULL || errorSamples_out == NULL)
 		return HAL_ERROR;
 	int16_t e = setpoint - currentPoint;
-//	if (-10 < e && e < 10)
-//		PID = 0;
-//	else
-		PID = (Kp + Ki * time / 2 + Kd / time) * e
-				+	(-Kp + Ki * time / 2 - Kd / time * 2) * *errorSamples_out
-				+	(Kd / time) * *(errorSamples_out + 1)
-				+ 	*PIDSamples_out;
-//	float PID = (Kp + Ki * time / 2 + Kd / time + Ka / time / time) * e
-//			+	(-Kp + Ki * time / 2 - 2 * Kd / time - 3 * Ka / time / time) * *errorSamples_out
-//			+	(Kd / time + 4 * Ka / time / time) * *(errorSamples_out + 1)
-//			- 	(2 * Ka / time / time) * *(errorSamples_out + 2)
-//			+ 	*PIDSamples_out;
+	if (clamping)
+	{
+		if (lastPID > MAX_PWM_DUTY ? 1 : lastPID < MIN_PWM_DUTY ? 1 : 0  && e*Ki > 0 ? 1 : e*Ki < 0 ? 1 : 0) 
+			Ki = 0;
+	}
+	PID = (Kp + Ki * time / 2 + Kd / time) * e
+			+	(-Kp + Ki * time / 2 - Kd / time * 2) * *errorSamples_out
+			+	(Kd / time) * *(errorSamples_out + 1)
+			+ 	*PIDSamples_out;
+	lastPID = PID;
 	if (clamping)
 		PID = PWMSaturation(PID);
 	ret = bpsAppendInts(errorSamples_out, e);
@@ -168,32 +166,7 @@ HAL_StatusTypeDef bpsCalSetpoint4CircleMode (int16_t centerOrdinate, uint16_t ra
 	return HAL_OK;
 }
 
-HAL_StatusTypeDef bpsFindThresholds(bpsAxisTypeDef axis, int16_t *min, int16_t *max)
-{
-	int16_t temp;
-	HAL_StatusTypeDef ret;
-	ret = bpsControlMotor(axis, -1 * MAX_PWM_DUTY / 1.6);
-	ret |= bpsReadEncoderCnt(axis, &temp);
-	do {
-		*min = temp;
-		HAL_Delay(300);
-		ret |= bpsReadEncoderCnt(axis, &temp);
-	} while (*min != temp);
-	ret |= bpsControlMotor(axis, 0);
-	HAL_Delay(1000);
-	ret |= bpsReadEncoderCnt(axis, min);
-	ret |= bpsControlMotor(axis, MAX_PWM_DUTY / 1.6);
-	ret |= bpsReadEncoderCnt(axis, &temp);
-	do {
-		*max = temp;
-		HAL_Delay(300);
-		ret |= bpsReadEncoderCnt(axis, &temp);
-	} while (*max != temp);
-	ret |= bpsControlMotor(axis, 0);
-	HAL_Delay(1000);
-	ret |= bpsReadEncoderCnt(axis, max);
-	return ret;
-}
+
 
 float encoderSaturation(float PID)
 {
@@ -211,8 +184,6 @@ float PWMSaturation(float PID)
 		return MAX_PWM_DUTY;
 	else if (PID < MIN_PWM_DUTY)
 		return MIN_PWM_DUTY;
-	else //if (PID > MAX_PWM_DUTY / 20 || PID < MIN_PWM_DUTY / 20)
+	else 
 		return PID;
-	//else
-		//return 0;
 }
