@@ -103,6 +103,11 @@ HAL_StatusTypeDef bpsDiscretePID(int16_t setpoint, int16_t currentPoint, float K
 		if (lastPID > MAX_PWM_DUTY ? 1 : lastPID < MIN_PWM_DUTY ? 1 : 0  && e*Ki > 0 ? 1 : e*Ki < 0 ? 1 : 0) 
 			Ki = 0;
 	}
+	// else
+	// {
+	// 	if (lastPID > MAX_ENCODER_CNT ? 1 : lastPID < MIN_ENCODER_CNT ? 1 : 0  && e*Ki > 0 ? 1 : e*Ki < 0 ? 1 : 0) 
+	// 		Ki = 0;
+	// }
 	PID = (Kp + Ki * time / 2 + Kd / time) * e
 			+	(-Kp + Ki * time / 2 - Kd / time * 2) * *errorSamples_out
 			+	(Kd / time) * *(errorSamples_out + 1)
