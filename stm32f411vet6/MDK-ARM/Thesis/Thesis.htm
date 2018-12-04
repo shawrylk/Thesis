@@ -3,9 +3,9 @@
 <title>Static Call Graph - [Thesis\Thesis.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image Thesis\Thesis.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060528: Last Updated: Tue Dec 04 13:37:07 2018
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060528: Last Updated: Tue Dec 04 14:01:23 2018
 <BR><P>
-<H3>Maximum Stack Usage =        304 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
+<H3>Maximum Stack Usage =        296 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
 bpsTaskUpdateSetpoint &rArr; bpsCalSetpoint4CircleMode &rArr; __hardfp_sin &rArr; __ieee754_rem_pio2 &rArr; __aeabi_dmul &rArr; _double_epilogue &rArr; _double_round
 <P>
@@ -1175,7 +1175,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsTaskUpdateSetpoint
 </UL>
 
-<P><STRONG><a name="[da]"></a>bpsCalSetpoint4RectMode</STRONG> (Thumb, 60 bytes, Stack size 0 bytes, bpsfunctions.o(i.bpsCalSetpoint4RectMode))
+<P><STRONG><a name="[da]"></a>bpsCalSetpoint4RectMode</STRONG> (Thumb, 104 bytes, Stack size 0 bytes, bpsfunctions.o(i.bpsCalSetpoint4RectMode))
 <BR><BR>[Called By]<UL><LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsTaskUpdateSetpoint
 </UL>
 
@@ -1250,7 +1250,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> bpstasks.o(i.bpsBallAndPlateSystemStart)
 </UL>
-<P><STRONG><a name="[4b]"></a>bpsTaskSetup</STRONG> (Thumb, 154 bytes, Stack size 0 bytes, bpstasks.o(i.bpsTaskSetup))
+<P><STRONG><a name="[4b]"></a>bpsTaskSetup</STRONG> (Thumb, 136 bytes, Stack size 0 bytes, bpstasks.o(i.bpsTaskSetup))
 <BR><BR>[Stack]<UL><LI>Max Depth = 64<LI>Call Chain = bpsTaskSetup &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
@@ -1258,8 +1258,8 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> bpstasks.o(i.bpsBallAndPlateSystemStart)
 </UL>
-<P><STRONG><a name="[4d]"></a>bpsTaskUpdateSetpoint</STRONG> (Thumb, 212 bytes, Stack size 24 bytes, bpstasks.o(i.bpsTaskUpdateSetpoint))
-<BR><BR>[Stack]<UL><LI>Max Depth = 304<LI>Call Chain = bpsTaskUpdateSetpoint &rArr; bpsCalSetpoint4CircleMode &rArr; __hardfp_sin &rArr; __ieee754_rem_pio2 &rArr; __aeabi_dmul &rArr; _double_epilogue &rArr; _double_round
+<P><STRONG><a name="[4d]"></a>bpsTaskUpdateSetpoint</STRONG> (Thumb, 208 bytes, Stack size 16 bytes, bpstasks.o(i.bpsTaskUpdateSetpoint))
+<BR><BR>[Stack]<UL><LI>Max Depth = 296<LI>Call Chain = bpsTaskUpdateSetpoint &rArr; bpsCalSetpoint4CircleMode &rArr; __hardfp_sin &rArr; __ieee754_rem_pio2 &rArr; __aeabi_dmul &rArr; _double_epilogue &rArr; _double_round
 </UL>
 <BR>[Calls]<UL><LI><a href="#[d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
 <LI><a href="#[da]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bpsCalSetpoint4RectMode

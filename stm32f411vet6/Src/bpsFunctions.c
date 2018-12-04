@@ -176,35 +176,41 @@ HAL_StatusTypeDef bpsCalSetpoint4CircleMode (int16_t centerOrdinate, uint16_t ra
 	return HAL_OK;
 }
 
-HAL_StatusTypeDef bpsCalSetpoint4RectMode (bpsRectangleTypeDef *rect, int *timeElapse, bpsPointTypeDef *setpoint)
+HAL_StatusTypeDef bpsCalSetpoint4RectMode (bpsRectangleTypeDef *rect, int *timeElapse, int16_t *setpoint)
 {
 	if (rect == NULL || timeElapse == NULL || setpoint == NULL)
 		return HAL_ERROR;
 	if (*timeElapse > TIME_FOR_A_RECT * 0.75)
 	{
-		memcpy(setpoint, &rect->vertexCoordinate[BPS_TOP_LEFT], sizeof(bpsPointTypeDef));
-		*timeElapse--;
+		*setpoint = 480 - rect->vertexCoordinate[BPS_TOP_LEFT][BPS_X_AXIS];
+		*(setpoint + 1) =  rect->vertexCoordinate[BPS_TOP_LEFT][BPS_Y_AXIS];
+		*timeElapse-=1;
+		return HAL_OK;
 	}
-	else if (*timeElapse > TIME_FOR_A_RECT * 0.5)
+	if (*timeElapse > TIME_FOR_A_RECT * 0.5)
 	{
-		memcpy(setpoint, &rect->vertexCoordinate[BPS_TOP_RIGHT], sizeof(bpsPointTypeDef));
-		*timeElapse--;
+		*setpoint = 480 - rect->vertexCoordinate[BPS_TOP_RIGHT][BPS_X_AXIS];
+		*(setpoint + 1) =  rect->vertexCoordinate[BPS_TOP_RIGHT][BPS_Y_AXIS];
+		*timeElapse-=1;
+		return HAL_OK;
 	}
-	else if (*timeElapse > TIME_FOR_A_RECT * 0.25)
+	if (*timeElapse > TIME_FOR_A_RECT * 0.25)
 	{
-		memcpy(setpoint, &rect->vertexCoordinate[BPS_BOT_RIGHT], sizeof(bpsPointTypeDef));
-		*timeElapse--;
+		*setpoint = 480 - rect->vertexCoordinate[BPS_BOT_RIGHT][BPS_X_AXIS];
+		*(setpoint + 1) =  rect->vertexCoordinate[BPS_BOT_RIGHT][BPS_Y_AXIS];
+		*timeElapse-=1;
+		return HAL_OK;
 	}
-	else if (*timeElapse > 0)
+	if (*timeElapse > 0)
 	{
-		memcpy(setpoint, &rect->vertexCoordinate[BPS_BOT_LEFT], sizeof(bpsPointTypeDef));
-		*timeElapse--;
+		*setpoint = 480 - rect->vertexCoordinate[BPS_BOT_LEFT][BPS_X_AXIS];
+		*(setpoint + 1) =  rect->vertexCoordinate[BPS_BOT_LEFT][BPS_Y_AXIS];
+		*timeElapse-=1;
+		return HAL_OK;
 	}
-	else
-	{
-		*timeElapse = TIME_FOR_A_RECT;
-	}
+	*timeElapse = TIME_FOR_A_RECT;
 	return HAL_OK;
+	
 }
 
 float encoderSaturation(float PID)

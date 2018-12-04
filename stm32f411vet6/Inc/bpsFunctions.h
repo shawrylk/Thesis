@@ -18,7 +18,7 @@ HAL_StatusTypeDef		bpsAppendFloats				(float* PIDSamples, float newSample);
 HAL_StatusTypeDef		bpsControlMotor				(bpsAxisTypeDef axis, float PID);
 HAL_StatusTypeDef		bpsCalSetpoint4CircleMode 	(int16_t centerOrdinate, uint16_t radius, float* currentAngle_out, uint16_t speed, 
 													int16_t* setpoint_out, bpsAxisTypeDef axis);
-HAL_StatusTypeDef 		bpsCalSetpoint4RectMode 	(bpsRectangleTypeDef *rect, int *timeElapse, bpsPointTypeDef *setpoint);												
+HAL_StatusTypeDef 		bpsCalSetpoint4RectMode 	(bpsRectangleTypeDef *rect, int *timeElapse, int16_t *setpoint);												
 float 					encoderSaturation			(float PID);
 float 					PWMSaturation				(float PID);
 #endif

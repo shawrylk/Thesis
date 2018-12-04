@@ -6,9 +6,9 @@ bpsUARTSendDataTypeDef 	sendData;
 bpsSharedDataTypeDef 	sharedData;
 TaskHandle_t   			taskNumber[NUMBER_OF_TASK];
 int16_t encoderValue;
-int16_t encX = 0, encXMin = 0, encXMax = 0, encY = 0, encYMin = 0, encYMax = 0;
+int16_t encX = 0, encY = 0;
 BOOL delay1ms = false;
-float vx, vy, ax, ay, axsp, aysp;
+int timeElapse = TIME_FOR_A_RECT;
 
 void bpsTaskUpdateUARTData(void* pointer)
 {
@@ -35,7 +35,7 @@ void bpsTaskUpdateSetpoint(void* pointer)
 {
 	bpsSharedDataTypeDef* sd = (bpsSharedDataTypeDef*)pointer;
 	float currentAngle = 0;
-	int time = TIME_FOR_A_RECT;
+	//int timeElapse = TIME_FOR_A_RECT;
 	while(1)
 	{
 		// wait notification from update UART data task
@@ -83,7 +83,7 @@ void bpsTaskUpdateSetpoint(void* pointer)
 					xTaskNotifyGive(taskNumber[TASK_CONTROL_MOTOR]);
 				else
 				{	
-					bpsCalSetpoint4RectMode(&sd->UARTData.content.rectangleProperties, &time, (bpsPointTypeDef*)&sd->setpoint);
+					bpsCalSetpoint4RectMode(&sd->UARTData.content.rectangleProperties, &timeElapse, &sd->setpoint[BPS_X_AXIS]);
 					xTaskNotifyGive(taskNumber[TASK_CAL_REF_ENCODER_VALUE]);
 				}
 				break;
@@ -213,11 +213,11 @@ void bpsTaskSetup(void *pointer)
 	// sd->UARTData.command = BPS_MODE_SETPOINT;
 	// sd->UARTData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 240;
 	// sd->UARTData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] = 240;
-	sd->UARTData.command = BPS_MODE_CIRCLE;
-	sd->UARTData.content.circleProperties.centerCoordinate[BPS_X_AXIS] = 200;
-	sd->UARTData.content.circleProperties.centerCoordinate[BPS_Y_AXIS] = 200;
-	sd->UARTData.content.circleProperties.radius	= 40;
-	sd->UARTData.content.circleProperties.speed		= 1;
+	// sd->UARTData.command = BPS_MODE_CIRCLE;
+	// sd->UARTData.content.circleProperties.centerCoordinate[BPS_X_AXIS] = 200;
+	// sd->UARTData.content.circleProperties.centerCoordinate[BPS_Y_AXIS] = 200;
+	// sd->UARTData.content.circleProperties.radius	= 40;
+	// sd->UARTData.content.circleProperties.speed		= 1;
 	xTaskNotifyGive(taskNumber[TASK_UPDATE_SETPOINT]);
 	vTaskDelay(pdMS_TO_TICKS(11));
 	vTaskDelay(portMAX_DELAY);
