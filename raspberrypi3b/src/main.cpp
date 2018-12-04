@@ -69,9 +69,9 @@ int main( int argc, char *argv[] )
             printf("Tennis ball\n");
     }
     //*******************************//
-    // STMData.command = BPS_MODE_SETPOINT;
-    // STMData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 240;
-    // STMData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] = 240;
+    STMData.command = BPS_MODE_SETPOINT;
+    STMData.content.pointProperties.setpointCoordinate[BPS_X_AXIS] = 240;
+    STMData.content.pointProperties.setpointCoordinate[BPS_Y_AXIS] = 240;
     //*******************************//
     // STMData.command = BPS_MODE_CIRCLE;
 	// STMData.content.circleProperties.centerCoordinate[BPS_X_AXIS] = 240;
@@ -79,15 +79,15 @@ int main( int argc, char *argv[] )
 	// STMData.content.circleProperties.radius	= 80;
 	// STMData.content.circleProperties.speed		= 1;
     //*******************************//
-    STMData.command = BPS_MODE_RECTANGLE;
-    STMData.content.rectangleProperties.vertexCoordinate[BPS_TOP_LEFT][BPS_X_AXIS] = 160;
-    STMData.content.rectangleProperties.vertexCoordinate[BPS_TOP_LEFT][BPS_Y_AXIS] = 320;
-    STMData.content.rectangleProperties.vertexCoordinate[BPS_TOP_RIGHT][BPS_X_AXIS] = 320;
-    STMData.content.rectangleProperties.vertexCoordinate[BPS_TOP_RIGHT][BPS_Y_AXIS] = 320;
-    STMData.content.rectangleProperties.vertexCoordinate[BPS_BOT_RIGHT][BPS_X_AXIS] = 320;
-    STMData.content.rectangleProperties.vertexCoordinate[BPS_BOT_RIGHT][BPS_Y_AXIS] = 160;
-    STMData.content.rectangleProperties.vertexCoordinate[BPS_BOT_LEFT][BPS_X_AXIS] = 160;
-    STMData.content.rectangleProperties.vertexCoordinate[BPS_BOT_LEFT][BPS_Y_AXIS] = 160;
+    // STMData.command = BPS_MODE_RECTANGLE;
+    // STMData.content.rectangleProperties.vertexCoordinate[BPS_TOP_LEFT][BPS_X_AXIS] = 160;
+    // STMData.content.rectangleProperties.vertexCoordinate[BPS_TOP_LEFT][BPS_Y_AXIS] = 320;
+    // STMData.content.rectangleProperties.vertexCoordinate[BPS_TOP_RIGHT][BPS_X_AXIS] = 320;
+    // STMData.content.rectangleProperties.vertexCoordinate[BPS_TOP_RIGHT][BPS_Y_AXIS] = 320;
+    // STMData.content.rectangleProperties.vertexCoordinate[BPS_BOT_RIGHT][BPS_X_AXIS] = 320;
+    // STMData.content.rectangleProperties.vertexCoordinate[BPS_BOT_RIGHT][BPS_Y_AXIS] = 160;
+    // STMData.content.rectangleProperties.vertexCoordinate[BPS_BOT_LEFT][BPS_X_AXIS] = 160;
+    // STMData.content.rectangleProperties.vertexCoordinate[BPS_BOT_LEFT][BPS_Y_AXIS] = 160;
     //*******************************//
     sem_init(&semCaptureFrameCplt, 0, 0);
     sem_init(&semPreProcessFrameCplt, 0, 0);
