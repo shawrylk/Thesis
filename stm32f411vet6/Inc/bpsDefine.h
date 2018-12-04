@@ -38,6 +38,7 @@ extern	DMA_HandleTypeDef			hdma_usart2_rx;
 #define PULSE_PER_REVOLUTION        3072
 #define PIXELS_PER_METER			1600
 #define	PULSES_PER_RADIAN			489
+#define	TIME_FOR_A_RECT			720 // 720 seconds
 #define BOOL						int8_t
 #define true						1
 #define false						0

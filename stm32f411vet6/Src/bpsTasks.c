@@ -35,6 +35,7 @@ void bpsTaskUpdateSetpoint(void* pointer)
 {
 	bpsSharedDataTypeDef* sd = (bpsSharedDataTypeDef*)pointer;
 	float currentAngle = 0;
+	int time = TIME_FOR_A_RECT;
 	while(1)
 	{
 		// wait notification from update UART data task
@@ -64,8 +65,6 @@ void bpsTaskUpdateSetpoint(void* pointer)
 				}
 				break;
 			case BPS_MODE_CIRCLE:
-				
-				
 				if (delay1ms)
 					xTaskNotifyGive(taskNumber[TASK_CONTROL_MOTOR]);
 				else
@@ -80,7 +79,13 @@ void bpsTaskUpdateSetpoint(void* pointer)
 				}
 				break;
 			case BPS_MODE_RECTANGLE:
-				xTaskNotifyGive(taskNumber[TASK_CAL_REF_ENCODER_VALUE]);
+				if (delay1ms)
+					xTaskNotifyGive(taskNumber[TASK_CONTROL_MOTOR]);
+				else
+				{	
+					bpsCalSetpoint4RectMode(&sd->UARTData.content.rectangleProperties, &time, (bpsPointTypeDef*)&sd->setpoint);
+					xTaskNotifyGive(taskNumber[TASK_CAL_REF_ENCODER_VALUE]);
+				}
 				break;
 			default:
 				break;

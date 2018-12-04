@@ -165,12 +165,47 @@ HAL_StatusTypeDef bpsCalSetpoint4CircleMode (int16_t centerOrdinate, uint16_t ra
 		return HAL_ERROR;
 	if (currentAngle_out == NULL || setpoint_out == NULL)
 		return HAL_ERROR;
-	*setpoint_out = centerOrdinate + radius * (int16_t)(axis == BPS_Y_AXIS ?  sin(*currentAngle_out) : cos(*currentAngle_out));
-	if (*currentAngle_out >= 2 * 3.1415) *currentAngle_out = 0; else *currentAngle_out += speed / 2 / 3.1415 / 10;
+	*setpoint_out = centerOrdinate + radius * (axis == BPS_Y_AXIS ?  sin(*currentAngle_out / 180 * 3.1415f) 
+																	: cos(*currentAngle_out / 180 * 3.1415f));
+	if (axis == BPS_X_AXIS)
+		*setpoint_out = 480 - *setpoint_out;
+	if (*currentAngle_out >= 360) 
+		*currentAngle_out = 0; 
+	else 
+		*currentAngle_out += (float)speed / 2;
 	return HAL_OK;
 }
 
-
+HAL_StatusTypeDef bpsCalSetpoint4RectMode (bpsRectangleTypeDef *rect, int *timeElapse, bpsPointTypeDef *setpoint)
+{
+	if (rect == NULL || timeElapse == NULL || setpoint == NULL)
+		return HAL_ERROR;
+	if (*timeElapse > TIME_FOR_A_RECT * 0.75)
+	{
+		memcpy(setpoint, &rect->vertexCoordinate[BPS_TOP_LEFT], sizeof(bpsPointTypeDef));
+		*timeElapse--;
+	}
+	else if (*timeElapse > TIME_FOR_A_RECT * 0.5)
+	{
+		memcpy(setpoint, &rect->vertexCoordinate[BPS_TOP_RIGHT], sizeof(bpsPointTypeDef));
+		*timeElapse--;
+	}
+	else if (*timeElapse > TIME_FOR_A_RECT * 0.25)
+	{
+		memcpy(setpoint, &rect->vertexCoordinate[BPS_BOT_RIGHT], sizeof(bpsPointTypeDef));
+		*timeElapse--;
+	}
+	else if (*timeElapse > 0)
+	{
+		memcpy(setpoint, &rect->vertexCoordinate[BPS_BOT_LEFT], sizeof(bpsPointTypeDef));
+		*timeElapse--;
+	}
+	else
+	{
+		*timeElapse = TIME_FOR_A_RECT;
+	}
+	return HAL_OK;
+}
 
 float encoderSaturation(float PID)
 {
