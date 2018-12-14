@@ -172,7 +172,7 @@ HAL_StatusTypeDef bpsCalSetpoint4CircleMode (int16_t centerOrdinate, uint16_t ra
 	if (*currentAngle_out >= 360) 
 		*currentAngle_out = 0; 
 	else 
-		*currentAngle_out += (float)speed / 2;
+		*currentAngle_out += (float)speed / 1.5f;
 	return HAL_OK;
 }
 
