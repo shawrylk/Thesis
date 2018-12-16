@@ -240,8 +240,16 @@ void processFrame(void)
         }
         sem_post(&semProcessFrameCplt);
         //*******************************//
-        xKF = 480 - x;//KF.predict(x);
-        yKF = y;//KF.predict(y);
+        if (bFoundObject)
+        {
+            xKF = 480 - x;//KF.predict(x);
+            yKF = y;//KF.predict(y);
+        }
+        else
+        {
+            xKF = -1;
+            yKF = -1;
+        }
         if (bFoundObject)
             std::cout << "x = " << xKF << " y = " << yKF << std::endl;
         else
