@@ -35,7 +35,7 @@ void bpsServer::poll()
         std::cout << "can't bind socket\n";
     }
 
-    if (listen(listen_sd, 3) < 0)
+    if (listen(listen_sd, 2) < 0)
     {
         close(listen_sd);
         std::cout << "can't listen on this socket\n";
