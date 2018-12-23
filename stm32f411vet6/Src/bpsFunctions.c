@@ -91,7 +91,7 @@ HAL_StatusTypeDef bpsUARTSendData(bpsUARTSendDataTypeDef* sendData)
 }
 
 HAL_StatusTypeDef bpsDiscretePID(int16_t setpoint, int16_t currentPoint, float Kp, 
-									float Ki, float Kd, int16_t* errorSamples_out, float* PIDSamples_out, float time, BOOL clamping)
+									float Ki, float Kd, int16_t* errorSamples_out, float* PIDSamples_out, float time, BOOL clamping, int max, int min)
 {
 	HAL_StatusTypeDef ret;
 	float PID, lastPID = 0;
@@ -100,21 +100,17 @@ HAL_StatusTypeDef bpsDiscretePID(int16_t setpoint, int16_t currentPoint, float K
 	int16_t e = setpoint - currentPoint;
 	if (clamping)
 	{
-		if (lastPID > MAX_PWM_DUTY ? 1 : lastPID < MIN_PWM_DUTY ? 1 : 0  && e*Ki > 0 ? 1 : e*Ki < 0 ? 1 : 0) 
+		if (lastPID > max ? 1 : lastPID < min ? 1 : 0  && e*Ki > 0 ? 1 : e*Ki < 0 ? 1 : 0) 
 			Ki = 0;
 	}
-	// else
-	// {
-	// 	if (lastPID > MAX_ENCODER_CNT ? 1 : lastPID < MIN_ENCODER_CNT ? 1 : 0  && e*Ki > 0 ? 1 : e*Ki < 0 ? 1 : 0) 
-	// 		Ki = 0;
-	// }
+	
 	PID = (Kp + Ki * time / 2 + Kd / time) * e
 			+	(-Kp + Ki * time / 2 - Kd / time * 2) * *errorSamples_out
 			+	(Kd / time) * *(errorSamples_out + 1)
 			+ 	*PIDSamples_out;
 	lastPID = PID;
 	if (clamping)
-		PID = PWMSaturation(PID);
+		PID = saturation(PID, max, min);
 	ret = bpsAppendInts(errorSamples_out, e);
 	ret |= bpsAppendFloats(PIDSamples_out, PID);
 	return ret;
@@ -172,7 +168,7 @@ HAL_StatusTypeDef bpsCalSetpoint4CircleMode (int16_t centerOrdinate, uint16_t ra
 	if (*currentAngle_out >= 360) 
 		*currentAngle_out = 0; 
 	else 
-		*currentAngle_out += (float)speed / 1.5f;
+		*currentAngle_out += (float)speed / 1.2f;
 	return HAL_OK;
 }
 
@@ -213,22 +209,14 @@ HAL_StatusTypeDef bpsCalSetpoint4RectMode (bpsRectangleTypeDef *rect, int *timeE
 	
 }
 
-float encoderSaturation(float PID)
+float saturation(float PID, int max, int min)
 {
-	if (PID > MAX_ENCODER_CNT)
-		return MAX_ENCODER_CNT;
-	else if (PID < MIN_ENCODER_CNT)
-		return MIN_ENCODER_CNT;
+	if (PID > max)
+		return max;
+	else if (PID < min)
+		return min;
 	else
 		return PID;
 }
 
-float PWMSaturation(float PID)
-{
-	if (PID > MAX_PWM_DUTY)
-		return MAX_PWM_DUTY;
-	else if (PID < MIN_PWM_DUTY)
-		return MIN_PWM_DUTY;
-	else 
-		return PID;
-}
+

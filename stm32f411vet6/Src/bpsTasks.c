@@ -107,14 +107,14 @@ void bpsTaskCalRefEncoderValue(void *pointer)
 							sd->PIDParams.Kp[BPS_OUTER_PID][BPS_X_AXIS], 
 							sd->PIDParams.Ki[BPS_OUTER_PID][BPS_X_AXIS], sd->PIDParams.Kd[BPS_OUTER_PID][BPS_X_AXIS], 
 							&sd->errorSamples[BPS_OUTER_PID][BPS_X_AXIS][0], &sd->PIDSamples[BPS_OUTER_PID][BPS_X_AXIS][0],
-							DT_OUTER_LOOP, false);
+							DT_OUTER_LOOP, false, MAX_ENCODER_CNT, MIN_ENCODER_CNT);
 			bpsDiscretePID(sd->setpoint[BPS_Y_AXIS], sd->UARTData.ballCoordinate[BPS_Y_AXIS],
 							sd->PIDParams.Kp[BPS_OUTER_PID][BPS_Y_AXIS], 
 							sd->PIDParams.Ki[BPS_OUTER_PID][BPS_Y_AXIS], sd->PIDParams.Kd[BPS_OUTER_PID][BPS_Y_AXIS], 
 							&sd->errorSamples[BPS_OUTER_PID][BPS_Y_AXIS][0], &sd->PIDSamples[BPS_OUTER_PID][BPS_Y_AXIS][0],
-							DT_OUTER_LOOP, false);			
-			sd->encoderCntRef[BPS_X_AXIS] = encoderSaturation(sd->PIDSamples[BPS_OUTER_PID][BPS_X_AXIS][0]);
-			sd->encoderCntRef[BPS_Y_AXIS] = encoderSaturation(sd->PIDSamples[BPS_OUTER_PID][BPS_Y_AXIS][0]);
+							DT_OUTER_LOOP, false, MAX_ENCODER_CNT, MIN_ENCODER_CNT);			
+			sd->encoderCntRef[BPS_X_AXIS] = saturation(sd->PIDSamples[BPS_OUTER_PID][BPS_X_AXIS][0], MAX_ENCODER_CNT, MIN_ENCODER_CNT);
+			sd->encoderCntRef[BPS_Y_AXIS] = saturation(sd->PIDSamples[BPS_OUTER_PID][BPS_Y_AXIS][0], MAX_ENCODER_CNT, MIN_ENCODER_CNT);
 		}
 		else
 		{
@@ -143,8 +143,8 @@ void bpsTaskControlMotor(void* pointer)
 						sd->PIDParams.Kp[BPS_INNER_PID][BPS_X_AXIS], 
 						sd->PIDParams.Ki[BPS_INNER_PID][BPS_X_AXIS], sd->PIDParams.Kd[BPS_INNER_PID][BPS_X_AXIS], 
 						&sd->errorSamples[BPS_INNER_PID][BPS_X_AXIS][0], &sd->PIDSamples[BPS_INNER_PID][BPS_X_AXIS][0],
-						DT_INNER_LOOP, true);
-		if (sd->PIDSamples[BPS_INNER_PID][BPS_X_AXIS][0] > 40 || sd->PIDSamples[BPS_INNER_PID][BPS_X_AXIS][0] < -40)
+						DT_INNER_LOOP, true, MAX_PWM_DUTY, MIN_PWM_DUTY);
+		if (sd->PIDSamples[BPS_INNER_PID][BPS_X_AXIS][0] > 15 || sd->PIDSamples[BPS_INNER_PID][BPS_X_AXIS][0] < -15)
 			bpsControlMotor(BPS_X_AXIS, sd->PIDSamples[BPS_INNER_PID][BPS_X_AXIS][0]);
 		else
 			bpsControlMotor(BPS_X_AXIS, 0);
@@ -154,8 +154,8 @@ void bpsTaskControlMotor(void* pointer)
 						sd->PIDParams.Kp[BPS_INNER_PID][BPS_Y_AXIS], 
 						sd->PIDParams.Ki[BPS_INNER_PID][BPS_Y_AXIS], sd->PIDParams.Kd[BPS_INNER_PID][BPS_Y_AXIS], 
 						&sd->errorSamples[BPS_INNER_PID][BPS_Y_AXIS][0], &sd->PIDSamples[BPS_INNER_PID][BPS_Y_AXIS][0],
-						DT_INNER_LOOP, true);	
-		if (sd->PIDSamples[BPS_INNER_PID][BPS_Y_AXIS][0] > 40 || sd->PIDSamples[BPS_INNER_PID][BPS_Y_AXIS][0] < -40)
+						DT_INNER_LOOP, true, MAX_PWM_DUTY, MIN_PWM_DUTY);	
+		if (sd->PIDSamples[BPS_INNER_PID][BPS_Y_AXIS][0] > 15 || sd->PIDSamples[BPS_INNER_PID][BPS_Y_AXIS][0] < -15)
 			bpsControlMotor(BPS_Y_AXIS, sd->PIDSamples[BPS_INNER_PID][BPS_Y_AXIS][0]);	
 		else
 			bpsControlMotor(BPS_Y_AXIS, 0);	
@@ -190,18 +190,18 @@ void bpsTaskSetup(void *pointer)
 	bpsSharedDataTypeDef* sd = (bpsSharedDataTypeDef*)pointer;
 	sd->UARTData.command = BPS_UPDATE_PID;
 	sd->UARTData.content.PIDProperties.Kp[BPS_OUTER_PID][BPS_X_AXIS] = 1.9;
-	sd->UARTData.content.PIDProperties.Ki[BPS_OUTER_PID][BPS_X_AXIS] = 0.4;
+	sd->UARTData.content.PIDProperties.Ki[BPS_OUTER_PID][BPS_X_AXIS] = 0.3;
 	sd->UARTData.content.PIDProperties.Kd[BPS_OUTER_PID][BPS_X_AXIS] = 0.7;
 
 	sd->UARTData.content.PIDProperties.Kp[BPS_OUTER_PID][BPS_Y_AXIS] = 1.9;
-	sd->UARTData.content.PIDProperties.Ki[BPS_OUTER_PID][BPS_Y_AXIS] = 0.4;
+	sd->UARTData.content.PIDProperties.Ki[BPS_OUTER_PID][BPS_Y_AXIS] = 0.3;
 	sd->UARTData.content.PIDProperties.Kd[BPS_OUTER_PID][BPS_Y_AXIS] = 0.7;
 
-	sd->UARTData.content.PIDProperties.Kp[BPS_INNER_PID][BPS_X_AXIS] = 0.7;
+	sd->UARTData.content.PIDProperties.Kp[BPS_INNER_PID][BPS_X_AXIS] = 1.0;
 	sd->UARTData.content.PIDProperties.Ki[BPS_INNER_PID][BPS_X_AXIS] = 0;
 	sd->UARTData.content.PIDProperties.Kd[BPS_INNER_PID][BPS_X_AXIS] = 0;
 
-	sd->UARTData.content.PIDProperties.Kp[BPS_INNER_PID][BPS_Y_AXIS] = 0.7;
+	sd->UARTData.content.PIDProperties.Kp[BPS_INNER_PID][BPS_Y_AXIS] = 1.0;
 	sd->UARTData.content.PIDProperties.Ki[BPS_INNER_PID][BPS_Y_AXIS] = 0;
 	sd->UARTData.content.PIDProperties.Kd[BPS_INNER_PID][BPS_Y_AXIS] = 0;
 

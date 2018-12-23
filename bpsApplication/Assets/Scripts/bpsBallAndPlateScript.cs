@@ -100,7 +100,7 @@ public class bpsBallAndPlateScript : MonoBehaviour {
     private const int Y_OFFSET = -449;
     private const int Z_OFFSET = -500;
     private const int RADIUS_MIN = 30;
-    private const int ACTIVE_REGION = 80;
+    private const int ACTIVE_REGION = 100;
     private const int DISTANCE_MIN = 50;
     private float radius = 70;
     private float oldRadius = 0;
@@ -143,6 +143,23 @@ public class bpsBallAndPlateScript : MonoBehaviour {
 
         selectSetpoint(true);
 
+        if (PlayerPrefs.HasKey("KpxInner"))
+        {
+            pnlInnerLoop.GetComponentsInChildren<InputField>()[0].text = PlayerPrefs.GetFloat("KpxInner").ToString();
+            pnlInnerLoop.GetComponentsInChildren<InputField>()[1].text = PlayerPrefs.GetFloat("KixInner").ToString();
+            pnlInnerLoop.GetComponentsInChildren<InputField>()[2].text = PlayerPrefs.GetFloat("KdxInner").ToString();
+            pnlInnerLoop.GetComponentsInChildren<InputField>()[3].text = PlayerPrefs.GetFloat("KpyInner").ToString();
+            pnlInnerLoop.GetComponentsInChildren<InputField>()[4].text = PlayerPrefs.GetFloat("KiyInner").ToString();
+            pnlInnerLoop.GetComponentsInChildren<InputField>()[5].text = PlayerPrefs.GetFloat("KdyInner").ToString();
+            pnlOuterLoop.GetComponentsInChildren<InputField>()[0].text = PlayerPrefs.GetFloat("KpxOuter").ToString();
+            pnlOuterLoop.GetComponentsInChildren<InputField>()[1].text = PlayerPrefs.GetFloat("KixOuter").ToString();
+            pnlOuterLoop.GetComponentsInChildren<InputField>()[2].text = PlayerPrefs.GetFloat("KdxOuter").ToString();
+            pnlOuterLoop.GetComponentsInChildren<InputField>()[3].text = PlayerPrefs.GetFloat("KpyOuter").ToString();
+            pnlOuterLoop.GetComponentsInChildren<InputField>()[4].text = PlayerPrefs.GetFloat("KiyOuter").ToString();
+            pnlOuterLoop.GetComponentsInChildren<InputField>()[5].text = PlayerPrefs.GetFloat("KdyOuter").ToString();
+            updatePID("a");
+        }
+
 
     }
 
@@ -150,8 +167,22 @@ public class bpsBallAndPlateScript : MonoBehaviour {
     {
         if (client.intArr != null)
         {
-            GameObject.Find("Sphere").GetComponent<Rigidbody>().position =
-                new Vector3(client.intArr[0] - BALL_OFFSET , -420, client.intArr[1] - BALL_OFFSET + Z_OFFSET);
+            if (client.intArr[0] == -1 || client.intArr[1] == -1)
+            {
+                GameObject.Find("Sphere").GetComponent<Rigidbody>().position =
+                new Vector3(0, -420, 0);
+                GameObject.Find("Sphere").GetComponent<TrailRenderer>().enabled = false;
+                GameObject.Find("Sphere").GetComponent<TrailRenderer>().Clear();
+            }
+            else
+            {
+                GameObject.Find("Sphere").GetComponent<TrailRenderer>().enabled = true;
+                GameObject.Find("Sphere").GetComponent<TrailRenderer>().time = 10;
+                GameObject.Find("Sphere").GetComponent<TrailRenderer>().startWidth = 3;
+                GameObject.Find("Sphere").GetComponent<TrailRenderer>().endWidth = 1;
+                GameObject.Find("Sphere").GetComponent<Rigidbody>().position =
+                new Vector3(client.intArr[0] - BALL_OFFSET, -420, client.intArr[1] - BALL_OFFSET + Z_OFFSET);
+            }
         }
         
     }
@@ -400,6 +431,19 @@ public class bpsBallAndPlateScript : MonoBehaviour {
                                     farr[0], farr[3], farr[6], farr[9], farr[1], farr[4], 
                                     farr[7], farr[10], farr[2], farr[5], farr[8], farr[11]);
         client.SendAsync(sendData.data, sendData.data.Length);
+        PlayerPrefs.SetFloat("KpxInner", farr[6]);
+        PlayerPrefs.SetFloat("KixInner", farr[7]);
+        PlayerPrefs.SetFloat("KdxInner", farr[8]);
+        PlayerPrefs.SetFloat("KpyInner", farr[9]);
+        PlayerPrefs.SetFloat("KiyInner", farr[10]);
+        PlayerPrefs.SetFloat("KdyInner", farr[11]);
+        PlayerPrefs.SetFloat("KpxOuter", farr[0]);
+        PlayerPrefs.SetFloat("KixOuter", farr[1]);
+        PlayerPrefs.SetFloat("KdxOuter", farr[2]);
+        PlayerPrefs.SetFloat("KpyOuter", farr[3]);
+        PlayerPrefs.SetFloat("KiyOuter", farr[4]);
+        PlayerPrefs.SetFloat("KdyOuter", farr[5]);
+
     }
 }
 
